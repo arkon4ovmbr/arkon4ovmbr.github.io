@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>РБНС "ARKON" | Офіційний сайт</title>
+  
+  <!-- Фавікон зі скиданням кешу браузера через ?v=2 -->
+  <link rel="icon" type="image/png" href="аркон.png?v=2">
+  <link rel="shortcut icon" type="image/png" href="аркон.png?v=2">
+
+  <!-- FontAwesome & Google Fonts -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-color: #0b0c0e;
+      --card-bg: rgba(17, 18, 21, 0.45);
+      --primary-yellow: #ffcc00;
+      --text-white: #ffffff;
+      --text-gray: #a0a5b0;
+      --border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-white);
+      line-height: 1.6;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Глобальний фоновий банер з блюром */
+    .global-page-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-image: url('bannerarkon.jpg');
+      background-size: cover;
+      background-position: center;
+      filter: blur(25px) brightness(0.35);
+      transform: scale(1.1);
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    /* Навігаційна панель */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 50px;
+      background: rgba(11, 12, 14, 0.90);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .logo-btn {
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      transition: transform 0.3s ease;
+    }
+
+    .logo-btn:hover {
+      transform: scale(1.05);
+    }
+
+    /* Емблема в шапці сайту */
+    .logo-img {
+      width: 52px;
+      height: 52px;
+      object-fit: contain;
+      display: block;
+      background: transparent;
+    }
+
+    /* Квадратні іконки соцмереж */
+    .social-sq-icon {
+      width: 38px;
+      height: 38px;
+      background: #000000;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .social-sq-icon:hover {
+      border-color: var(--primary-yellow);
+      color: var(--primary-yellow);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 204, 0, 0.25);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 30px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text-white);
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      transition: color 0.3s ease;
+      cursor: pointer;
+    }
+
+    .nav-links a:hover {
+      color: var(--primary-yellow);
+    }
+
+    /* Головний екран (Hero) */
+    .hero {
+      position: relative;
+      width: 100%;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 80px 0 0 0;
+      background: transparent;
+    }
+
+    .hero-banner-wrapper {
+      position: relative;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .hero-banner-bg {
+      width: 100%;
+      height: auto;
+      display: block;
+      opacity: 0.8;
+    }
+
+    .hero-content {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 2;
+      width: 90%;
+      max-width: 900px;
+    }
+
+    .hero-title {
+      font-size: 5rem;
+      font-weight: 900;
+      letter-spacing: 12px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      text-shadow: 0 0 30px rgba(0,0,0,0.9);
+    }
+
+    .hero-subtitle {
+      font-size: 1.3rem;
+      font-weight: 700;
+      letter-spacing: 4px;
+      color: var(--text-white);
+      text-transform: uppercase;
+      margin-bottom: 40px;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.9);
+    }
+
+    .btn-yellow {
+      display: inline-block;
+      background-color: var(--primary-yellow);
+      color: #000;
+      font-weight: 800;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      padding: 18px 45px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 20px rgba(255, 204, 0, 0.2);
+    }
+
+    .btn-yellow:hover {
+      background-color: #e6b800;
+      transform: translateY(-3px);
+      box-shadow: 0 6px 25px rgba(255, 204, 0, 0.35);
+    }
+
+    /* Загальні стилі секцій */
+    section {
+      position: relative;
+      padding: 90px 10%;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      background: transparent;
+    }
+
+    /* Ультракомпактна секція "Про нас" */
+    #about {
+      padding: 15px 10%;
+    }
+
+    #about .section-header {
+      margin-bottom: 5px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 50px;
+    }
+
+    .section-title-bar {
+      width: 5px;
+      height: 30px;
+      background-color: var(--primary-yellow);
+    }
+
+    .section-title {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    /* Розділ "Про нас" — щільний блок */
+    .about-container {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 30px;
+      align-items: center;
+    }
+
+    .about-text {
+      font-size: 1.4rem;
+      line-height: 1.5;
+      color: #d1d5db;
+    }
+
+    .about-text strong {
+      color: var(--primary-yellow);
+    }
+
+    .about-badge {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .about-img {
+      width: 100%;
+      max-width: 400px;
+      height: auto;
+      display: block;
+      transition: transform 0.3s ease;
+    }
+
+    .about-img:hover {
+      transform: scale(1.03);
+    }
+
+    /* Картки */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 25px;
+    }
+
+    .card {
+      background-color: var(--card-bg);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 35px 30px;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    }
+
+    .card:hover {
+      border-color: var(--primary-yellow);
+      transform: translateY(-5px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+      background-color: rgba(17, 18, 21, 0.6);
+    }
+
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 15px;
+      color: var(--text-white);
+    }
+
+    .card-desc {
+      color: var(--text-gray);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .vacancies-btn-wrapper {
+      margin-top: 40px;
+      text-align: center;
+    }
+
+    /* Анкета кандидата */
+    .form-container {
+      max-width: 750px;
+      margin: 0 auto;
+      background-color: var(--card-bg);
+      padding: 40px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    }
+
+    .form-group {
+      margin-bottom: 25px;
+    }
+
+    .form-label {
+      display: block;
+      font-weight: 700;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+      color: var(--text-white);
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 16px 20px;
+      background-color: rgba(11, 12, 14, 0.5);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      color: var(--text-white);
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+
+    .form-control:focus {
+      border-color: var(--primary-yellow);
+    }
+
+    select.form-control {
+      appearance: none;
+      cursor: pointer;
+    }
+
+    textarea.form-control {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    .form-submit-btn {
+      width: 100%;
+      padding: 18px;
+      font-size: 1rem;
+      margin-top: 10px;
+    }
+
+    .contact-divider {
+      text-align: center;
+      margin: 40px 0 25px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--text-gray);
+      text-transform: uppercase;
+    }
+
+    .social-btns-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .btn-outline {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 15px;
+      border: 2px solid var(--primary-yellow);
+      color: var(--primary-yellow);
+      background: transparent;
+      font-weight: 800;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .btn-outline:hover {
+      background-color: var(--primary-yellow);
+      color: #000;
+    }
+
+    footer {
+      position: relative;
+      padding: 30px;
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-gray);
+      letter-spacing: 1px;
+      background: rgba(11, 12, 14, 0.8);
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    @media (max-width: 768px) {
+      header { padding: 10px 20px; }
+      .nav-links { gap: 15px; }
+      .nav-links a { font-size: 0.75rem; }
+      .hero-title { font-size: 2.8rem; letter-spacing: 4px; }
+      .hero-subtitle { font-size: 0.9rem; }
+      .about-container { grid-template-columns: 1fr; }
+      .social-btns-grid { grid-template-columns: 1fr; }
+      .form-container { padding: 20px; }
+    }
+  </style>
+
+  <script>
+    // Вимикаємо автоскрол браузера для надійного релоаду на 1 секцію
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+  </script>
+</head>
+<body>
+
+  <!-- Глобальний фоновий блок з блюром -->
+  <div class="global-page-bg"></div>
+
+  <!-- Навігація -->
+  <header>
+    <div class="nav-left">
+      <!-- Кнопка скидає скрол на самий верх і моментально оновлює сторінку -->
+      <button class="logo-btn" onclick="window.scrollTo(0, 0); window.location.reload();" title="На головну та оновити">
+        <img src="аркон.png" alt="Емблема ARKON" class="logo-img">
+      </button>
+      <a href="https://t.me/bbs_4_ovmbr" target="_blank" class="social-sq-icon" title="Telegram">
+        <i class="fa-brands fa-telegram"></i>
+      </a>
+      <a href="https://www.instagram.com/bbs_4_ovmbr/" target="_blank" class="social-sq-icon" title="Instagram">
+        <i class="fa-brands fa-instagram"></i>
+      </a>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#about">Про нас</a></li>
+      <li><a href="#directions">Напрямки</a></li>
+      <li><a href="#vacancies">Вакансії</a></li>
+    </ul>
+  </header>
+
+  <!-- Головний екран (Hero - 1 секція) -->
+  <section class="hero" id="hero">
+    <div class="hero-banner-wrapper">
+      <img src="bannerarkon.jpg" alt="Банер ARKON" class="hero-banner-bg">
+      <div class="hero-content">
+        <h1 class="hero-title">ARKON</h1>
+        <p class="hero-subtitle">Рота Безпілотних Наземних Систем</p>
+        <a href="#apply" class="btn-yellow">Вступити до лав</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Секція: Про нас -->
+  <section id="about">
+    <div class="section-header">
+      <div class="section-title-bar"></div>
+      <h2 class="section-title">Про нас</h2>
+    </div>
+    <div class="about-container">
+      <p class="about-text">
+        <strong>Рота Безпілотних Наземних Систем «ARKON»</strong> — підрозділ у складі 4 Окремої Важкої Механізованої Бригади, який втілює сучасну філософію війни: <strong>максимум технологій, мінімум ризику для особового складу.</strong>
+      </p>
+      <div class="about-badge">
+        <img src="collabarkon4.png" alt="Емблема ARKON та 4 ОВМБр" class="about-img">
+      </div>
+    </div>
+  </section>
+
+  <!-- Секція: Напрямки роботи -->
+  <section id="directions">
+    <div class="section-header">
+      <div class="section-title-bar"></div>
+      <h2 class="section-title">Напрямки роботи</h2>
+    </div>
+    <div class="cards-grid">
+      <div class="card">
+        <h3 class="card-title">Наземна логістика</h3>
+        <p class="card-desc">Безпілотні роботизовані платформи для доставки та порятунку на лінії фронту. Вони дистанційно перевозять боєприпаси, провізію та медикаменти безпосередньо в окопи, а також безпечно евакуюють поранених бійців під обстрілами. Головна мета — замінити людину на найнебезпечніших ділянках фронту.</p>
+      </div>
+      <div class="card">
+        <h3 class="card-title">Повітряна логістика</h3>
+        <p class="card-desc">Доставка вантажів за допомогою безпілотних літальних апаратів (БПЛА). Повітряні дрони дозволяють швидко та оперативно передавати критично важливе забезпечення, медикаменти чи їжу та воду на важкодоступні позиції, оточені території або через мінні поля, оминаючи наземні загрози.</p>
+      </div>
+      <div class="card">
+        <h3 class="card-title">Наземне вогневе ураження</h3>
+        <p class="card-desc">Дистанційно керовані бойові модулі та роботизовані комплекси, оснащені зброєю. Вони здатні вести вогонь по ворогу, штурмувати позиції, мінувати територію чи тримати оборону на передовій. Дозволяють виконувати бойові завдання, поки оператор перебуває у безпечному укритті.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Секція: Вакансії -->
+  <section id="vacancies">
+    <div class="section-header">
+      <div class="section-title-bar"></div>
+      <h2 class="section-title">Вакансії</h2>
+    </div>
+    <div class="cards-grid">
+      <div class="card">
+        <h3 class="card-title">Пілот</h3>
+        <p class="card-desc">Управління FPV та розвідувальними БПЛА.</p>
+      </div>
+      <div class="card">
+        <h3 class="card-title">Інженер</h3>
+        <p class="card-desc">Збірка та ремонт комплексів.</p>
+      </div>
+      <div class="card">
+        <h3 class="card-title">Зв'язківець</h3>
+        <p class="card-desc">Забезпечення стабільного сигналу.</p>
+      </div>
+    </div>
+    <div class="vacancies-btn-wrapper">
+      <a href="#apply" class="btn-yellow">Подати заявку</a>
+    </div>
+  </section>
+
+  <!-- Секція: Анкета кандидата -->
+  <section id="apply">
+    <div class="section-header">
+      <div class="section-title-bar"></div>
+      <h2 class="section-title">Анкета кандидата</h2>
+    </div>
+    <div class="form-container">
+      <form onsubmit="event.preventDefault(); alert('Дякуємо! Вашу анкету відправлено.');">
+        <div class="form-group">
+          <label class="form-label">Прізвище, Ім'я, По батькові</label>
+          <input type="text" class="form-control" placeholder="Введіть ПІБ" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Номер телефону</label>
+          <input type="tel" class="form-control" value="+380" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Бажана посада</label>
+          <select class="form-control" required>
+            <option value="" disabled selected>Оберіть напрямок</option>
+            <option value="pilot">Пілот</option>
+            <option value="engineer">Інженер</option>
+            <option value="communications">Зв'язківець</option>
+            <option value="other">Інше</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Досвід (якщо є)</label>
+          <textarea class="form-control" placeholder="Напишіть коротко про свій досвід або навички"></textarea>
+        </div>
+
+        <button type="submit" class="btn-yellow form-submit-btn">Відправити дані</button>
+      </form>
+
+      <div class="contact-divider">Або напишіть нам напряму</div>
+
+      <div class="social-btns-grid">
+        <a href="https://t.me/bbs_4_ovmbr" target="_blank" class="btn-outline">
+          <i class="fa-brands fa-telegram"></i> Написати в Telegram
+        </a>
+        <a href="https://www.instagram.com/bbs_4_ovmbr/" target="_blank" class="btn-outline">
+          <i class="fa-brands fa-instagram"></i> Написати в Instagram
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Футер -->
+  <footer>
+    &copy; 2026 Рота Безпілотних Наземних Систем «ARKON»
+  </footer>
+
+  <!-- Скрипт плавного прокручування -->
+  <script>
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const targetId = this.getAttribute('href');
+        const targetElement = document.querySelector(targetId);
+        if (targetElement) {
+          window.scrollTo({
+            top: targetElement.offsetTop - 55,
+            behavior: 'smooth'
+          });
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>
