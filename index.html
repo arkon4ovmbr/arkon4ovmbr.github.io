@@ -577,7 +577,7 @@
             color: #ffaa00;
         }
 
-        /* Кольорові бейджі статусів (як у таблиці) */
+        /* Бейджі статусів */
         .status-badge {
             display: inline-block;
             padding: 4px 12px;
@@ -585,12 +585,12 @@
             font-weight: 700;
             font-size: 13px;
         }
-        .status-processing { background-color: #e0e0e0; color: #333333; } /* Обробляється */
-        .status-in-progress { background-color: #fde68a; color: #78350f; } /* Виконується */
-        .status-completed { background-color: #065f46; color: #ffffff; } /* Виконано */
-        .status-partially { background-color: #d9f99d; color: #166534; } /* Виконано частково */
-        .status-failed { background-color: #991b1b; color: #ffffff; } /* Не виконано */
-        .status-cancelled { background-color: #fecaca; color: #991b1b; } /* Скасовано */
+        .status-processing { background-color: #e0e0e0; color: #333333; }
+        .status-in-progress { background-color: #fde68a; color: #78350f; }
+        .status-completed { background-color: #065f46; color: #ffffff; }
+        .status-partially { background-color: #d9f99d; color: #166534; }
+        .status-failed { background-color: #991b1b; color: #ffffff; }
+        .status-cancelled { background-color: #fecaca; color: #991b1b; }
 
         /* Модальне вікно успішного відправлення */
         .success-modal {
@@ -773,6 +773,7 @@
         <div class="form-group">
             <label for="checkIdInput">Введіть ID заявки</label>
             <input type="text" id="checkIdInput" placeholder="Наприклад: 1">
+            <div class="field-warning" id="warning-check-id">Заявку з таким ID не знайдено!</div>
         </div>
         <button type="button" class="submit-btn" id="checkStatusBtn">Перевірити</button>
         <button type="button" class="switch-view-btn" id="switchToFormBtn">Назад до заявки</button>
@@ -811,6 +812,7 @@
         </div>
     </div>
 
+    <!-- Підключення бібліотеки Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script>
         const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbw0sYEcM0GJ_RNx8V0tmsRne_CAwwh6T3GQbgP9tSVpAMJvNxq0uMzkugrpKmGIQYNS7w/exec';
@@ -841,7 +843,6 @@
             navTitle.textContent = 'Нова заявка';
         });
 
-        // Функція для визначення відповідного кольору статусу
         function getStatusBadgeHtml(statusText) {
             const cleanText = (statusText || '').trim();
             let cssClass = 'status-processing';
@@ -851,20 +852,28 @@
             else if (cleanText === 'Виконано частково') cssClass = 'status-partially';
             else if (cleanText === 'Не виконано') cssClass = 'status-failed';
             else if (cleanText === 'Скасовано') cssClass = 'status-cancelled';
-            else cssClass = 'status-processing'; // Обробляється
+            else cssClass = 'status-processing';
 
             return `<span class="status-badge ${cssClass}">${cleanText || 'Обробляється'}</span>`;
         }
 
-        // Логіка перевірки статусу через сервер
+        // Логіка перевірки статусу через сервер з попередженням під інпутом
         const checkStatusBtn = document.getElementById('checkStatusBtn');
         const checkIdInput = document.getElementById('checkIdInput');
         const statusResultCard = document.getElementById('statusResultCard');
+        const warningCheckId = document.getElementById('warning-check-id');
+
+        checkIdInput.addEventListener('input', () => {
+            warningCheckId.classList.remove('active');
+        });
 
         checkStatusBtn.addEventListener('click', () => {
             const idVal = checkIdInput.value.trim();
+            warningCheckId.classList.remove('active');
+
             if (!idVal) {
-                alert('Введіть ID заявки!');
+                warningCheckId.textContent = 'Введіть ID заявки!';
+                warningCheckId.classList.add('active');
                 return;
             }
 
@@ -887,13 +896,11 @@
                         document.getElementById('resUnit').textContent = resData.data.unit || '-';
                         document.getElementById('resPosition').textContent = resData.data.position || '-';
                         document.getElementById('resCargo').textContent = resData.data.cargo || '-';
-                        
-                        // Встановлюємо кольоровий бейдж
                         document.getElementById('resStatus').innerHTML = getStatusBadgeHtml(resData.data.orderStatus);
-                        
                         statusResultCard.classList.add('active');
                     } else {
-                        alert('Заявку з таким ID не знайдено!');
+                        warningCheckId.textContent = 'Заявку з таким ID не знайдено!';
+                        warningCheckId.classList.add('active');
                         statusResultCard.classList.remove('active');
                     }
                 } else {
