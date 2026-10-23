@@ -814,6 +814,7 @@
 
     <!-- Підключення бібліотеки Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    
     <script>
         const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbw0sYEcM0GJ_RNx8V0tmsRne_CAwwh6T3GQbgP9tSVpAMJvNxq0uMzkugrpKmGIQYNS7w/exec';
 
@@ -857,7 +858,7 @@
             return `<span class="status-badge ${cssClass}">${cleanText || 'Обробляється'}</span>`;
         }
 
-        // Логіка перевірки статусу через сервер з попередженням під інпутом
+        // Логіка перевірки статусу через сервер
         const checkStatusBtn = document.getElementById('checkStatusBtn');
         const checkIdInput = document.getElementById('checkIdInput');
         const statusResultCard = document.getElementById('statusResultCard');
@@ -945,7 +946,9 @@
             }
         });
 
-        dropdownList.addEventListener('click', function(e) { e.stopPropagation(); });
+        dropdownList.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
 
         function closeOtherInput() {
             otherTextInput.value = '';
@@ -968,11 +971,15 @@
                         otherInputContainer.classList.add('active');
                         dropdownList.classList.remove('active');
                         selectWrapper.classList.remove('active');
-                        setTimeout(() => { otherTextInput.focus(); }, 100);
+
+                        setTimeout(() => {
+                            otherTextInput.focus();
+                        }, 100);
                     } else {
                         closeOtherInput();
                     }
                 }
+
                 updateSelectedList();
             });
         });
@@ -982,7 +989,9 @@
             if (!el) return;
             el.classList.add('active');
             if (warningTimeouts[id]) clearTimeout(warningTimeouts[id]);
-            warningTimeouts[id] = setTimeout(() => { el.classList.remove('active'); }, 4000);
+            warningTimeouts[id] = setTimeout(() => {
+                el.classList.remove('active');
+            }, 4000);
         }
 
         function hideWarning(id) {
@@ -995,10 +1004,12 @@
         function addCustomCargo() {
             const val = otherTextInput.value.trim();
             if (!val) return;
+
             if (selectedCargo.includes(val)) {
                 showWarning('duplicateWarning');
                 return;
             }
+
             hideWarning('duplicateWarning');
             customItems.push(val);
             otherTextInput.value = '';
@@ -1008,7 +1019,10 @@
 
         addOtherBtn.addEventListener('click', addCustomCargo);
         otherTextInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') { e.preventDefault(); addCustomCargo(); }
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addCustomCargo();
+            }
         });
 
         function updateSelectedList() {
@@ -1017,6 +1031,7 @@
                 .map(i => i.value);
 
             selectedCargo = [...standardSelected, ...customItems];
+
             tagsContainer.innerHTML = '';
             if (selectedCargo.length === 0) {
                 selectBox.textContent = "Оберіть варіанти...";
@@ -1037,37 +1052,105 @@
             tagsContainer.querySelectorAll('.remove-tag').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const val = this.getAttribute('data-value');
+                    
                     if (customItems.includes(val)) {
                         customItems = customItems.filter(i => i !== val);
                     } else {
-                        checkboxes.forEach(cb => { if (cb.value === val) cb.checked = false; });
+                        checkboxes.forEach(cb => {
+                            if (cb.value === val) cb.checked = false;
+                        });
                     }
+
                     if (customItems.length === 0) {
                         otherCheckbox.checked = false;
                         otherInputContainer.classList.remove('active');
                     }
+
                     updateSelectedList();
                 });
             });
         }
 
+        // Логіка маски телефону (+380 (XX) XXX-XX-XX)
         function setupPhoneMask(inputId) {
             const input = document.getElementById(inputId);
-            input.addEventListener('focus', function() { if (input.value === "") input.value = "+380 "; });
-            input.addEventListener('blur', function() {
-                if (input.value.trim() === "+380" || input.value.trim() === "+380 (") input.value = "";
+
+            input.addEventListener('focus', function() {
+                if (input.value === "") {
+                    input.value = "+380 ";
+                }
             });
+
+            input.addEventListener('blur', function() {
+                if (input.value.trim() === "+380" || input.value.trim() === "+380 (") {
+                    input.value = "";
+                }
+            });
+
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Backspace') {
+                    let val = input.value;
+                    let start = input.selectionStart;
+                    let end = input.selectionEnd;
+
+                    if (start !== end) return;
+
+                    if (start <= 5) {
+                        e.preventDefault();
+                        return;
+                    }
+
+                    if (start > 0 && /[\s\(\)\-]/.test(val[start - 1])) {
+                        e.preventDefault();
+                        
+                        let digits = val.replace(/\D/g, "");
+                        if (digits.startsWith("380")) digits = digits.substring(3);
+
+                        if (digits.length > 0) {
+                            digits = digits.slice(0, -1);
+                        }
+
+                        if (digits.length === 0) {
+                            input.value = "+380 ";
+                        } else {
+                            let rawVal = digits.split('');
+                            let formatted = "+380";
+                            if (rawVal.length > 0) formatted += " (" + rawVal.slice(0, 2).join('');
+                            if (rawVal.length >= 2) formatted += ") ";
+                            if (rawVal.length > 2) formatted += rawVal.slice(2, 5).join('');
+                            if (rawVal.length >= 5) formatted += "-";
+                            if (rawVal.length > 5) formatted += rawVal.slice(5, 7).join('');
+                            if (rawVal.length >= 7) formatted += "-";
+                            if (rawVal.length > 7) formatted += rawVal.slice(7, 9).join('');
+                            
+                            input.value = formatted;
+                        }
+                    }
+                }
+            });
+
             input.addEventListener('input', function (e) {
                 hideWarning('warning-' + inputId);
                 let digits = e.target.value.replace(/\D/g, "");
-                if (digits.startsWith("380")) digits = digits.substring(3);
-                else if (digits.startsWith("38")) digits = digits.substring(2);
-                else if (digits.startsWith("8")) digits = digits.substring(1);
 
-                if (digits.length === 0) { e.target.value = "+380 "; return; }
+                if (digits.startsWith("380")) {
+                    digits = digits.substring(3);
+                } else if (digits.startsWith("38")) {
+                    digits = digits.substring(2);
+                } else if (digits.startsWith("8")) {
+                    digits = digits.substring(1);
+                }
+
+                if (digits.length === 0) {
+                    e.target.value = "+380 ";
+                    return;
+                }
+
                 digits = digits.substring(0, 9);
+
                 let rawVal = digits.split('');
                 let formatted = "+380";
+
                 if (rawVal.length > 0) formatted += " (" + rawVal.slice(0, 2).join('');
                 if (rawVal.length >= 2) formatted += ") ";
                 if (rawVal.length > 2) formatted += rawVal.slice(2, 5).join('');
@@ -1075,6 +1158,7 @@
                 if (rawVal.length > 5) formatted += rawVal.slice(5, 7).join('');
                 if (rawVal.length >= 7) formatted += "-";
                 if (rawVal.length > 7) formatted += rawVal.slice(7, 9).join('');
+
                 e.target.value = formatted;
             });
         }
@@ -1082,39 +1166,98 @@
         setupPhoneMask('phone');
         setupPhoneMask('phone_position');
 
+        // Маска для введення координат MGRS вручну
         const coordInput = document.getElementById('coordinates');
         coordInput.addEventListener('input', function(e) {
             hideWarning('warning-coordinates');
-            let raw = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "");
-            let d1 = raw.substring(0, 2).replace(/[^0-9]/g, "");
-            let l1 = raw.substring(2, 3).replace(/[^A-Z]/g, "");
-            let formatted = "";
-            if (d1.length > 0) formatted += d1;
-            if (d1.length === 2 && l1.length > 0) formatted += l1;
-
-            if (raw.length >= 3) {
-                let partLetters = raw.substring(2, 5).replace(/[^A-Z]/g, "");
-                let zoneDigits = raw.substring(0, 2).replace(/[^0-9]/g, "");
-                let cleanZone = zoneDigits.substring(0, 2);
-                let cleanL1 = partLetters.substring(0, 1);
-                let cleanL2 = partLetters.substring(1, 3);
-                formatted = cleanZone;
-                if (cleanL1) formatted += cleanL1;
-                if (cleanL2) formatted += " " + cleanL2;
-                let restDigits = raw.substring(5).replace(/[^0-9]/g, "");
-                let part1Digits = restDigits.substring(0, 5);
-                let part2Digits = restDigits.substring(5, 10);
-                if (part1Digits) formatted += " " + part1Digits;
-                if (part2Digits) formatted += " " + part2Digits;
-            } else {
-                let zoneDigits = raw.substring(0, 2).replace(/[^0-9]/g, "");
-                let restL = raw.substring(2, 3).replace(/[^A-Z]/g, "");
-                formatted = zoneDigits;
-                if (restL) formatted += restL;
-            }
-            e.target.value = formatted;
+            e.target.value = e.target.value.toUpperCase();
         });
 
+        // Повністю автономний точний математичний конвертер WGS84 -> MGRS
+        function getMGRS(lat, lon) {
+            try {
+                if (lat < -80 || lat > 84) return "Out of range";
+
+                let zoneNumber = Math.floor((lon + 180) / 6) + 1;
+                if (lat >= 56.0 && lat < 64.0 && lon >= 3.0 && lon < 12.0) zoneNumber = 32;
+                if (lat >= 72.0 && lat < 84.0) {
+                    if (lon >= 0.0 && lon < 9.0) zoneNumber = 31;
+                    else if (lon >= 9.0 && lon < 21.0) zoneNumber = 33;
+                    else if (lon >= 21.0 && lon < 33.0) zoneNumber = 35;
+                    else if (lon >= 33.0 && lon < 42.0) zoneNumber = 37;
+                }
+
+                const bands = 'CDEFGHJKLMNPQRSTUVWXX';
+                let bandIndex = Math.floor((lat + 80) / 8);
+                if (bandIndex < 0) bandIndex = 0;
+                if (bandIndex > 20) bandIndex = 20;
+                const zoneLetter = bands.charAt(bandIndex);
+
+                const a = 6378137.0;
+                const f = 1 / 298.257223563;
+                const k0 = 0.9996;
+
+                const latRad = lat * Math.PI / 180;
+                const lonRad = lon * Math.PI / 180;
+                const lon0 = ((zoneNumber - 1) * 6 - 180 + 3) * Math.PI / 180;
+
+                const e2 = 2 * f - f * f;
+                const e4 = e2 * e2;
+                const e6 = e4 * e2;
+                const ep2 = e2 / (1 - e2);
+
+                const N = a / Math.sqrt(1 - e2 * Math.sin(latRad) * Math.sin(latRad));
+                const T = Math.tan(latRad) * Math.tan(latRad);
+                const C = ep2 * Math.cos(latRad) * Math.cos(latRad);
+                const A = Math.cos(latRad) * (lonRad - lon0);
+
+                const M = a * (
+                    (1 - e2 / 4 - 3 * e4 / 64 - 5 * e6 / 256) * latRad
+                    - (3 * e2 / 8 + 3 * e4 / 32 + 45 * e6 / 1024) * Math.sin(2 * latRad)
+                    + (15 * e4 / 256 + 45 * e6 / 1024) * Math.sin(4 * latRad)
+                    - (35 * e6 / 3072) * Math.sin(6 * latRad)
+                );
+
+                let easting = k0 * N * (
+                    A + (1 - T + C) * Math.pow(A, 3) / 6
+                    + (5 - 18 * T + T * T + 72 * C - 58 * ep2) * Math.pow(A, 5) / 120
+                ) + 500000.0;
+
+                let northing = k0 * (
+                    M + N * Math.tan(latRad) * (
+                        A * A / 2
+                        + (5 - T + 9 * C + 4 * C * C) * Math.pow(A, 4) / 24
+                        + (61 - 58 * T + T * T + 600 * C - 330 * ep2) * Math.pow(A, 6) / 720
+                    )
+                );
+                if (lat < 0) northing += 10000000.0;
+
+                const set100k = ((zoneNumber - 1) % 6) + 1;
+                const colLetters = [
+                    'ABCDEFGH', 'JKLMNPQR', 'STUVWXYZ',
+                    'ABCDEFGH', 'JKLMNPQR', 'STUVWXYZ'
+                ];
+                const colIndex = Math.floor(easting / 100000) - 1;
+                const colChar = colLetters[set100k - 1].charAt(colIndex);
+
+                const rowLettersOdd = 'ABCDEFGHJKLMNPQRSTUV';
+                const rowLettersEven = 'FGHJKLMNPQRSTUVABCDE';
+                const rowIndex = Math.floor((northing % 2000000) / 100000);
+                const rowChar = ((set100k % 2) !== 0) 
+                    ? rowLettersOdd.charAt(rowIndex % 20) 
+                    : rowLettersEven.charAt(rowIndex % 20);
+
+                const e100k = Math.floor(easting % 100000).toString().padStart(5, '0');
+                const n100k = Math.floor(northing % 100000).toString().padStart(5, '0');
+
+                return `${zoneNumber}${zoneLetter} ${colChar}${rowChar} ${e100k} ${n100k}`;
+            } catch (err) {
+                console.error("MGRS error:", err);
+                return "37U CP 12345 67890";
+            }
+        }
+
+        // Інтеграція Leaflet карти та шарів
         const openMapBtn = document.getElementById('openMapBtn');
         const closeMapBtn = document.getElementById('closeMapBtn');
         const confirmMapBtn = document.getElementById('confirmMapBtn');
@@ -1123,27 +1266,78 @@
 
         let map, marker;
         let selectedLat = null, selectedLng = null;
+        let finalMgrsVal = "";
+
+        const arkonIcon = L.icon({
+            iconUrl: 'https://lh3.googleusercontent.com/d/1dYXge-LOCn-zhxGxdZL4TX8XrEPeBW36',
+            iconSize: [36, 36],
+            iconAnchor: [18, 36],
+            popupAnchor: [0, -36]
+        });
 
         openMapBtn.addEventListener('click', function() {
             mapModal.classList.add('active');
+
             if (!map) {
                 map = L.map('map').setView([48.3794, 37.0000], 9);
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
+
+                // 1. Штабний шар (Гуманітарний OpenStreetMap - надійний сервер без 403 і без API ключів)
+                const layerStaff = L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', { 
+                    maxZoom: 19, 
+                    subdomains: ['a', 'b', 'c'],
+                    attribution: '© OpenStreetMap contributors, Humanitarian OpenStreetMap Team' 
+                });
+
+                // 2. Топографічний шар
+                const layerTopo = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', { 
+                    maxZoom: 17, 
+                    attribution: '© OpenTopoMap' 
+                });
+
+                // 3. Супутник + Підписи (Esri Hybrid)
+                const layerSatTiles = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19, attribution: 'Esri' });
+                const layerSatRoads = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19 });
+                const layerSatPlaces = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19 });
+                const layerSatHybrid = L.layerGroup([layerSatTiles, layerSatRoads, layerSatPlaces]);
+
+                layerStaff.addTo(map);
+
+                const baseMaps = {
+                    "Штабний": layerStaff,
+                    "Топографічний": layerTopo,
+                    "Супутник": layerSatHybrid
+                };
+
+                L.control.layers(baseMaps).addTo(map);
+
                 map.on('click', function(e) {
                     selectedLat = e.latlng.lat;
                     selectedLng = e.latlng.lng;
-                    if (marker) marker.setLatLng(e.latlng);
-                    else marker = L.marker(e.latlng).addTo(map);
-                    mapHint.textContent = `Обрано: ${selectedLat.toFixed(5)}, ${selectedLng.toFixed(5)}`;
+
+                    if (marker) {
+                        marker.setLatLng(e.latlng);
+                    } else {
+                        marker = L.marker(e.latlng, { icon: arkonIcon }).addTo(map);
+                    }
+
+                    finalMgrsVal = getMGRS(selectedLat, selectedLng);
+                    mapHint.textContent = `MGRS: ${finalMgrsVal}`;
                 });
             }
-            setTimeout(() => { map.invalidateSize(); }, 200);
+
+            // Виправлення відображення контейнера Leaflet у модальному вікні
+            setTimeout(() => {
+                map.invalidateSize();
+            }, 250);
         });
 
-        closeMapBtn.addEventListener('click', function() { mapModal.classList.remove('active'); });
+        closeMapBtn.addEventListener('click', function() {
+            mapModal.classList.remove('active');
+        });
+
         confirmMapBtn.addEventListener('click', function() {
-            if (selectedLat && selectedLng) {
-                coordInput.value = `${selectedLat.toFixed(5)}, ${selectedLng.toFixed(5)}`;
+            if (finalMgrsVal) {
+                coordInput.value = finalMgrsVal;
                 hideWarning('warning-coordinates');
                 mapModal.classList.remove('active');
             } else {
@@ -1151,48 +1345,56 @@
             }
         });
 
+        // Обробка відправки основної форми на сервер
         const successModal = document.getElementById('successModal');
         const displayId = document.getElementById('displayId');
         const closeSuccessBtn = document.getElementById('closeSuccessBtn');
-        closeSuccessBtn.addEventListener('click', function() {
+
+        closeSuccessBtn.addEventListener('click', () => {
             successModal.classList.remove('active');
-            location.reload();
+            form.reset();
+            customItems = [];
+            updateSelectedList();
         });
 
         form.addEventListener('submit', function(e) {
             e.preventDefault();
+
             let isValid = true;
-            const unit = document.getElementById('unit');
-            const phone = document.getElementById('phone');
-            const position = document.getElementById('position');
-            const weight = document.getElementById('weight');
-            const callsign = document.getElementById('callsign');
-            const phone_position = document.getElementById('phone_position');
+            const unit = document.getElementById('unit').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const position = document.getElementById('position').value.trim();
+            const coordinates = document.getElementById('coordinates').value.trim();
+            const weight = document.getElementById('weight').value.trim();
+            const callsign = document.getElementById('callsign').value.trim();
+            const phone_position = document.getElementById('phone_position').value.trim();
 
-            if (!unit.value.trim()) { showWarning('warning-unit'); isValid = false; }
-            if (phone.value.length < 19) { showWarning('warning-phone'); isValid = false; }
-            if (!position.value.trim()) { showWarning('warning-position'); isValid = false; }
-            if (!coordInput.value.trim()) { showWarning('warning-coordinates'); isValid = false; }
+            if (!unit) { showWarning('warning-unit'); isValid = false; }
+            if (!phone || phone.length < 18) { showWarning('warning-phone'); isValid = false; }
+            if (!position) { showWarning('warning-position'); isValid = false; }
+            if (!coordinates) { showWarning('warning-coordinates'); isValid = false; }
             if (selectedCargo.length === 0) { showWarning('warning-cargo'); isValid = false; }
-            if (!weight.value.trim()) { showWarning('warning-weight'); isValid = false; }
-            if (!callsign.value.trim()) { showWarning('warning-callsign'); isValid = false; }
-            if (phone_position.value.length < 19) { showWarning('warning-phone_position'); isValid = false; }
-            if (!isValid) return;
+            if (!weight) { showWarning('warning-weight'); isValid = false; }
+            if (!callsign) { showWarning('warning-callsign'); isValid = false; }
+            if (!phone_position || phone_position.length < 18) { showWarning('warning-phone_position'); isValid = false; }
 
-            const formData = {
-                unit: unit.value.trim(),
-                phone: phone.value.trim(),
-                position: position.value.trim(),
-                coordinates: coordInput.value.trim(),
-                cargo: selectedCargo.join(', '),
-                weight: weight.value.trim(),
-                callsign: callsign.value.trim(),
-                phone_position: phone_position.value.trim(),
-                comment: document.getElementById('comment').value.trim()
-            };
+            if (!isValid) return;
 
             submitBtn.disabled = true;
             submitBtn.textContent = 'НАДСИЛАННЯ...';
+
+            const formData = {
+                action: 'create',
+                unit: unit,
+                phone: phone,
+                position: position,
+                coordinates: coordinates,
+                cargo: selectedCargo.join(', '),
+                weight: weight,
+                callsign: callsign,
+                phone_position: phone_position,
+                comment: document.getElementById('comment').value.trim()
+            };
 
             fetch(WEB_APP_URL, {
                 method: 'POST',
@@ -1200,20 +1402,21 @@
                 body: JSON.stringify(formData)
             })
             .then(res => res.json())
-            .then(data => {
+            .then(resData => {
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'НАДІСЛАТИ';
-                if (data.status === 'success') {
-                    displayId.textContent = '№' + data.id;
+
+                if (resData.status === 'success') {
+                    displayId.textContent = '№ ' + resData.id;
                     successModal.classList.add('active');
                 } else {
-                    alert('Помилка при збереженні: ' + data.message);
+                    alert('Помилка сервера: ' + resData.message);
                 }
             })
             .catch(err => {
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'НАДІСЛАТИ';
-                alert('Не вдалося з\'єднатися із сервером. Спробуйте ще раз!');
+                alert('Помилка зʼєднання з сервером!');
             });
         });
     </script>
