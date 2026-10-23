@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARKON LOGISTIC</title>
+    <link rel="icon" type="image/png" href="https://lh3.googleusercontent.com/d/1dYXge-LOCn-zhxGxdZL4TX8XrEPeBW36?v=2">
+    <link rel="shortcut icon" type="image/png" href="https://lh3.googleusercontent.com/d/1dYXge-LOCn-zhxGxdZL4TX8XrEPeBW36?v=2">
+    <!-- Підключення стилів Leaflet CSS для карти -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Екран завантаження */
+        #loader-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #121212;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        #loader-overlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loader-logo-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loader-logo-container img {
+            width: 85px;
+            height: 85px;
+            object-fit: contain;
+            border-radius: 50%;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Анімація обводки (світіння) по контуру */
+        .loader-ring {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 3px solid transparent;
+            border-top-color: #ffaa00;
+            border-bottom-color: #ffaa00;
+            border-radius: 50%;
+            animation: spinPulse 1.2s linear infinite;
+            z-index: 1;
+        }
+
+        @keyframes spinPulse {
+            0% {
+                transform: rotate(0deg);
+                box-shadow: 0 0 5px rgba(255, 170, 0, 0.2);
+            }
+            50% {
+                box-shadow: 0 0 20px rgba(255, 170, 0, 0.8);
+            }
+            100% {
+                transform: rotate(360deg);
+                box-shadow: 0 0 5px rgba(255, 170, 0, 0.2);
+            }
+        }
+
+        .loader-text {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #ffaa00;
+            letter-spacing: 2px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .form-container {
+            background-color: #1e1e1e;
+            padding: 30px 25px;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+
+        .form-header {
+            margin-bottom: 20px;
+        }
+
+        .form-header img {
+            width: 100%;
+            max-height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .form-header h2 {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: #ffffff;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 5px;
+            color: #b0b0b0;
+        }
+
+        /* Помаранчевий текст і рамки при введенні */
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            background-color: #2c2c2c;
+            border: 1px solid #3c3c3c;
+            border-radius: 6px;
+            color: #ffaa00;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .form-group input:hover,
+        .form-group select:hover {
+            border-color: #ffaa00;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #ffaa00;
+            box-shadow: 0 0 5px rgba(255, 170, 0, 0.4);
+        }
+
+        .form-group input::placeholder {
+            color: #666666;
+        }
+
+        .form-group input:-webkit-autofill,
+        .form-group input:-webkit-autofill:hover, 
+        .form-group input:-webkit-autofill:focus {
+            -webkit-box-shadow: 0 0 0 30px #2c2c2c inset !important;
+            -webkit-text-fill-color: #ffaa00 !important;
+            caret-color: #ffaa00;
+        }
+
+        /* Контейнер для координати та кнопки карти */
+        .coord-container {
+            display: flex;
+            gap: 8px;
+        }
+
+        .coord-container input {
+            flex: 1;
+        }
+
+        .map-btn {
+            padding: 0 12px;
+            background-color: #2c2c2c;
+            border: 1px solid #3c3c3c;
+            border-radius: 6px;
+            color: #ffaa00;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s, border-color 0.3s;
+            white-space: nowrap;
+        }
+
+        .map-btn:hover {
+            border-color: #ffaa00;
+            background-color: #383838;
+        }
+
+        /* Модальне вікно карти */
+        .map-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+        }
+
+        .map-modal.active {
+            display: flex;
+        }
+
+        .map-modal-content {
+            background-color: #1e1e1e;
+            width: 100%;
+            max-width: 500px;
+            height: 500px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid #ffaa00;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.8);
+        }
+
+        .map-modal-header {
+            padding: 12px 15px;
+            background-color: #2c2c2c;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #ffffff;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .close-map-btn {
+            background: none;
+            border: none;
+            color: #b0b0b0;
+            font-size: 20px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .close-map-btn:hover {
+            color: #ff4d4d;
+        }
+
+        #map {
+            flex: 1;
+            width: 100%;
+            height: 100%;
+            background-color: #2c2c2c;
+            cursor: crosshair !important;
+        }
+
+        .map-modal-footer {
+            padding: 10px 15px;
+            background-color: #2c2c2c;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .map-hint {
+            font-size: 12px;
+            color: #b0b0b0;
+        }
+
+        .confirm-map-btn {
+            padding: 8px 16px;
+            background-color: #ffaa00;
+            color: #121212;
+            border: none;
+            border-radius: 6px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .confirm-map-btn:hover {
+            background-color: #e69900;
+        }
+
+        /* Стилі для мультиселекту вантажу */
+        .multiselect-wrapper {
+            position: relative;
+        }
+
+        .select-box {
+            width: 100%;
+            padding: 12px 15px;
+            background-color: #2c2c2c;
+            border: 1px solid #3c3c3c;
+            border-radius: 6px;
+            color: #ffffff;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23b0b0b0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 16px;
+        }
+
+        .select-box:hover {
+            border-color: #ffaa00;
+        }
+
+        .multiselect-wrapper.active .select-box {
+            border-color: #ffaa00;
+            box-shadow: 0 0 5px rgba(255, 170, 0, 0.4);
+        }
+
+        .dropdown-list {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background-color: #2c2c2c;
+            border: 1px solid #ffaa00;
+            border-radius: 6px;
+            margin-top: 5px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 10;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+
+        .dropdown-list.active {
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 15px;
+            color: #ffffff;
+            border-bottom: 1px solid #383838;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .dropdown-item:hover {
+            background-color: #383838;
+            color: #ffaa00;
+        }
+
+        .dropdown-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #ffaa00;
+        }
+
+        /* Поле введення для "Інше" */
+        .other-input-container {
+            display: none;
+            margin-top: 8px;
+            gap: 8px;
+        }
+
+        .other-input-container.active {
+            display: flex;
+        }
+
+        .other-input-container input {
+            flex: 1;
+            padding: 10px 12px;
+            font-size: 14px;
+            background-color: #2c2c2c;
+            border: 1px solid #3c3c3c;
+            border-radius: 6px;
+            color: #ffaa00;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .other-input-container input:hover,
+        .other-input-container input:focus {
+            border-color: #ffaa00;
+        }
+
+        .add-other-btn {
+            padding: 0 14px;
+            background-color: #ffaa00;
+            color: #121212;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .add-other-btn:hover {
+            background-color: #e69900;
+        }
+
+        /* Стилі для попереджень */
+        .field-warning {
+            font-size: 12px;
+            color: #ff4d4d;
+            margin-top: 4px;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .field-warning.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Контейнер для обраних тегів */
+        .selected-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .tag {
+            background-color: #383838;
+            color: #ffaa00;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid #ffaa00;
+        }
+
+        .tag .remove-tag {
+            cursor: pointer;
+            font-weight: bold;
+            color: #b0b0b0;
+            transition: color 0.2s;
+        }
+
+        .tag .remove-tag:hover {
+            color: #ff4d4d;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background-color: #ffaa00;
+            color: #121212;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 5px;
+        }
+
+        .submit-btn:hover {
+            background-color: #e69900;
+        }
+
+        .message {
+            margin-top: 15px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .message.success {
+            color: #4CAF50;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Екран завантаження з анімованою обводкою -->
+    <div id="loader-overlay">
+        <div class="loader-logo-container">
+            <div class="loader-ring"></div>
+            <img src="https://lh3.googleusercontent.com/d/1dYXge-LOCn-zhxGxdZL4TX8XrEPeBW36" alt="ARKON Loading">
+        </div>
+        <div class="loader-text">Завантаження...</div>
+    </div>
+
+    <div class="form-container">
+        <div class="form-header">
+            <!-- Зображення банера/логотипа -->
+            <img src="https://lh3.googleusercontent.com/d/1rjDvvXjAyquikv_dapM2Z0iBZdCFLkKa" alt="Логотип / Банер">
+            <h2>Новий запит</h2>
+        </div>
+
+        <form id="applicationForm" novalidate>
+            <div class="form-group">
+                <label for="unit">1. Підрозділ *</label>
+                <input type="text" id="unit" name="unit" placeholder="Вкажіть лише бригаду та батальйон">
+                <div class="field-warning" id="warning-unit">Будь ласка, заповніть це поле!</div>
+            </div>
+
+            <div class="form-group">
+                <label for="phone">2. Контакт замовника *</label>
+                <input type="tel" id="phone" name="phone" placeholder="+380 (XX) XXX-XX-XX">
+                <div class="field-warning" id="warning-phone">Введіть коректний номер телефону!</div>
+            </div>
+
+            <div class="form-group">
+                <label for="position">3. Позиція *</label>
+                <input type="text" id="position" name="position" placeholder="Вкажіть назву вашої позиції">
+                <div class="field-warning" id="warning-position">Будь ласка, заповніть це поле!</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="coordinates">4. Координати (MGRS) *</label>
+                <div class="coord-container">
+                    <input type="text" id="coordinates" name="coordinates" placeholder="37U CP 12345 67890" maxlength="19">
+                    <button type="button" class="map-btn" id="openMapBtn">📍 Карта</button>
+                </div>
+                <div class="field-warning" id="warning-coordinates">Формат: 37U CP 12345 67890</div>
+            </div>
+            
+            <!-- Пункт 5: Вантаж -->
+            <div class="form-group" id="cargoGroup">
+                <label>5. Вантаж *</label>
+                <div class="multiselect-wrapper" id="cargoSelectWrapper">
+                    <div class="select-box" id="cargoSelectBox">Оберіть варіанти...</div>
+                    <div class="dropdown-list" id="cargoDropdownList">
+                        <label class="dropdown-item"><input type="checkbox" value="Паливо"> Паливо</label>
+                        <label class="dropdown-item"><input type="checkbox" value="Їжа"> Їжа</label>
+                        <label class="dropdown-item"><input type="checkbox" value="Вода"> Вода</label>
+                        <label class="dropdown-item"><input type="checkbox" value="БК"> БК</label>
+                        <label class="dropdown-item"><input type="checkbox" value="Засоби і обладнання"> Засоби і обладнання</label>
+                        <label class="dropdown-item"><input type="checkbox" value="Засоби і обладнання БпЛА"> Засоби і обладнання БпЛА</label>
+                        <label class="dropdown-item"><input type="checkbox" value="Озброєння"> Озброєння</label>
+                        <label class="dropdown-item"><input type="checkbox" value="Евак 300"> Евак 300</label>
+                        <label class="dropdown-item"><input type="checkbox" value="Евак 200"> Евак 200</label>
+                        <label class="dropdown-item"><input type="checkbox" id="otherCheckbox" value="Інше"> Інше</label>
+                    </div>
+                </div>
+
+                <div class="other-input-container" id="otherInputContainer">
+                    <input type="text" id="otherTextInput" placeholder="Введіть свій варіант вантажу">
+                    <button type="button" class="add-other-btn" id="addOtherBtn">Додати</button>
+                </div>
+                <div class="field-warning" id="duplicateWarning">Цей варіант вже є в списку!</div>
+                <div class="field-warning" id="warning-cargo">Оберіть принаймні один вантаж!</div>
+
+                <div class="selected-tags" id="selectedCargoTags"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="weight">6. Вага *</label>
+                <input type="text" id="weight" name="weight" placeholder="Вкажіть повну вагу в кілограмах">
+                <div class="field-warning" id="warning-weight">Будь ласка, заповніть це поле!</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="callsign">7. Позивний *</label>
+                <input type="text" id="callsign" name="callsign" placeholder="Вкажіть позивний в/с на позиції">
+                <div class="field-warning" id="warning-callsign">Будь ласка, заповніть це поле!</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="phone_position">8. Контакт в/с на позиції *</label>
+                <input type="tel" id="phone_position" name="phone_position" placeholder="+380 (XX) XXX-XX-XX">
+                <div class="field-warning" id="warning-phone_position">Введіть коректний номер телефону!</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="comment">Коментарі</label>
+                <input type="text" id="comment" name="comment" placeholder="Для додаткової інформації">
+            </div>
+
+            <button type="submit" class="submit-btn">НАДІСЛАТИ</button>
+        </form>
+
+        <div id="formMessage" class="message"></div>
+    </div>
+
+    <!-- Модальне вікно для карти -->
+    <div class="map-modal" id="mapModal">
+        <div class="map-modal-content">
+            <div class="map-modal-header">
+                <span>Оберіть точку на карті</span>
+                <button type="button" class="close-map-btn" id="closeMapBtn">&times;</button>
+            </div>
+            <div id="map"></div>
+            <div class="map-modal-footer">
+                <span class="map-hint" id="mapHint">Клікніть на карту для вибору</span>
+                <button type="button" class="confirm-map-btn" id="confirmMapBtn">Вибрати</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Підключення бібліотеки Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script>
+        // Приховування екрану завантаження після повного завантаження сторінки
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                const loader = document.getElementById('loader-overlay');
+                loader.classList.add('hidden');
+            }, 600);
+        });
+
+        const form = document.getElementById('applicationForm');
+        const cargoGroup = document.getElementById('cargoGroup');
+        const selectWrapper = document.getElementById('cargoSelectWrapper');
+        const selectBox = document.getElementById('cargoSelectBox');
+        const dropdownList = document.getElementById('cargoDropdownList');
+        const tagsContainer = document.getElementById('selectedCargoTags');
+        const checkboxes = dropdownList.querySelectorAll('input[type="checkbox"]');
+        const otherCheckbox = document.getElementById('otherCheckbox');
+        const otherInputContainer = document.getElementById('otherInputContainer');
+        const otherTextInput = document.getElementById('otherTextInput');
+        const addOtherBtn = document.getElementById('addOtherBtn');
+
+        let selectedCargo = [];
+        let customItems = [];
+        let warningTimeouts = {};
+
+        selectBox.addEventListener('click', function(e) {
+            e.stopPropagation();
+            dropdownList.classList.toggle('active');
+            selectWrapper.classList.toggle('active');
+        });
+
+        document.addEventListener('click', function(e) {
+            if (!selectWrapper.contains(e.target)) {
+                dropdownList.classList.remove('active');
+                selectWrapper.classList.remove('active');
+            }
+        });
+
+        dropdownList.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+
+        function closeOtherInput() {
+            otherTextInput.value = '';
+            otherInputContainer.classList.remove('active');
+            hideWarning('duplicateWarning');
+            otherCheckbox.checked = false;
+        }
+
+        form.addEventListener('focusin', function(e) {
+            if (!cargoGroup.contains(e.target)) {
+                closeOtherInput();
+                updateSelectedList();
+            }
+        });
+
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                if (this === otherCheckbox) {
+                    if (this.checked) {
+                        otherInputContainer.classList.add('active');
+                        dropdownList.classList.remove('active');
+                        selectWrapper.classList.remove('active');
+
+                        setTimeout(() => {
+                            otherTextInput.focus();
+                        }, 100);
+                    } else {
+                        closeOtherInput();
+                    }
+                }
+
+                updateSelectedList();
+            });
+        });
+
+        function showWarning(id) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.classList.add('active');
+            if (warningTimeouts[id]) clearTimeout(warningTimeouts[id]);
+            warningTimeouts[id] = setTimeout(() => {
+                el.classList.remove('active');
+            }, 4000);
+        }
+
+        function hideWarning(id) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.classList.remove('active');
+            if (warningTimeouts[id]) clearTimeout(warningTimeouts[id]);
+        }
+
+        function addCustomCargo() {
+            const val = otherTextInput.value.trim();
+            if (!val) return;
+
+            if (selectedCargo.includes(val)) {
+                showWarning('duplicateWarning');
+                return;
+            }
+
+            hideWarning('duplicateWarning');
+            customItems.push(val);
+            otherTextInput.value = '';
+            updateSelectedList();
+            otherTextInput.focus();
+        }
+
+        addOtherBtn.addEventListener('click', addCustomCargo);
+        otherTextInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addCustomCargo();
+            }
+        });
+
+        function updateSelectedList() {
+            const standardSelected = Array.from(checkboxes)
+                .filter(i => i.checked && i !== otherCheckbox)
+                .map(i => i.value);
+
+            selectedCargo = [...standardSelected, ...customItems];
+
+            tagsContainer.innerHTML = '';
+            if (selectedCargo.length === 0) {
+                selectBox.textContent = "Оберіть варіанти...";
+                selectBox.style.color = "#ffffff";
+            } else {
+                selectBox.textContent = "Обрано: " + selectedCargo.length;
+                selectBox.style.color = "#ffaa00";
+                hideWarning('warning-cargo');
+            }
+
+            selectedCargo.forEach(item => {
+                const tag = document.createElement('div');
+                tag.className = 'tag';
+                tag.innerHTML = `${item} <span class="remove-tag" data-value="${item}">&times;</span>`;
+                tagsContainer.appendChild(tag);
+            });
+
+            tagsContainer.querySelectorAll('.remove-tag').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const val = this.getAttribute('data-value');
+                    
+                    if (customItems.includes(val)) {
+                        customItems = customItems.filter(i => i !== val);
+                    } else {
+                        checkboxes.forEach(cb => {
+                            if (cb.value === val) cb.checked = false;
+                        });
+                    }
+
+                    if (customItems.length === 0) {
+                        otherCheckbox.checked = false;
+                        otherInputContainer.classList.remove('active');
+                    }
+
+                    updateSelectedList();
+                });
+            });
+        }
+
+        // Логіка маски телефону (+380 (XX) XXX-XX-XX)
+        function setupPhoneMask(inputId) {
+            const input = document.getElementById(inputId);
+
+            input.addEventListener('focus', function() {
+                if (input.value === "") {
+                    input.value = "+380 ";
+                }
+            });
+
+            input.addEventListener('blur', function() {
+                if (input.value.trim() === "+380" || input.value.trim() === "+380 (") {
+                    input.value = "";
+                }
+            });
+
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Backspace') {
+                    let val = input.value;
+                    let start = input.selectionStart;
+                    let end = input.selectionEnd;
+
+                    if (start !== end) return;
+
+                    if (start <= 5) {
+                        e.preventDefault();
+                        return;
+                    }
+
+                    if (start > 0 && /[\s\(\)\-]/.test(val[start - 1])) {
+                        e.preventDefault();
+                        
+                        let digits = val.replace(/\D/g, "");
+                        if (digits.startsWith("380")) digits = digits.substring(3);
+
+                        if (digits.length > 0) {
+                            digits = digits.slice(0, -1);
+                        }
+
+                        if (digits.length === 0) {
+                            input.value = "+380 ";
+                        } else {
+                            let rawVal = digits.split('');
+                            let formatted = "+380";
+                            if (rawVal.length > 0) formatted += " (" + rawVal.slice(0, 2).join('');
+                            if (rawVal.length >= 2) formatted += ") ";
+                            if (rawVal.length > 2) formatted += rawVal.slice(2, 5).join('');
+                            if (rawVal.length >= 5) formatted += "-";
+                            if (rawVal.length > 5) formatted += rawVal.slice(5, 7).join('');
+                            if (rawVal.length >= 7) formatted += "-";
+                            if (rawVal.length > 7) formatted += rawVal.slice(7, 9).join('');
+                            
+                            input.value = formatted;
+                        }
+                    }
+                }
+            });
+
+            input.addEventListener('input', function (e) {
+                hideWarning('warning-' + inputId);
+                let digits = e.target.value.replace(/\D/g, "");
+
+                if (digits.startsWith("380")) {
+                    digits = digits.substring(3);
+                } else if (digits.startsWith("38")) {
+                    digits = digits.substring(2);
+                } else if (digits.startsWith("8")) {
+                    digits = digits.substring(1);
+                }
+
+                if (digits.length === 0) {
+                    e.target.value = "+380 ";
+                    return;
+                }
+
+                digits = digits.substring(0, 9);
+
+                let rawVal = digits.split('');
+                let formatted = "+380";
+
+                if (rawVal.length > 0) formatted += " (" + rawVal.slice(0, 2).join('');
+                if (rawVal.length >= 2) formatted += ") ";
+                if (rawVal.length > 2) formatted += rawVal.slice(2, 5).join('');
+                if (rawVal.length >= 5) formatted += "-";
+                if (rawVal.length > 5) formatted += rawVal.slice(5, 7).join('');
+                if (rawVal.length >= 7) formatted += "-";
+                if (rawVal.length > 7) formatted += rawVal.slice(7, 9).join('');
+
+                e.target.value = formatted;
+            });
+        }
+
+        setupPhoneMask('phone');
+        setupPhoneMask('phone_position');
+
+        // Маска для введення координат MGRS
+        const coordInput = document.getElementById('coordinates');
+        coordInput.addEventListener('input', function(e) {
+            hideWarning('warning-coordinates');
+            let raw = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "");
+            
+            let d1 = raw.substring(0, 2).replace(/[^0-9]/g, "");
+            let l1 = raw.substring(2, 3).replace(/[^A-Z]/g, "");
+            
+            let formatted = "";
+            if (d1.length > 0) formatted += d1;
+            if (d1.length === 2 && l1.length > 0) formatted += l1;
+            else if (d1.length < 2 && l1.length > 0) {
+                formatted = d1 + l1;
+            }
+
+            if (raw.length >= 3) {
+                let partLetters = raw.substring(2, 5).replace(/[^A-Z]/g, "");
+                let zoneDigits = raw.substring(0, 2).replace(/[^0-9]/g, "");
+                
+                let cleanZone = zoneDigits.substring(0, 2);
+                let cleanL1 = partLetters.substring(0, 1);
+                let cleanL2 = partLetters.substring(1, 3);
+
+                formatted = cleanZone;
+                if (cleanL1) formatted += cleanL1;
+                if (cleanL2) formatted += " " + cleanL2;
+
+                let restDigits = raw.substring(5).replace(/[^0-9]/g, "");
+                let part1Digits = restDigits.substring(0, 5);
+                let part2Digits = restDigits.substring(5, 10);
+
+                if (part1Digits) formatted += " " + part1Digits;
+                if (part2Digits) formatted += " " + part2Digits;
+            } else {
+                let zoneDigits = raw.substring(0, 2).replace(/[^0-9]/g, "");
+                let restL = raw.substring(2, 3).replace(/[^A-Z]/g, "");
+                formatted = zoneDigits;
+                if (restL) formatted += restL;
+            }
+
+            e.target.value = formatted;
+        });
+
+        // Конвертер WGS84 -> MGRS
+        function getMGRS(lat, lon) {
+            if (lat < -80 || lat > 84) return "Out of range";
+
+            const NUM_LETTERS = "CDEFGHJKLMNPQRSTUVWX";
+            let latBand = NUM_LETTERS[Math.floor((lat + 80) / 8)];
+            if (lat >= 72 && lat <= 84) latBand = 'X';
+
+            let zoneNumber = Math.floor((lon + 180) / 6) + 1;
+            if (lat >= 56.0 && lat < 64.0 && lon >= 3.0 && lon < 12.0) zoneNumber = 32;
+            if (lat >= 72.0 && lat < 84.0) {
+                if (lon >= 0.0 && lon < 9.0) zoneNumber = 31;
+                else if (lon >= 9.0 && lon < 21.0) zoneNumber = 33;
+                else if (lon >= 21.0 && lon < 33.0) zoneNumber = 35;
+                else if (lon >= 33.0 && lon < 42.0) zoneNumber = 37;
+            }
+
+            let radLat = lat * Math.PI / 180;
+            let radLon = lon * Math.PI / 180;
+            let lonOrigin = (zoneNumber - 1) * 6 - 180 + 3;
+            let radLonOrigin = lonOrigin * Math.PI / 180;
+
+            let k0 = 0.9996;
+            let a = 6378137.0;
+            let eccSq = 0.006694380022900788;
+
+            let N = a / Math.sqrt(1 - eccSq * Math.sin(radLat) * Math.sin(radLat));
+            let T = Math.tan(radLat) * Math.tan(radLat);
+            let C = eccSq * Math.cos(radLat) * Math.cos(radLat) / (1 - eccSq);
+            let A = Math.cos(radLat) * (radLon - radLonOrigin);
+
+            let M = a * ((1 - eccSq / 4 - 3 * eccSq * eccSq / 64 - 5 * eccSq * eccSq * eccSq / 256) * radLat
+                - (3 * eccSq / 8 + 3 * eccSq * eccSq / 32 + 45 * eccSq * eccSq * eccSq / 1024) * Math.sin(2 * radLat)
+                + (15 * eccSq * eccSq / 256 + 45 * eccSq * eccSq * eccSq / 1024) * Math.sin(4 * radLat)
+                - (35 * eccSq * eccSq * eccSq / 3072) * Math.sin(6 * radLat));
+
+            let utmEasting = k0 * N * (A + (1 - T + C) * A * A * A / 6 + (5 - 18 * T + T * T + 72 * C - 58 * eccSq) * A * A * A * A * A / 120) + 500000.0;
+            let utmNorthing = k0 * (M + N * Math.tan(radLat) * (A * A / 2 + (5 - T + 9 * C + 4 * C * C) * A * A * A * A / 24 + (61 - 58 * T + T * T + 600 * C - 330 * eccSq) * A * A * A * A * A * A / 720));
+            if (lat < 0) utmNorthing += 10000000.0;
+
+            let set = zoneNumber % 6;
+            if (set === 0) set = 6;
+
+            let colList = "ABCDEFGH";
+            if (set === 2 || set === 5) colList = "JKLMNPQR";
+            if (set === 3 || set === 6) colList = "STUVWXYZ";
+
+            let rowList = "ABCDEFGHJKLMNPQRSTUV";
+            if (set % 2 === 0) rowList = "FGHJKLMNPQRSTUVABCDE";
+
+            let colIndex = Math.floor(utmEasting / 100000) - 1;
+            let rowIndex = Math.floor(utmNorthing / 100000) % 20;
+
+            let colLetter = colList[colIndex];
+            let rowLetter = rowList[rowIndex];
+
+            let eNum = Math.floor(utmEasting % 100000).toString().padStart(5, '0');
+            let nNum = Math.floor(utmNorthing % 100000).toString().padStart(5, '0');
+
+            let zStr = zoneNumber.toString().padStart(2, '0') + latBand;
+
+            return `${zStr} ${colLetter}${rowLetter} ${eNum} ${nNum}`;
+        }
+
+        // Кастомний маркер на карті
+        const arkonIcon = L.icon({
+            iconUrl: 'https://lh3.googleusercontent.com/d/1dYXge-LOCn-zhxGxdZL4TX8XrEPeBW36',
+            iconSize: [36, 36],
+            iconAnchor: [18, 36],
+            popupAnchor: [0, -36]
+        });
+
+        // Інтерактивна карта Leaflet
+        const openMapBtn = document.getElementById('openMapBtn');
+        const mapModal = document.getElementById('mapModal');
+        const closeMapBtn = document.getElementById('closeMapBtn');
+        const confirmMapBtn = document.getElementById('confirmMapBtn');
+        const mapHint = document.getElementById('mapHint');
+        
+        let map = null;
+        let marker = null;
+        let generatedMGRS = "";
+
+        openMapBtn.addEventListener('click', function() {
+            mapModal.classList.add('active');
+            
+            setTimeout(() => {
+                if (!map) {
+                    map = L.map('map', { zoomControl: true }).setView([48.7361, 37.5822], 8);
+                    
+                    const штабна = L.tileLayer('https://a.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png', {
+                        maxZoom: 20,
+                        attribution: '&copy; OpenStreetMap France'
+                    });
+
+                    const топо = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+                        maxZoom: 17,
+                        attribution: '&copy; OpenTopoMap'
+                    });
+
+                    const супутникБаза = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                        maxZoom: 19,
+                        attribution: 'Esri'
+                    });
+                    const супутникПідписи = L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
+                        maxZoom: 19
+                    });
+                    const супутник = L.layerGroup([супутникБаза, супутникПідписи]);
+
+                    штабна.addTo(map);
+
+                    const baseMaps = {
+                        "🗺 Штабна": штабна,
+                        "⛰ Топографічна": топо,
+                        "🛰 Супутник (з містами)": супутник
+                    };
+
+                    L.control.layers(baseMaps).addTo(map);
+
+                    map.on('click', function(e) {
+                        const lat = e.latlng.lat;
+                        const lng = e.latlng.lng;
+
+                        try {
+                            generatedMGRS = getMGRS(lat, lng);
+                            mapHint.textContent = `Вибрано: ${generatedMGRS}`;
+                            mapHint.style.color = "#ffaa00";
+
+                            if (marker) {
+                                marker.setLatLng(e.latlng);
+                            } else {
+                                marker = L.marker(e.latlng, { icon: arkonIcon }).addTo(map);
+                            }
+                        } catch (err) {
+                            console.error("Помилка розрахунку координат:", err);
+                        }
+                    });
+                }
+                map.invalidateSize();
+            }, 200);
+        });
+
+        closeMapBtn.addEventListener('click', function() {
+            mapModal.classList.remove('active');
+        });
+
+        confirmMapBtn.addEventListener('click', function() {
+            if (generatedMGRS) {
+                coordInput.value = generatedMGRS;
+                hideWarning('warning-coordinates');
+            }
+            mapModal.classList.remove('active');
+        });
+
+        ['unit', 'position', 'weight', 'callsign'].forEach(id => {
+            document.getElementById(id).addEventListener('input', () => hideWarning('warning-' + id));
+        });
+
+        // Обробник відправки форми у Google Таблицю
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const fieldsSequence = [
+                { id: 'unit', validate: val => val.trim() !== '', warn: 'warning-unit' },
+                { id: 'phone', validate: val => val.trim() !== '' && val.trim() !== '+380' && val.length >= 18, warn: 'warning-phone' },
+                { id: 'position', validate: val => val.trim() !== '', warn: 'warning-position' },
+                { id: 'coordinates', validate: val => val.trim() !== '', warn: 'warning-coordinates' },
+                { id: 'cargoGroup', validate: () => selectedCargo.length > 0, warn: 'warning-cargo' },
+                { id: 'weight', validate: val => val.trim() !== '', warn: 'warning-weight' },
+                { id: 'callsign', validate: val => val.trim() !== '', warn: 'warning-callsign' },
+                { id: 'phone_position', validate: val => val.trim() !== '' && val.trim() !== '+380' && val.length >= 18, warn: 'warning-phone_position' }
+            ];
+
+            for (let item of fieldsSequence) {
+                let isValid = true;
+                if (item.id === 'cargoGroup') {
+                    isValid = item.validate();
+                } else {
+                    const el = document.getElementById(item.id);
+                    isValid = item.validate(el.value);
+                }
+
+                if (!isValid) {
+                    showWarning(item.warn);
+                    if (item.id !== 'cargoGroup') {
+                        document.getElementById(item.id).focus();
+                    }
+                    return;
+                } else {
+                    hideWarning(item.warn);
+                }
+            }
+
+            // Збираємо дані для відправки в Google Таблицю
+            const formData = {
+                unit: document.getElementById('unit').value.trim(),
+                phone: document.getElementById('phone').value.trim(),
+                position: document.getElementById('position').value.trim(),
+                coordinates: document.getElementById('coordinates').value.trim(),
+                cargo: selectedCargo.join(', '),
+                weight: document.getElementById('weight').value.trim(),
+                callsign: document.getElementById('callsign').value.trim(),
+                phone_position: document.getElementById('phone_position').value.trim(),
+                comment: document.getElementById('comment').value.trim()
+            };
+
+            const submitBtn = form.querySelector('.submit-btn');
+            submitBtn.textContent = 'НАДСИЛАННЯ...';
+            submitBtn.disabled = true;
+
+            // Вставте сюди ваше реальне посилання Web App URL з Apps Script:
+            const WEB_APP_URL = 'ТУТ_ВАШЕ_ПОСИЛАННЯ_З_АКТИВНИМ_EXEC';
+
+            fetch(WEB_APP_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(() => {
+                const messageDiv = document.getElementById('formMessage');
+                messageDiv.textContent = 'ДЯКУЮ! ЗАЯВКУ УСПІШНО НАДІСЛАНО!';
+                messageDiv.className = 'message success';
+                
+                form.reset();
+                selectedCargo = [];
+                customItems = [];
+                otherCheckbox.checked = false;
+                otherInputContainer.classList.remove('active');
+                hideWarning('duplicateWarning');
+                updateSelectedList();
+
+                submitBtn.textContent = 'НАДІСЛАТИ';
+                submitBtn.disabled = false;
+            })
+            .catch(error => {
+                console.error('Помилка відправки:', error);
+                alert('Сталася помилка при відправці. Спробуйте ще раз.');
+                submitBtn.textContent = 'НАДІСЛАТИ';
+                submitBtn.disabled = false;
+            });
+        });
+    </script>
+</body>
+</html>
