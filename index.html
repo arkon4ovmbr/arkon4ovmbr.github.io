@@ -523,7 +523,6 @@
             cursor: not-allowed;
         }
 
-        /* Кнопка перемикання на перевірку статусу */
         .switch-view-btn {
             width: 100%;
             padding: 14px;
@@ -542,7 +541,6 @@
             background-color: rgba(255, 170, 0, 0.1);
         }
 
-        /* Блок перевірки статусу */
         .status-container {
             display: none;
         }
@@ -578,6 +576,21 @@
         .status-result-card p strong {
             color: #ffaa00;
         }
+
+        /* Кольорові бейджі статусів (як у таблиці) */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 13px;
+        }
+        .status-processing { background-color: #e0e0e0; color: #333333; } /* Обробляється */
+        .status-in-progress { background-color: #fde68a; color: #78350f; } /* Виконується */
+        .status-completed { background-color: #065f46; color: #ffffff; } /* Виконано */
+        .status-partially { background-color: #d9f99d; color: #166534; } /* Виконано частково */
+        .status-failed { background-color: #991b1b; color: #ffffff; } /* Не виконано */
+        .status-cancelled { background-color: #fecaca; color: #991b1b; } /* Скасовано */
 
         /* Модальне вікно успішного відправлення */
         .success-modal {
@@ -769,7 +782,7 @@
             <p><strong>Підрозділ:</strong> <span id="resUnit">-</span></p>
             <p><strong>Позиція:</strong> <span id="resPosition">-</span></p>
             <p><strong>Що веземо:</strong> <span id="resCargo">-</span></p>
-            <p><strong>Статус:</strong> <span id="resStatus" style="color: #ffaa00; font-weight: bold;">-</span></p>
+            <p><strong>Статус:</strong> <span id="resStatus">-</span></p>
         </div>
     </div>
 
@@ -828,6 +841,21 @@
             navTitle.textContent = 'Нова заявка';
         });
 
+        // Функція для визначення відповідного кольору статусу
+        function getStatusBadgeHtml(statusText) {
+            const cleanText = (statusText || '').trim();
+            let cssClass = 'status-processing';
+
+            if (cleanText === 'Виконується') cssClass = 'status-in-progress';
+            else if (cleanText === 'Виконано') cssClass = 'status-completed';
+            else if (cleanText === 'Виконано частково') cssClass = 'status-partially';
+            else if (cleanText === 'Не виконано') cssClass = 'status-failed';
+            else if (cleanText === 'Скасовано') cssClass = 'status-cancelled';
+            else cssClass = 'status-processing'; // Обробляється
+
+            return `<span class="status-badge ${cssClass}">${cleanText || 'Обробляється'}</span>`;
+        }
+
         // Логіка перевірки статусу через сервер
         const checkStatusBtn = document.getElementById('checkStatusBtn');
         const checkIdInput = document.getElementById('checkIdInput');
@@ -859,7 +887,10 @@
                         document.getElementById('resUnit').textContent = resData.data.unit || '-';
                         document.getElementById('resPosition').textContent = resData.data.position || '-';
                         document.getElementById('resCargo').textContent = resData.data.cargo || '-';
-                        document.getElementById('resStatus').textContent = resData.data.orderStatus;
+                        
+                        // Встановлюємо кольоровий бейдж
+                        document.getElementById('resStatus').innerHTML = getStatusBadgeHtml(resData.data.orderStatus);
+                        
                         statusResultCard.classList.add('active');
                     } else {
                         alert('Заявку з таким ID не знайдено!');
