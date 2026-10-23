@@ -1,4 +1,4 @@
-            <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
@@ -65,7 +65,6 @@
             z-index: 2;
         }
 
-        /* Анімація обводки (світіння) по контуру */
         .loader-ring {
             position: absolute;
             top: 0;
@@ -144,7 +143,6 @@
             color: #b0b0b0;
         }
 
-        /* Помаранчевий текст і рамки при введенні */
         .form-group input,
         .form-group select {
             width: 100%;
@@ -181,7 +179,6 @@
             caret-color: #ffaa00;
         }
 
-        /* Контейнер для координати та кнопки карти */
         .coord-container {
             display: flex;
             gap: 8px;
@@ -378,7 +375,6 @@
             accent-color: #ffaa00;
         }
 
-        /* Поле введення для "Інше" */
         .other-input-container {
             display: none;
             margin-top: 8px;
@@ -422,7 +418,6 @@
             background-color: #e69900;
         }
 
-        /* Стилі для попереджень */
         .field-warning {
             font-size: 12px;
             color: #ff4d4d;
@@ -440,7 +435,6 @@
             to { opacity: 1; }
         }
 
-        /* Контейнер для обраних тегів */
         .selected-tags {
             display: flex;
             flex-wrap: wrap;
@@ -489,21 +483,86 @@
             background-color: #e69900;
         }
 
-        .message {
-            margin-top: 15px;
-            font-size: 14px;
-            display: none;
+        .submit-btn:disabled {
+            background-color: #555555;
+            color: #888888;
+            cursor: not-allowed;
         }
 
-        .message.success {
+        /* Модальне вікно успішного відправлення */
+        .success-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .success-modal.active {
+            display: flex;
+        }
+
+        .success-modal-content {
+            background-color: #1e1e1e;
+            padding: 25px;
+            border-radius: 12px;
+            max-width: 350px;
+            width: 100%;
+            text-align: center;
+            border: 1px solid #ffaa00;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.8);
+        }
+
+        .success-modal-content h3 {
             color: #4CAF50;
-            display: block;
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .success-modal-content p {
+            color: #ffffff;
+            font-size: 15px;
+            margin-bottom: 15px;
+        }
+
+        .success-modal-content .id-badge {
+            display: inline-block;
+            background-color: #ffaa00;
+            color: #121212;
+            font-size: 22px;
+            font-weight: 800;
+            padding: 8px 18px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .close-success-btn {
+            width: 100%;
+            padding: 10px;
+            background-color: #383838;
+            color: #ffffff;
+            border: 1px solid #ffaa00;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .close-success-btn:hover {
+            background-color: #ffaa00;
+            color: #121212;
         }
     </style>
 </head>
 <body>
 
-    <!-- Екран завантаження з анімованою обводкою -->
+    <!-- Екран завантаження -->
     <div id="loader-overlay">
         <div class="loader-logo-container">
             <div class="loader-ring"></div>
@@ -514,7 +573,6 @@
 
     <div class="form-container">
         <div class="form-header">
-            <!-- Зображення банера/логотипа -->
             <img src="https://lh3.googleusercontent.com/d/1rjDvvXjAyquikv_dapM2Z0iBZdCFLkKa" alt="Логотип / Банер">
             <h2>Новий запит</h2>
         </div>
@@ -547,7 +605,6 @@
                 <div class="field-warning" id="warning-coordinates">Формат: 37U CP 12345 67890</div>
             </div>
             
-            <!-- Пункт 5: Вантаж -->
             <div class="form-group" id="cargoGroup">
                 <label>5. Вантаж *</label>
                 <div class="multiselect-wrapper" id="cargoSelectWrapper">
@@ -599,10 +656,8 @@
                 <input type="text" id="comment" name="comment" placeholder="Для додаткової інформації">
             </div>
 
-            <button type="submit" class="submit-btn">НАДІСЛАТИ</button>
+            <button type="submit" class="submit-btn" id="submitBtn">НАДІСЛАТИ</button>
         </form>
-
-        <div id="formMessage" class="message"></div>
     </div>
 
     <!-- Модальне вікно для карти -->
@@ -620,10 +675,21 @@
         </div>
     </div>
 
+    <!-- Модальне вікно підтвердження заявки -->
+    <div class="success-modal" id="successModal">
+        <div class="success-modal-content">
+            <h3>Заявку прийнято!</h3>
+            <p>Ваш індивідуальний номер заявки:</p>
+            <div class="id-badge" id="displayId">№ ---</div>
+            <button type="button" class="close-success-btn" id="closeSuccessBtn">ЗАКРИТИ</button>
+        </div>
+    </div>
+
     <!-- Підключення бібліотеки Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script>
-        // Приховування екрану завантаження після повного завантаження сторінки
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbw0sYEcM0GJ_RNx8V0tmsRne_CAwwh6T3GQbgP9tSVpAMJvNxq0uMzkugrpKmGIQYNS7w/exec';
+
         window.addEventListener('load', function() {
             setTimeout(() => {
                 const loader = document.getElementById('loader-overlay');
@@ -632,6 +698,7 @@
         });
 
         const form = document.getElementById('applicationForm');
+        const submitBtn = document.getElementById('submitBtn');
         const cargoGroup = document.getElementById('cargoGroup');
         const selectWrapper = document.getElementById('cargoSelectWrapper');
         const selectBox = document.getElementById('cargoSelectBox');
@@ -693,7 +760,6 @@
                         closeOtherInput();
                     }
                 }
-
                 updateSelectedList();
             });
         });
@@ -785,7 +851,6 @@
             });
         }
 
-        // Логіка маски телефону (+380 (XX) XXX-XX-XX)
         function setupPhoneMask(inputId) {
             const input = document.getElementById(inputId);
 
@@ -798,48 +863,6 @@
             input.addEventListener('blur', function() {
                 if (input.value.trim() === "+380" || input.value.trim() === "+380 (") {
                     input.value = "";
-                }
-            });
-
-            input.addEventListener('keydown', function(e) {
-                if (e.key === 'Backspace') {
-                    let val = input.value;
-                    let start = input.selectionStart;
-                    let end = input.selectionEnd;
-
-                    if (start !== end) return;
-
-                    if (start <= 5) {
-                        e.preventDefault();
-                        return;
-                    }
-
-                    if (start > 0 && /[\s\(\)\-]/.test(val[start - 1])) {
-                        e.preventDefault();
-                        
-                        let digits = val.replace(/\D/g, "");
-                        if (digits.startsWith("380")) digits = digits.substring(3);
-
-                        if (digits.length > 0) {
-                            digits = digits.slice(0, -1);
-                        }
-
-                        if (digits.length === 0) {
-                            input.value = "+380 ";
-                        } else {
-                            let rawVal = digits.split('');
-                            let formatted = "+380";
-                            if (rawVal.length > 0) formatted += " (" + rawVal.slice(0, 2).join('');
-                            if (rawVal.length >= 2) formatted += ") ";
-                            if (rawVal.length > 2) formatted += rawVal.slice(2, 5).join('');
-                            if (rawVal.length >= 5) formatted += "-";
-                            if (rawVal.length > 5) formatted += rawVal.slice(5, 7).join('');
-                            if (rawVal.length >= 7) formatted += "-";
-                            if (rawVal.length > 7) formatted += rawVal.slice(7, 9).join('');
-                            
-                            input.value = formatted;
-                        }
-                    }
                 }
             });
 
@@ -861,7 +884,6 @@
                 }
 
                 digits = digits.substring(0, 9);
-
                 let rawVal = digits.split('');
                 let formatted = "+380";
 
@@ -880,7 +902,6 @@
         setupPhoneMask('phone');
         setupPhoneMask('phone_position');
 
-        // Маска для введення координат MGRS
         const coordInput = document.getElementById('coordinates');
         coordInput.addEventListener('input', function(e) {
             hideWarning('warning-coordinates');
@@ -892,9 +913,6 @@
             let formatted = "";
             if (d1.length > 0) formatted += d1;
             if (d1.length === 2 && l1.length > 0) formatted += l1;
-            else if (d1.length < 2 && l1.length > 0) {
-                formatted = d1 + l1;
-            }
 
             if (raw.length >= 3) {
                 let partLetters = raw.substring(2, 5).replace(/[^A-Z]/g, "");
@@ -924,144 +942,41 @@
             e.target.value = formatted;
         });
 
-        // Конвертер WGS84 -> MGRS
-        function getMGRS(lat, lon) {
-            if (lat < -80 || lat > 84) return "Out of range";
-
-            const NUM_LETTERS = "CDEFGHJKLMNPQRSTUVWX";
-            let latBand = NUM_LETTERS[Math.floor((lat + 80) / 8)];
-            if (lat >= 72 && lat <= 84) latBand = 'X';
-
-            let zoneNumber = Math.floor((lon + 180) / 6) + 1;
-            if (lat >= 56.0 && lat < 64.0 && lon >= 3.0 && lon < 12.0) zoneNumber = 32;
-            if (lat >= 72.0 && lat < 84.0) {
-                if (lon >= 0.0 && lon < 9.0) zoneNumber = 31;
-                else if (lon >= 9.0 && lon < 21.0) zoneNumber = 33;
-                else if (lon >= 21.0 && lon < 33.0) zoneNumber = 35;
-                else if (lon >= 33.0 && lon < 42.0) zoneNumber = 37;
-            }
-
-            let radLat = lat * Math.PI / 180;
-            let radLon = lon * Math.PI / 180;
-            let lonOrigin = (zoneNumber - 1) * 6 - 180 + 3;
-            let radLonOrigin = lonOrigin * Math.PI / 180;
-
-            let k0 = 0.9996;
-            let a = 6378137.0;
-            let eccSq = 0.006694380022900788;
-
-            let N = a / Math.sqrt(1 - eccSq * Math.sin(radLat) * Math.sin(radLat));
-            let T = Math.tan(radLat) * Math.tan(radLat);
-            let C = eccSq * Math.cos(radLat) * Math.cos(radLat) / (1 - eccSq);
-            let A = Math.cos(radLat) * (radLon - radLonOrigin);
-
-            let M = a * ((1 - eccSq / 4 - 3 * eccSq * eccSq / 64 - 5 * eccSq * eccSq * eccSq / 256) * radLat
-                - (3 * eccSq / 8 + 3 * eccSq * eccSq / 32 + 45 * eccSq * eccSq * eccSq / 1024) * Math.sin(2 * radLat)
-                + (15 * eccSq * eccSq / 256 + 45 * eccSq * eccSq * eccSq / 1024) * Math.sin(4 * radLat)
-                - (35 * eccSq * eccSq * eccSq / 3072) * Math.sin(6 * radLat));
-
-            let utmEasting = k0 * N * (A + (1 - T + C) * A * A * A / 6 + (5 - 18 * T + T * T + 72 * C - 58 * eccSq) * A * A * A * A * A / 120) + 500000.0;
-            let utmNorthing = k0 * (M + N * Math.tan(radLat) * (A * A / 2 + (5 - T + 9 * C + 4 * C * C) * A * A * A * A / 24 + (61 - 58 * T + T * T + 600 * C - 330 * eccSq) * A * A * A * A * A * A / 720));
-            if (lat < 0) utmNorthing += 10000000.0;
-
-            let set = zoneNumber % 6;
-            if (set === 0) set = 6;
-
-            let colList = "ABCDEFGH";
-            if (set === 2 || set === 5) colList = "JKLMNPQR";
-            if (set === 3 || set === 6) colList = "STUVWXYZ";
-
-            let rowList = "ABCDEFGHJKLMNPQRSTUV";
-            if (set % 2 === 0) rowList = "FGHJKLMNPQRSTUVABCDE";
-
-            let colIndex = Math.floor(utmEasting / 100000) - 1;
-            let rowIndex = Math.floor(utmNorthing / 100000) % 20;
-
-            let colLetter = colList[colIndex];
-            let rowLetter = rowList[rowIndex];
-
-            let eNum = Math.floor(utmEasting % 100000).toString().padStart(5, '0');
-            let nNum = Math.floor(utmNorthing % 100000).toString().padStart(5, '0');
-
-            let zStr = zoneNumber.toString().padStart(2, '0') + latBand;
-
-            return `${zStr} ${colLetter}${rowLetter} ${eNum} ${nNum}`;
-        }
-
-        // Кастомний маркер на карті
-        const arkonIcon = L.icon({
-            iconUrl: 'https://lh3.googleusercontent.com/d/1dYXge-LOCn-zhxGxdZL4TX8XrEPeBW36',
-            iconSize: [36, 36],
-            iconAnchor: [18, 36],
-            popupAnchor: [0, -36]
-        });
-
-        // Інтерактивна карта Leaflet
+        // Інтеграція Leaflet карти та модального вікна
         const openMapBtn = document.getElementById('openMapBtn');
-        const mapModal = document.getElementById('mapModal');
         const closeMapBtn = document.getElementById('closeMapBtn');
         const confirmMapBtn = document.getElementById('confirmMapBtn');
+        const mapModal = document.getElementById('mapModal');
         const mapHint = document.getElementById('mapHint');
-        
-        let map = null;
-        let marker = null;
-        let generatedMGRS = "";
+
+        let map, marker;
+        let selectedLat = null, selectedLng = null;
 
         openMapBtn.addEventListener('click', function() {
             mapModal.classList.add('active');
-            
+
+            if (!map) {
+                map = L.map('map').setView([48.3794, 37.0000], 9);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    attribution: '© OpenStreetMap'
+                }).addTo(map);
+
+                map.on('click', function(e) {
+                    selectedLat = e.latlng.lat;
+                    selectedLng = e.latlng.lng;
+
+                    if (marker) {
+                        marker.setLatLng(e.latlng);
+                    } else {
+                        marker = L.marker(e.latlng).addTo(map);
+                    }
+
+                    mapHint.textContent = `Обрано: ${selectedLat.toFixed(5)}, ${selectedLng.toFixed(5)}`;
+                });
+            }
+
             setTimeout(() => {
-                if (!map) {
-                    map = L.map('map', { zoomControl: true }).setView([48.7361, 37.5822], 8);
-                    
-                    const штабна = L.tileLayer('https://a.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png', {
-                        maxZoom: 20,
-                        attribution: '&copy; OpenStreetMap France'
-                    });
-
-                    const топо = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-                        maxZoom: 17,
-                        attribution: '&copy; OpenTopoMap'
-                    });
-
-                    const супутникБаза = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-                        maxZoom: 19,
-                        attribution: 'Esri'
-                    });
-                    const супутникПідписи = L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
-                        maxZoom: 19
-                    });
-                    const супутник = L.layerGroup([супутникБаза, супутникПідписи]);
-
-                    штабна.addTo(map);
-
-                    const baseMaps = {
-                        "🗺 Штабна": штабна,
-                        "⛰ Топографічна": топо,
-                        "🛰 Супутник (з містами)": супутник
-                    };
-
-                    L.control.layers(baseMaps).addTo(map);
-
-                    map.on('click', function(e) {
-                        const lat = e.latlng.lat;
-                        const lng = e.latlng.lng;
-
-                        try {
-                            generatedMGRS = getMGRS(lat, lng);
-                            mapHint.textContent = `Вибрано: ${generatedMGRS}`;
-                            mapHint.style.color = "#ffaa00";
-
-                            if (marker) {
-                                marker.setLatLng(e.latlng);
-                            } else {
-                                marker = L.marker(e.latlng, { icon: arkonIcon }).addTo(map);
-                            }
-                        } catch (err) {
-                            console.error("Помилка розрахунку координат:", err);
-                        }
-                    });
-                }
                 map.invalidateSize();
             }, 200);
         });
@@ -1071,101 +986,91 @@
         });
 
         confirmMapBtn.addEventListener('click', function() {
-            if (generatedMGRS) {
-                coordInput.value = generatedMGRS;
+            if (selectedLat && selectedLng) {
+                // Запис простого формату Lat/Lng, якщо немає зовнішнього конвертера MGRS
+                coordInput.value = `${selectedLat.toFixed(5)}, ${selectedLng.toFixed(5)}`;
                 hideWarning('warning-coordinates');
+                mapModal.classList.remove('active');
+            } else {
+                alert('Будь ласка, клікніть на карту, щоб обрати точку.');
             }
-            mapModal.classList.remove('active');
         });
 
-        ['unit', 'position', 'weight', 'callsign'].forEach(id => {
-            document.getElementById(id).addEventListener('input', () => hideWarning('warning-' + id));
+        // Модальне вікно успіху
+        const successModal = document.getElementById('successModal');
+        const displayId = document.getElementById('displayId');
+        const closeSuccessBtn = document.getElementById('closeSuccessBtn');
+
+        closeSuccessBtn.addEventListener('click', function() {
+            successModal.classList.remove('active');
         });
 
-        // Обробник відправки форми у Google Таблицю
+        // Обробка відправки форми
         form.addEventListener('submit', function(e) {
             e.preventDefault();
-            
-            const fieldsSequence = [
-                { id: 'unit', validate: val => val.trim() !== '', warn: 'warning-unit' },
-                { id: 'phone', validate: val => val.trim() !== '' && val.trim() !== '+380' && val.length >= 18, warn: 'warning-phone' },
-                { id: 'position', validate: val => val.trim() !== '', warn: 'warning-position' },
-                { id: 'coordinates', validate: val => val.trim() !== '', warn: 'warning-coordinates' },
-                { id: 'cargoGroup', validate: () => selectedCargo.length > 0, warn: 'warning-cargo' },
-                { id: 'weight', validate: val => val.trim() !== '', warn: 'warning-weight' },
-                { id: 'callsign', validate: val => val.trim() !== '', warn: 'warning-callsign' },
-                { id: 'phone_position', validate: val => val.trim() !== '' && val.trim() !== '+380' && val.length >= 18, warn: 'warning-phone_position' }
-            ];
 
-            for (let item of fieldsSequence) {
-                let isValid = true;
-                if (item.id === 'cargoGroup') {
-                    isValid = item.validate();
-                } else {
-                    const el = document.getElementById(item.id);
-                    isValid = item.validate(el.value);
-                }
+            let isValid = true;
 
-                if (!isValid) {
-                    showWarning(item.warn);
-                    if (item.id !== 'cargoGroup') {
-                        document.getElementById(item.id).focus();
-                    }
-                    return;
-                } else {
-                    hideWarning(item.warn);
-                }
-            }
+            const unit = document.getElementById('unit');
+            const phone = document.getElementById('phone');
+            const position = document.getElementById('position');
+            const weight = document.getElementById('weight');
+            const callsign = document.getElementById('callsign');
+            const phone_position = document.getElementById('phone_position');
 
-            // Збираємо дані для відправки в Google Таблицю
+            if (!unit.value.trim()) { showWarning('warning-unit'); isValid = false; }
+            if (phone.value.length < 19) { showWarning('warning-phone'); isValid = false; }
+            if (!position.value.trim()) { showWarning('warning-position'); isValid = false; }
+            if (!coordInput.value.trim()) { showWarning('warning-coordinates'); isValid = false; }
+            if (selectedCargo.length === 0) { showWarning('warning-cargo'); isValid = false; }
+            if (!weight.value.trim()) { showWarning('warning-weight'); isValid = false; }
+            if (!callsign.value.trim()) { showWarning('warning-callsign'); isValid = false; }
+            if (phone_position.value.length < 19) { showWarning('warning-phone_position'); isValid = false; }
+
+            if (!isValid) return;
+
             const formData = {
-                unit: document.getElementById('unit').value.trim(),
-                phone: document.getElementById('phone').value.trim(),
-                position: document.getElementById('position').value.trim(),
-                coordinates: document.getElementById('coordinates').value.trim(),
+                unit: unit.value.trim(),
+                phone: phone.value.trim(),
+                position: position.value.trim(),
+                coordinates: coordInput.value.trim(),
                 cargo: selectedCargo.join(', '),
-                weight: document.getElementById('weight').value.trim(),
-                callsign: document.getElementById('callsign').value.trim(),
-                phone_position: document.getElementById('phone_position').value.trim(),
+                weight: weight.value.trim(),
+                callsign: callsign.value.trim(),
+                phone_position: phone_position.value.trim(),
                 comment: document.getElementById('comment').value.trim()
             };
 
-            const submitBtn = form.querySelector('.submit-btn');
-            submitBtn.textContent = 'НАДСИЛАННЯ...';
             submitBtn.disabled = true;
-
-            // Вставте сюди ваше реальне посилання Web App URL з Apps Script:
-            const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbw0sYEcM0GJ_RNx8V0tmsRne_CAwwh6T3GQbgP9tSVpAMJvNxq0uMzkugrpKmGIQYNS7w/exec';
+            submitBtn.textContent = 'НАДСИЛАННЯ...';
 
             fetch(WEB_APP_URL, {
                 method: 'POST',
-                mode: 'no-cors',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                 body: JSON.stringify(formData)
             })
-            .then(() => {
-                const messageDiv = document.getElementById('formMessage');
-                messageDiv.textContent = 'ДЯКУЮ! ЗАЯВКУ УСПІШНО НАДІСЛАНО!';
-                messageDiv.className = 'message success';
-                
-                form.reset();
-                selectedCargo = [];
-                customItems = [];
-                otherCheckbox.checked = false;
-                otherInputContainer.classList.remove('active');
-                hideWarning('duplicateWarning');
-                updateSelectedList();
+            .then(res => res.json())
+            .then(data => {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'НАДІСЛАТИ';
 
-                submitBtn.textContent = 'НАДІСЛАТИ';
-                submitBtn.disabled = false;
+                if (data.status === 'success') {
+                    displayId.textContent = '№' + data.id;
+                    successModal.classList.add('active');
+
+                    form.reset();
+                    selectedCargo = [];
+                    customItems = [];
+                    checkboxes.forEach(cb => cb.checked = false);
+                    updateSelectedList();
+                } else {
+                    alert('Помилка при збереженні: ' + data.message);
+                }
             })
-            .catch(error => {
-                console.error('Помилка відправки:', error);
-                alert('Сталася помилка при відправці. Спробуйте ще раз.');
-                submitBtn.textContent = 'НАДІСЛАТИ';
+            .catch(err => {
                 submitBtn.disabled = false;
+                submitBtn.textContent = 'НАДІСЛАТИ';
+                alert('Не вдалося з\'єднатися із сервером. Спробуйте ще раз!');
             });
         });
     </script>
