@@ -20,10 +20,54 @@
             background-color: #121212;
             color: #ffffff;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
             min-height: 100vh;
-            padding: 20px;
+            padding-bottom: 30px;
+        }
+
+        /* Верхня панель навігації */
+        .navbar {
+            width: 100%;
+            background-color: #1a1a1a;
+            border-bottom: 1px solid #2c2c2c;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: sticky;
+            top: 0;
+            z-index: 900;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .navbar-brand img {
+            width: 36px;
+            height: 36px;
+            object-fit: contain;
+            border-radius: 50%;
+            background-color: #2c2c2c;
+            padding: 2px;
+            transition: transform 0.2s;
+        }
+
+        .navbar-brand img:hover {
+            transform: scale(1.05);
+        }
+
+        .navbar-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: 0.5px;
         }
 
         /* Екран завантаження */
@@ -102,6 +146,7 @@
             text-transform: uppercase;
         }
 
+        /* Контейнер форми */
         .form-container {
             background-color: #1e1e1e;
             padding: 30px 25px;
@@ -109,26 +154,7 @@
             width: 100%;
             max-width: 400px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-            text-align: center;
-        }
-
-        .form-header {
-            margin-bottom: 20px;
-        }
-
-        .form-header img {
-            width: 100%;
-            max-height: 200px;
-            object-fit: cover;
-            border-radius: 8px;
-            margin-bottom: 15px;
-        }
-
-        .form-header h2 {
-            font-size: 24px;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            color: #ffffff;
+            margin-top: 30px;
         }
 
         .form-group {
@@ -562,6 +588,14 @@
 </head>
 <body>
 
+    <!-- Верхня панель навігації з міні-логотипом та можливістю оновлення сторінки -->
+    <header class="navbar">
+        <a href="#" class="navbar-brand" onclick="location.reload(); return false;" title="Оновити сторінку">
+            <img src="https://lh3.googleusercontent.com/d/1dYXge-LOCn-zhxGxdZL4TX8XrEPeBW36" alt="Логотип">
+            <span class="navbar-title">Нова заявка</span>
+        </a>
+    </header>
+
     <!-- Екран завантаження -->
     <div id="loader-overlay">
         <div class="loader-logo-container">
@@ -572,11 +606,6 @@
     </div>
 
     <div class="form-container">
-        <div class="form-header">
-            <img src="https://lh3.googleusercontent.com/d/1rjDvvXjAyquikv_dapM2Z0iBZdCFLkKa" alt="Логотип / Банер">
-            <h2>Новий запит</h2>
-        </div>
-
         <form id="applicationForm" novalidate>
             <div class="form-group">
                 <label for="unit">1. Підрозділ *</label>
@@ -987,7 +1016,6 @@
 
         confirmMapBtn.addEventListener('click', function() {
             if (selectedLat && selectedLng) {
-                // Запис простого формату Lat/Lng, якщо немає зовнішнього конвертера MGRS
                 coordInput.value = `${selectedLat.toFixed(5)}, ${selectedLng.toFixed(5)}`;
                 hideWarning('warning-coordinates');
                 mapModal.classList.remove('active');
@@ -1003,6 +1031,7 @@
 
         closeSuccessBtn.addEventListener('click', function() {
             successModal.classList.remove('active');
+            location.reload(); // Оновлення сторінки при закритті вікна успіху
         });
 
         // Обробка відправки форми
@@ -1057,12 +1086,6 @@
                 if (data.status === 'success') {
                     displayId.textContent = '№' + data.id;
                     successModal.classList.add('active');
-
-                    form.reset();
-                    selectedCargo = [];
-                    customItems = [];
-                    checkboxes.forEach(cb => cb.checked = false);
-                    updateSelectedList();
                 } else {
                     alert('Помилка при збереженні: ' + data.message);
                 }
