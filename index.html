@@ -197,13 +197,23 @@
         .form-group select {
             width: 100%;
             padding: 13px 15px;
-            background-color: #2c2c2c;
+            background-color: #2c2c2c !important;
             border: 1px solid #3c3c3c;
             border-radius: 6px;
-            color: #ffaa00;
+            color: #ffaa00 !important;
             font-size: 16px;
             outline: none;
             transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        /* Запобігаємо зміні кольору браузером при автозаповненні та введенні тексту */
+        .form-group input:-webkit-autofill,
+        .form-group input:-webkit-autofill:hover, 
+        .form-group input:-webkit-autofill:focus,
+        .form-group input:-webkit-autofill:active {
+            -webkit-box-shadow: 0 0 0 30px #2c2c2c inset !important;
+            -webkit-text-fill-color: #ffaa00 !important;
+            caret-color: #ffaa00 !important;
         }
 
         .form-group input:hover,
@@ -215,6 +225,8 @@
         .form-group select:focus {
             border-color: #ffaa00;
             box-shadow: 0 0 5px rgba(255, 170, 0, 0.4);
+            background-color: #2c2c2c !important;
+            color: #ffaa00 !important;
         }
 
         .form-group input::placeholder {
@@ -429,10 +441,10 @@
             flex: 1;
             padding: 10px 12px;
             font-size: 14px;
-            background-color: #2c2c2c;
+            background-color: #2c2c2c !important;
             border: 1px solid #3c3c3c;
             border-radius: 6px;
-            color: #ffaa00;
+            color: #ffaa00 !important;
             outline: none;
             transition: border-color 0.3s;
         }
@@ -1420,7 +1432,7 @@
 
             const formData = {
                 action: 'create',
-                formType: currentFormType, // Передаємо тип форми (НРК або БпЛА) для запису на відповідний аркуш
+                formType: currentFormType,
                 unit: unit,
                 phone: phone,
                 position: position,
