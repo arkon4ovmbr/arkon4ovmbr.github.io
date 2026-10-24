@@ -65,13 +65,18 @@
             letter-spacing: 0.5px;
         }
 
-        /* Група кнопок перемикання у навігації */
+        .nav-right-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
         .nav-buttons-group {
             display: flex;
             gap: 8px;
         }
 
-        .nav-switch-btn {
+        .nav-switch-btn, .nav-home-btn {
             background-color: #2c2c2c;
             border: 1px solid #3c3c3c;
             color: #b0b0b0;
@@ -84,18 +89,113 @@
             text-decoration: none;
         }
 
-        .nav-switch-btn:hover {
+        .nav-switch-btn:hover, .nav-home-btn:hover {
             border-color: #ffaa00;
             color: #ffaa00;
         }
 
-        /* Ефект "втопленої" / активної кнопки */
         .nav-switch-btn.active {
             background-color: #ffaa00 !important;
             color: #121212 !important;
             border-color: #ffaa00 !important;
             box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
             font-weight: 700;
+        }
+
+        .page-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            width: 100%;
+            padding: 20px 0;
+        }
+
+        .menu-container {
+            background-color: #1e1e1e;
+            padding: 40px 30px;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.6);
+            text-align: center;
+        }
+
+        .menu-container h2 {
+            color: #ffaa00;
+            font-size: 22px;
+            margin-bottom: 25px;
+        }
+
+        .menu-btn {
+            width: 100%;
+            padding: 15px;
+            background-color: #2c2c2c;
+            color: #ffffff;
+            border: 1px solid #3c3c3c;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .menu-btn:hover {
+            border-color: #ffaa00;
+            color: #ffaa00;
+        }
+
+        .menu-btn.selected {
+            border-color: #ffaa00;
+            background-color: #383838;
+            color: #ffaa00;
+        }
+
+        .action-buttons-wrapper {
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .action-buttons-wrapper.active {
+            display: flex;
+        }
+
+        .sub-action-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .sub-action-row button {
+            flex: 1;
+            padding: 12px;
+            border-radius: 6px;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-confirm-enter {
+            background-color: #ffaa00;
+            color: #121212;
+        }
+        .btn-confirm-enter:hover {
+            background-color: #e69900;
+        }
+
+        .btn-cancel-enter {
+            background-color: #383838;
+            color: #ffffff;
+            border: 1px solid #555;
+        }
+        .btn-cancel-enter:hover {
+            background-color: #444;
         }
 
         #loader-overlay {
@@ -110,7 +210,7 @@
             justify-content: center;
             align-items: center;
             z-index: 9999;
-            transition: opacity 0.5s ease, visibility 0.5s ease;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
         }
 
         #loader-overlay.hidden {
@@ -151,17 +251,9 @@
         }
 
         @keyframes spinPulse {
-            0% {
-                transform: rotate(0deg);
-                box-shadow: 0 0 5px rgba(255, 170, 0, 0.2);
-            }
-            50% {
-                box-shadow: 0 0 20px rgba(255, 170, 0, 0.8);
-            }
-            100% {
-                transform: rotate(360deg);
-                box-shadow: 0 0 5px rgba(255, 170, 0, 0.2);
-            }
+            0% { transform: rotate(0deg); box-shadow: 0 0 5px rgba(255, 170, 0, 0.2); }
+            50% { box-shadow: 0 0 20px rgba(255, 170, 0, 0.8); }
+            100% { transform: rotate(360deg); box-shadow: 0 0 5px rgba(255, 170, 0, 0.2); }
         }
 
         .loader-text {
@@ -180,11 +272,11 @@
             width: 100%;
             max-width: 500px;
             box-shadow: 0 4px 25px rgba(0, 0, 0, 0.6);
-            margin: 30px 15px;
+            margin: 20px 15px;
         }
 
         @media (max-width: 480px) {
-            .form-container {
+            .form-container, .menu-container {
                 padding: 20px 15px;
                 margin: 15px 10px;
                 border-radius: 8px;
@@ -685,19 +777,23 @@
 </head>
 <body>
 
-    <!-- Верхня панель навігації з двома активними кнопками -->
+    <!-- Верхня панель навігації -->
     <header class="navbar">
-        <a href="#" class="navbar-brand" onclick="switchPage('nrk'); return false;" title="На головну">
+        <a href="#" class="navbar-brand" onclick="goToRoleMenu(); return false;" title="На головну">
             <img src="https://lh3.googleusercontent.com/d/1dYXge-LOCn-zhxGxdZL4TX8XrEPeBW36" alt="Логотип">
-            <span class="navbar-title" id="navTitle">Новий запит НРК</span>
+            <span class="navbar-title" id="navTitle">ARKON LOGISTIC</span>
         </a>
-        <div class="nav-buttons-group">
-            <button type="button" class="nav-switch-btn" id="btnNrk" onclick="switchPage('НРК')">НРК</button>
-            <button type="button" class="nav-switch-btn" id="btnBpla" onclick="switchPage('БпЛА')">БпЛА</button>
+        <div class="nav-right-container">
+            <div class="nav-buttons-group" id="navActionButtons" style="display: none;">
+                <button type="button" class="nav-switch-btn" id="btnNrk" onclick="switchPage('НРК')">НРК</button>
+                <button type="button" class="nav-switch-btn" id="btnBpla" onclick="switchPage('БпЛА')">БпЛА</button>
+            </div>
+            <button type="button" class="nav-home-btn" id="navHomeBtn" onclick="goToRoleMenu()" style="display: none;">Вихід</button>
         </div>
     </header>
 
-    <div id="loader-overlay">
+    <!-- Анімація завантаження -->
+    <div id="loader-overlay" class="hidden">
         <div class="loader-logo-container">
             <div class="loader-ring"></div>
             <img src="https://lh3.googleusercontent.com/d/1dYXge-LOCn-zhxGxdZL4TX8XrEPeBW36" alt="ARKON Loading">
@@ -705,110 +801,163 @@
         <div class="loader-text">Завантаження...</div>
     </div>
 
-    <div class="form-container" id="orderFormContainer">
-        <form id="applicationForm" novalidate>
-            <div class="form-group">
-                <label for="unit">1. Підрозділ *</label>
-                <input type="text" id="unit" name="unit" placeholder="Вкажіть лише бригаду та батальйон">
-                <div class="field-warning" id="warning-unit">Будь ласка, заповніть це поле!</div>
-            </div>
+    <!-- Обгортка для центрування вікон -->
+    <div class="page-wrapper">
 
-            <div class="form-group">
-                <label for="phone">2. Контакт замовника *</label>
-                <input type="tel" id="phone" name="phone" placeholder="+380 (XX) XXX-XX-XX">
-                <div class="field-warning" id="warning-phone">Введіть коректний номер телефону!</div>
-            </div>
-
-            <div class="form-group">
-                <label for="position">3. Позиція *</label>
-                <input type="text" id="position" name="position" placeholder="Вкажіть назву вашої позиції">
-                <div class="field-warning" id="warning-position">Будь ласка, заповніть це поле!</div>
-            </div>
+        <!-- 1. ГОЛОВНЕ МЕНЮ ВИБОРУ РОЛІ -->
+        <div class="menu-container" id="roleMenuContainer">
+            <h2>Оберіть режим входу</h2>
+            <button type="button" class="menu-btn" id="roleUserBtn" onclick="selectRole('user')" ondblclick="confirmRoleEntry('user')">Користувач</button>
+            <button type="button" class="menu-btn" id="roleAdminBtn" onclick="selectRole('admin')" ondblclick="confirmRoleEntry('admin')">Адміністратор</button>
             
-            <div class="form-group">
-                <label for="coordinates">4. Координати (MGRS) *</label>
-                <div class="coord-container">
-                    <input type="text" id="coordinates" name="coordinates" placeholder="37U CP 12345 67890" maxlength="19">
-                    <button type="button" class="map-btn" id="openMapBtn">📍 Карта</button>
+            <div class="action-buttons-wrapper" id="roleActionButtons">
+                <div class="sub-action-row">
+                    <button type="button" class="btn-confirm-enter" onclick="confirmRoleEntryFromButton()">Увійти</button>
+                    <button type="button" class="btn-cancel-enter" onclick="cancelRoleEntry()">Скасувати</button>
                 </div>
-                <div class="field-warning" id="warning-coordinates">Формат: 37U CP 12345 67890</div>
             </div>
+        </div>
+
+        <!-- 2. ПІДМЕНЮ КОРИСТУВАЧА -->
+        <div class="menu-container" id="userSubmenuContainer" style="display: none;">
+            <h2>Оберіть напрямок логістики</h2>
+            <button type="button" class="menu-btn" id="subNrkBtn" onclick="selectSubmenu('НРК')" ondblclick="confirmSubmenuEntry('НРК')">НРК</button>
+            <button type="button" class="menu-btn" id="subBplaBtn" onclick="selectSubmenu('БпЛА')" ondblclick="confirmSubmenuEntry('БпЛА')">БпЛА</button>
             
-            <div class="form-group" id="cargoGroup">
-                <label>5. Вантаж *</label>
-                <div class="multiselect-wrapper" id="cargoSelectWrapper">
-                    <div class="select-box" id="cargoSelectBox">Оберіть варіанти...</div>
-                    <div class="dropdown-list" id="cargoDropdownList">
-                        <label class="dropdown-item"><input type="checkbox" value="Паливо"> Паливо</label>
-                        <label class="dropdown-item"><input type="checkbox" value="Їжа"> Їжа</label>
-                        <label class="dropdown-item"><input type="checkbox" value="Вода"> Вода</label>
-                        <label class="dropdown-item"><input type="checkbox" value="БК"> БК</label>
-                        <label class="dropdown-item"><input type="checkbox" value="Засоби і обладнання"> Засоби і обладнання</label>
-                        <label class="dropdown-item"><input type="checkbox" value="Засоби і обладнання БпЛА"> Засоби і обладнання БпЛА</label>
-                        <label class="dropdown-item"><input type="checkbox" value="Озброєння"> Озброєння</label>
-                        <!-- Евакуація доступна тільки для НРК -->
-                        <label class="dropdown-item nrk-only"><input type="checkbox" value="Евак 300"> Евак 300</label>
-                        <label class="dropdown-item nrk-only"><input type="checkbox" value="Евак 200"> Евак 200</label>
-                        <label class="dropdown-item"><input type="checkbox" id="otherCheckbox" value="Інше"> Інше</label>
+            <div class="action-buttons-wrapper" id="submenuActionButtons">
+                <div class="sub-action-row">
+                    <button type="button" class="btn-confirm-enter" onclick="confirmSubmenuEntryFromButton()">Увійти</button>
+                    <button type="button" class="btn-cancel-enter" onclick="cancelSubmenuEntry()">Скасувати</button>
+                </div>
+            </div>
+
+            <button type="button" class="switch-view-btn" onclick="goToRoleMenu()" style="margin-top: 15px;">Назад</button>
+        </div>
+
+        <!-- 3. ФОРМА ВХОДУ АДМІНІСТРАТОРА -->
+        <div class="menu-container" id="adminLoginContainer" style="display: none;">
+            <h2>Вхід для адміністратора</h2>
+            <div class="form-group">
+                <label for="adminLogin">Логін</label>
+                <input type="text" id="adminLogin" placeholder="Введіть логін">
+            </div>
+            <div class="form-group">
+                <label for="adminPass">Пароль</label>
+                <input type="password" id="adminPass" placeholder="Введіть пароль">
+            </div>
+            <div class="field-warning" id="warning-admin-auth">Невірний логін або пароль!</div>
+            <button type="button" class="menu-btn primary" onclick="handleAdminLogin()" style="margin-top: 10px;">Увійти</button>
+            <button type="button" class="switch-view-btn" onclick="goToRoleMenu()">Назад</button>
+        </div>
+
+        <!-- 4. ОСНОВНА ФОРМА ЗАПИТУ -->
+        <div class="form-container" id="orderFormContainer" style="display: none;">
+            <form id="applicationForm" novalidate>
+                <div class="form-group">
+                    <label for="unit">1. Підрозділ *</label>
+                    <input type="text" id="unit" name="unit" placeholder="Вкажіть лише бригаду та батальйон">
+                    <div class="field-warning" id="warning-unit">Будь ласка, заповніть це поле!</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">2. Контакт замовника *</label>
+                    <input type="tel" id="phone" name="phone" placeholder="+380 (XX) XXX-XX-XX">
+                    <div class="field-warning" id="warning-phone">Введіть коректний номер телефону!</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="position">3. Позиція *</label>
+                    <input type="text" id="position" name="position" placeholder="Вкажіть назву вашої позиції">
+                    <div class="field-warning" id="warning-position">Будь ласка, заповніть це поле!</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="coordinates">4. Координати (MGRS) *</label>
+                    <div class="coord-container">
+                        <input type="text" id="coordinates" name="coordinates" placeholder="37U CP 12345 67890" maxlength="19">
+                        <button type="button" class="map-btn" id="openMapBtn">📍 Карта</button>
                     </div>
+                    <div class="field-warning" id="warning-coordinates">Формат: 37U CP 12345 67890</div>
+                </div>
+                
+                <div class="form-group" id="cargoGroup">
+                    <label>5. Вантаж *</label>
+                    <div class="multiselect-wrapper" id="cargoSelectWrapper">
+                        <div class="select-box" id="cargoSelectBox">Оберіть варіанти...</div>
+                        <div class="dropdown-list" id="cargoDropdownList">
+                            <label class="dropdown-item"><input type="checkbox" value="Паливо"> Паливо</label>
+                            <label class="dropdown-item"><input type="checkbox" value="Їжа"> Їжа</label>
+                            <label class="dropdown-item"><input type="checkbox" value="Вода"> Вода</label>
+                            <label class="dropdown-item"><input type="checkbox" value="БК"> БК</label>
+                            <label class="dropdown-item"><input type="checkbox" value="Засоби і обладнання"> Засоби і обладнання</label>
+                            <label class="dropdown-item"><input type="checkbox" value="Засоби і обладнання БпЛА"> Засоби і обладнання БпЛА</label>
+                            <label class="dropdown-item"><input type="checkbox" value="Озброєння"> Озброєння</label>
+                            <label class="dropdown-item nrk-only"><input type="checkbox" value="Евак 300"> Евак 300</label>
+                            <label class="dropdown-item nrk-only"><input type="checkbox" value="Евак 200"> Евак 200</label>
+                            <label class="dropdown-item"><input type="checkbox" id="otherCheckbox" value="Інше"> Інше</label>
+                        </div>
+                    </div>
+
+                    <div class="other-input-container" id="otherInputContainer">
+                        <input type="text" id="otherTextInput" placeholder="Введіть свій варіант вантажу">
+                        <button type="button" class="add-other-btn" id="addOtherBtn">Додати</button>
+                    </div>
+                    <div class="field-warning" id="duplicateWarning">Цей варіант вже є в списку!</div>
+                    <div class="field-warning" id="warning-cargo">Оберіть принаймні один вантаж!</div>
+
+                    <div class="selected-tags" id="selectedCargoTags"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="weight">6. Вага *</label>
+                    <input type="text" id="weight" name="weight" placeholder="Вкажіть повну вагу в кілограмах">
+                    <div class="field-warning" id="warning-weight">Будь ласка, заповніть це поле!</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="callsign">7. Позивний *</label>
+                    <input type="text" id="callsign" name="callsign" placeholder="Вкажіть позивний в/с на позиції">
+                    <div class="field-warning" id="warning-callsign">Будь ласка, заповніть це поле!</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone_position">8. Контакт в/с на позиції *</label>
+                    <input type="tel" id="phone_position" name="phone_position" placeholder="+380 (XX) XXX-XX-XX">
+                    <div class="field-warning" id="warning-phone_position">Введіть коректний номер телефону!</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="comment">Коментарі</label>
+                    <input type="text" id="comment" name="comment" placeholder="Для додаткової інформації">
                 </div>
 
-                <div class="other-input-container" id="otherInputContainer">
-                    <input type="text" id="otherTextInput" placeholder="Введіть свій варіант вантажу">
-                    <button type="button" class="add-other-btn" id="addOtherBtn">Додати</button>
-                </div>
-                <div class="field-warning" id="duplicateWarning">Цей варіант вже є в списку!</div>
-                <div class="field-warning" id="warning-cargo">Оберіть принаймні один вантаж!</div>
+                <button type="submit" class="submit-btn" id="submitBtn">НАДІСЛАТИ</button>
+                <button type="button" class="switch-view-btn" id="switchToStatusBtn">Перевірити статус</button>
+            </form>
+        </div>
 
-                <div class="selected-tags" id="selectedCargoTags"></div>
-            </div>
-            
+        <!-- 5. ПЕРЕВІРКА СТАТУСУ -->
+        <div class="form-container status-container" id="statusContainer" style="display: none;">
             <div class="form-group">
-                <label for="weight">6. Вага *</label>
-                <input type="text" id="weight" name="weight" placeholder="Вкажіть повну вагу в кілограмах">
-                <div class="field-warning" id="warning-weight">Будь ласка, заповніть це поле!</div>
+                <label for="checkIdInput">Введіть № вашого запиту</label>
+                <input type="text" id="checkIdInput" placeholder="Наприклад: 1">
+                <div class="field-warning" id="warning-check-id">Заявку з таким ID не знайдено!</div>
             </div>
-            
-            <div class="form-group">
-                <label for="callsign">7. Позивний *</label>
-                <input type="text" id="callsign" name="callsign" placeholder="Вкажіть позивний в/с на позиції">
-                <div class="field-warning" id="warning-callsign">Будь ласка, заповніть це поле!</div>
-            </div>
-            
-            <div class="form-group">
-                <label for="phone_position">8. Контакт в/с на позиції *</label>
-                <input type="tel" id="phone_position" name="phone_position" placeholder="+380 (XX) XXX-XX-XX">
-                <div class="field-warning" id="warning-phone_position">Введіть коректний номер телефону!</div>
-            </div>
-            
-            <div class="form-group">
-                <label for="comment">Коментарі</label>
-                <input type="text" id="comment" name="comment" placeholder="Для додаткової інформації">
-            </div>
+            <button type="button" class="submit-btn" id="checkStatusBtn">Перевірити</button>
+            <button type="button" class="switch-view-btn" id="switchToFormBtn">Назад до форми</button>
 
-            <button type="submit" class="submit-btn" id="submitBtn">НАДІСЛАТИ</button>
-            <button type="button" class="switch-view-btn" id="switchToStatusBtn">Перевірити статус</button>
-        </form>
+            <div class="status-result-card" id="statusResultCard">
+                <p><strong>ID:</strong> <span id="resId">-</span></p>
+                <p><strong>Підрозділ:</strong> <span id="resUnit">-</span></p>
+                <p><strong>Позиція:</strong> <span id="resPosition">-</span></p>
+                <p><strong>Що веземо:</strong> <span id="resCargo">-</span></p>
+                <p><strong>Статус:</strong> <span id="resStatus">-</span></p>
+            </div>
+        </div>
+
     </div>
 
-    <div class="form-container status-container" id="statusContainer">
-        <div class="form-group">
-            <label for="checkIdInput">Введіть № вашого запиту</label>
-            <input type="text" id="checkIdInput" placeholder="Наприклад: 1">
-            <div class="field-warning" id="warning-check-id">Заявку з таким ID не знайдено!</div>
-        </div>
-        <button type="button" class="submit-btn" id="checkStatusBtn">Перевірити</button>
-        <button type="button" class="switch-view-btn" id="switchToFormBtn">Назад до форми</button>
-
-        <div class="status-result-card" id="statusResultCard">
-            <p><strong>ID:</strong> <span id="resId">-</span></p>
-            <p><strong>Підрозділ:</strong> <span id="resUnit">-</span></p>
-            <p><strong>Позиція:</strong> <span id="resPosition">-</span></p>
-            <p><strong>Що веземо:</strong> <span id="resCargo">-</span></p>
-            <p><strong>Статус:</strong> <span id="resStatus">-</span></p>
-        </div>
-    </div>
-
+    <!-- МОДАЛЬНІ ВІКНА -->
     <div class="map-modal" id="mapModal">
         <div class="map-modal-content">
             <div class="map-modal-header">
@@ -837,74 +986,235 @@
     <script>
         const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbw0sYEcM0GJ_RNx8V0tmsRne_CAwwh6T3GQbgP9tSVpAMJvNxq0uMzkugrpKmGIQYNS7w/exec';
 
-        // Керування режимами НРК / БпЛА
         let currentFormType = 'НРК';
+        let selectedRoleType = null;
+        let selectedSubmenuType = null;
 
-        function getRouteFromHash() {
-            const hash = window.location.hash.replace('#', '').toLowerCase();
-            return hash === 'bpla' ? 'БпЛА' : 'НРК';
+        // Функція для плавного показу анімації завантаження між екранами
+        function showLoader(callback) {
+            const loader = document.getElementById('loader-overlay');
+            loader.classList.remove('hidden');
+            setTimeout(() => {
+                if (callback) callback();
+                setTimeout(() => {
+                    loader.classList.add('hidden');
+                }, 300);
+            }, 400);
+        }
+
+        function hideAllViews() {
+            document.getElementById('roleMenuContainer').style.display = 'none';
+            document.getElementById('userSubmenuContainer').style.display = 'none';
+            document.getElementById('adminLoginContainer').style.display = 'none';
+            document.getElementById('orderFormContainer').style.display = 'none';
+            document.getElementById('statusContainer').style.display = 'none';
+            document.getElementById('navActionButtons').style.display = 'none';
+            document.getElementById('navHomeBtn').style.display = 'none';
+        }
+
+        function goToRoleMenu() {
+            showLoader(() => {
+                hideAllViews();
+                document.getElementById('roleMenuContainer').style.display = 'block';
+                document.getElementById('navTitle').textContent = 'ARKON LOGISTIC';
+                
+                document.getElementById('roleUserBtn').classList.remove('selected');
+                document.getElementById('roleAdminBtn').classList.remove('selected');
+                document.getElementById('roleActionButtons').classList.remove('active');
+                selectedRoleType = null;
+
+                window.location.hash = '';
+            });
+        }
+
+        function selectRole(role) {
+            const userBtn = document.getElementById('roleUserBtn');
+            const adminBtn = document.getElementById('roleAdminBtn');
+            const actionWrapper = document.getElementById('roleActionButtons');
+
+            selectedRoleType = role;
+
+            if (role === 'user') {
+                userBtn.classList.add('selected');
+                adminBtn.classList.remove('selected');
+                actionWrapper.classList.add('active');
+            } else if (role === 'admin') {
+                adminBtn.classList.add('selected');
+                userBtn.classList.remove('selected');
+                actionWrapper.classList.add('active');
+            }
+        }
+
+        function confirmRoleEntry(role) {
+            selectedRoleType = role;
+            confirmRoleEntryFromButton();
+        }
+
+        function confirmRoleEntryFromButton() {
+            if (selectedRoleType === 'user') {
+                showUserSubmenu();
+            } else if (selectedRoleType === 'admin') {
+                showAdminLogin();
+            }
+        }
+
+        function cancelRoleEntry() {
+            document.getElementById('roleUserBtn').classList.remove('selected');
+            document.getElementById('roleAdminBtn').classList.remove('selected');
+            document.getElementById('roleActionButtons').classList.remove('active');
+            selectedRoleType = null;
+        }
+
+        function selectSubmenu(type) {
+            const nrkBtn = document.getElementById('subNrkBtn');
+            const bplaBtn = document.getElementById('subBplaBtn');
+            const actionWrapper = document.getElementById('submenuActionButtons');
+
+            selectedSubmenuType = type;
+
+            if (type === 'НРК') {
+                nrkBtn.classList.add('selected');
+                bplaBtn.classList.remove('selected');
+                actionWrapper.classList.add('active');
+            } else if (type === 'БпЛА') {
+                bplaBtn.classList.add('selected');
+                nrkBtn.classList.remove('selected');
+                actionWrapper.classList.add('active');
+            }
+        }
+
+        function confirmSubmenuEntry(type) {
+            selectedSubmenuType = type;
+            confirmSubmenuEntryFromButton();
+        }
+
+        function confirmSubmenuEntryFromButton() {
+            if (selectedSubmenuType) {
+                switchPage(selectedSubmenuType);
+            }
+        }
+
+        function cancelSubmenuEntry() {
+            document.getElementById('subNrkBtn').classList.remove('selected');
+            document.getElementById('subBplaBtn').classList.remove('selected');
+            document.getElementById('submenuActionButtons').classList.remove('active');
+            selectedSubmenuType = null;
+        }
+
+        function showUserSubmenu() {
+            showLoader(() => {
+                hideAllViews();
+                document.getElementById('userSubmenuContainer').style.display = 'block';
+                document.getElementById('navTitle').textContent = 'Вибір напрямку';
+                document.getElementById('navHomeBtn').style.display = 'inline-block';
+                
+                document.getElementById('subNrkBtn').classList.remove('selected');
+                document.getElementById('subBplaBtn').classList.remove('selected');
+                document.getElementById('submenuActionButtons').classList.remove('active');
+                selectedSubmenuType = null;
+
+                window.location.hash = 'user';
+            });
+        }
+
+        function showAdminLogin() {
+            showLoader(() => {
+                hideAllViews();
+                document.getElementById('adminLoginContainer').style.display = 'block';
+                document.getElementById('navTitle').textContent = 'Вхід адміністратора';
+                document.getElementById('navHomeBtn').style.display = 'inline-block';
+                window.location.hash = 'admin';
+            });
+        }
+
+        function handleAdminLogin() {
+            const login = document.getElementById('adminLogin').value.trim();
+            const pass = document.getElementById('adminPass').value.trim();
+            const warning = document.getElementById('warning-admin-auth');
+
+            if (login === 'admin' && pass === 'arkon2026') {
+                warning.classList.remove('active');
+                alert('Успішний вхід адміністратора! (Тут буде панель управління)');
+            } else {
+                warning.classList.add('active');
+            }
         }
 
         function switchPage(type) {
-            currentFormType = type === 'БпЛА' ? 'БпЛА' : 'НРК';
-            window.location.hash = currentFormType === 'БпЛА' ? 'bpla' : 'nrk';
-            
-            const navTitle = document.getElementById('navTitle');
-            const btnNrk = document.getElementById('btnNrk');
-            const btnBpla = document.getElementById('btnBpla');
+            showLoader(() => {
+                currentFormType = type === 'БпЛА' ? 'БпЛА' : 'НРК';
+                window.location.hash = currentFormType === 'БпЛА' ? 'bpla' : 'nrk';
+                
+                hideAllViews();
+                
+                // Очищаємо форму при кожному переході між НРК та БпЛА
+                const formElem = document.getElementById('applicationForm');
+                if (formElem) formElem.reset();
+                customItems = [];
+                updateSelectedList();
 
-            // Керування підсвіткою/втопленим станом кнопок у навігації
-            if (currentFormType === 'БпЛА') {
-                navTitle.textContent = 'Новий запит БпЛА';
-                btnBpla.classList.add('active');
-                btnNrk.classList.remove('active');
-            } else {
-                navTitle.textContent = 'Новий запит НРК';
-                btnNrk.classList.add('active');
-                btnBpla.classList.remove('active');
-            }
+                document.getElementById('orderFormContainer').style.display = 'block';
+                document.getElementById('navActionButtons').style.display = 'flex';
+                document.getElementById('navHomeBtn').style.display = 'inline-block';
 
-            // Ховаємо Евакуацію для БпЛА
-            document.querySelectorAll('.nrk-only').forEach(el => {
+                const navTitle = document.getElementById('navTitle');
+                const btnNrk = document.getElementById('btnNrk');
+                const btnBpla = document.getElementById('btnBpla');
+
                 if (currentFormType === 'БпЛА') {
-                    el.style.display = 'none';
-                    const cb = el.querySelector('input[type="checkbox"]');
-                    if (cb && cb.checked) cb.checked = false;
+                    navTitle.textContent = 'Новий запит БпЛА';
+                    btnBpla.classList.add('active');
+                    btnNrk.classList.remove('active');
                 } else {
-                    el.style.display = 'flex';
+                    navTitle.textContent = 'Новий запит НРК';
+                    btnNrk.classList.add('active');
+                    btnBpla.classList.remove('active');
                 }
-            });
 
-            updateSelectedList();
+                document.querySelectorAll('.nrk-only').forEach(el => {
+                    if (currentFormType === 'БпЛА') {
+                        el.style.display = 'none';
+                        const cb = el.querySelector('input[type="checkbox"]');
+                        if (cb && cb.checked) cb.checked = false;
+                    } else {
+                        el.style.display = 'flex';
+                    }
+                });
+            });
         }
 
-        window.addEventListener('hashchange', () => {
-            switchPage(getRouteFromHash());
-        });
-
         window.addEventListener('load', function() {
+            const loader = document.getElementById('loader-overlay');
             setTimeout(() => {
-                const loader = document.getElementById('loader-overlay');
                 loader.classList.add('hidden');
-            }, 600);
+            }, 500);
 
-            switchPage(getRouteFromHash());
+            const hash = window.location.hash.replace('#', '').toLowerCase();
+            if (hash === 'bpla') {
+                switchPage('БпЛА');
+            } else if (hash === 'nrk') {
+                switchPage('НРК');
+            } else if (hash === 'admin') {
+                showAdminLogin();
+            } else if (hash === 'user') {
+                showUserSubmenu();
+            } else {
+                goToRoleMenu();
+            }
         });
 
-        const orderFormContainer = document.getElementById('orderFormContainer');
-        const statusContainer = document.getElementById('statusContainer');
         const switchToStatusBtn = document.getElementById('switchToStatusBtn');
         const switchToFormBtn = document.getElementById('switchToFormBtn');
 
         switchToStatusBtn.addEventListener('click', () => {
-            orderFormContainer.classList.add('hidden-view');
-            statusContainer.classList.add('active');
-            document.getElementById('navTitle').textContent = 'Перевірка статусу';
+            showLoader(() => {
+                document.getElementById('orderFormContainer').style.display = 'none';
+                document.getElementById('statusContainer').style.display = 'block';
+                document.getElementById('navTitle').textContent = 'Перевірка статусу';
+            });
         });
 
         switchToFormBtn.addEventListener('click', () => {
-            statusContainer.classList.remove('active');
-            orderFormContainer.classList.remove('hidden-view');
             switchPage(currentFormType);
         });
 
@@ -917,7 +1227,6 @@
             else if (cleanText === 'Виконано частково') cssClass = 'status-partially';
             else if (cleanText === 'Не виконано') cssClass = 'status-failed';
             else if (cleanText === 'Скасовано') cssClass = 'status-cancelled';
-            else cssClass = 'status-processing';
 
             return `<span class="status-badge ${cssClass}">${cleanText || 'Обробляється'}</span>`;
         }
