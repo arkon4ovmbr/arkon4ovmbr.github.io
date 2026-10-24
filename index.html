@@ -19,6 +19,7 @@
             --input-text: #ffaa00;
             --accent-color: #ffaa00;
             --accent-hover: #e69900;
+            --accent-btn-text: #121212;
             --secondary-bg: #383838;
             --label-color: #b0b0b0;
         }
@@ -34,6 +35,7 @@
             --input-text: #0056b3;
             --accent-color: #0056b3;
             --accent-hover: #004085;
+            --accent-btn-text: #ffffff;
             --secondary-bg: #e2e6ea;
             --label-color: #495057;
         }
@@ -43,6 +45,12 @@
             margin: 0;
             padding: 0;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            overflow-x: hidden;
+            width: 100%;
         }
 
         body {
@@ -60,10 +68,11 @@
             width: 100%;
             background-color: var(--navbar-bg);
             border-bottom: 1px solid var(--border-color);
-            padding: 14px 24px;
+            padding: 12px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 10px;
             position: sticky;
             top: 0;
             z-index: 900;
@@ -74,14 +83,17 @@
         .navbar-brand {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             cursor: pointer;
             text-decoration: none;
+            min-width: 0;
+            flex: 1;
         }
 
         .navbar-brand img {
-            height: 38px;
-            width: auto;
+            height: 36px;
+            width: 36px;
+            flex-shrink: 0;
             object-fit: contain;
             transition: transform 0.2s;
         }
@@ -91,54 +103,30 @@
         }
 
         .navbar-title {
-            font-size: 18px;
+            font-size: 17px;
             font-weight: 700;
             color: var(--text-color);
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
+            line-height: 1.2;
         }
 
         .nav-right-container {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
+            flex-shrink: 0;
+            position: relative;
         }
 
-        .nav-buttons-group {
-            display: flex;
-            gap: 8px;
+        /* Стилі для кнопки меню-бургера */
+        .burger-menu-wrapper {
+            position: relative;
+            display: none;
         }
 
-        .nav-switch-btn, .nav-home-btn {
+        .burger-btn {
             background-color: var(--input-bg);
             border: 1px solid var(--input-border);
-            color: var(--label-color);
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-weight: 600;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-decoration: none;
-        }
-
-        .nav-switch-btn:hover, .nav-home-btn:hover {
-            border-color: var(--accent-color);
-            color: var(--accent-color);
-        }
-
-        .nav-switch-btn.active {
-            background-color: var(--accent-color) !important;
-            color: #121212 !important;
-            border-color: var(--accent-color) !important;
-            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
-            font-weight: 700;
-        }
-
-        .theme-toggle-btn {
-            background: none;
-            border: 1px solid var(--input-border);
-            background-color: var(--input-bg);
-            color: var(--text-color);
             width: 38px;
             height: 38px;
             border-radius: 6px;
@@ -146,12 +134,128 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
+            outline: none;
+            transition: border-color 0.2s, background-color 0.2s;
+            padding: 0;
+        }
+
+        .burger-btn:hover, .burger-btn.active {
+            border-color: var(--accent-color);
+        }
+
+        .burger-lines {
+            width: 18px;
+            height: 14px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.3s ease;
+        }
+
+        /* Поворот на 90 градусів робить горизонтальні лінії вертикальними */
+        .burger-btn.active .burger-lines {
+            transform: rotate(90deg);
+        }
+
+        .burger-line {
+            width: 100%;
+            height: 2px;
+            background-color: var(--text-color);
+            border-radius: 2px;
+            transition: background-color 0.2s;
+        }
+
+        .burger-btn.active .burger-line {
+            background-color: var(--accent-color);
+        }
+
+        /* Випадаюче меню навігації */
+        .nav-dropdown {
+            display: none;
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            background-color: var(--card-bg);
+            border: 1px solid var(--accent-color);
+            border-radius: 8px;
+            min-width: 150px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            z-index: 1000;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .nav-dropdown.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .nav-dropdown-item {
+            padding: 12px 16px;
+            background: none;
+            border: none;
+            border-bottom: 1px solid var(--input-border);
+            color: var(--text-color);
+            font-size: 15px;
+            font-weight: 600;
+            text-align: left;
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .nav-dropdown-item:hover {
+            background-color: var(--secondary-bg);
+            color: var(--accent-color);
+        }
+
+        .nav-dropdown-item.active-route {
+            background-color: var(--accent-color);
+            color: var(--accent-btn-text);
+            font-weight: 700;
+        }
+
+        .nav-dropdown-item.exit-item {
+            color: #ff4d4d;
+        }
+
+        .nav-dropdown-item.exit-item:hover {
+            background-color: rgba(255, 77, 77, 0.15);
+            color: #ff4d4d;
+        }
+
+        /* Кнопка зміни теми */
+        .theme-toggle-btn {
+            background-color: var(--input-bg);
+            border: 1px solid var(--input-border);
+            color: var(--text-color);
+            width: 38px;
+            height: 38px;
+            flex-shrink: 0;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
             font-size: 18px;
-            transition: all 0.2s;
+            line-height: 1;
+            padding: 0;
+            outline: none;
+            transition: border-color 0.2s, background-color 0.2s;
         }
 
         .theme-toggle-btn:hover {
             border-color: var(--accent-color);
+        }
+
+        .theme-toggle-btn:focus {
+            outline: none;
         }
 
         .page-wrapper {
@@ -161,7 +265,7 @@
             justify-content: center;
             flex: 1;
             width: 100%;
-            padding: 20px 0;
+            padding: 20px 12px;
         }
 
         .menu-container {
@@ -195,6 +299,7 @@
             margin-bottom: 15px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            outline: none;
         }
 
         .menu-btn:hover {
@@ -232,11 +337,12 @@
             font-weight: 700;
             cursor: pointer;
             border: none;
+            outline: none;
         }
 
         .btn-confirm-enter {
             background-color: var(--accent-color);
-            color: #121212;
+            color: var(--accent-btn-text);
         }
         .btn-confirm-enter:hover {
             background-color: var(--accent-hover);
@@ -325,18 +431,28 @@
             width: 100%;
             max-width: 500px;
             box-shadow: 0 4px 25px rgba(0, 0, 0, 0.3);
-            margin: 20px 15px;
+            margin: 10px 0;
             transition: background-color 0.3s;
         }
 
         @media (max-width: 480px) {
+            .navbar {
+                padding: 10px 14px;
+            }
+            .navbar-brand img {
+                height: 32px;
+                width: 32px;
+            }
+            .navbar-title {
+                font-size: 16px;
+            }
+            .burger-btn, .theme-toggle-btn {
+                width: 36px;
+                height: 36px;
+            }
             .form-container, .menu-container {
                 padding: 20px 15px;
-                margin: 15px 10px;
-                border-radius: 8px;
-            }
-            .navbar {
-                padding: 10px 15px;
+                border-radius: 10px;
             }
         }
 
@@ -353,7 +469,6 @@
             font-weight: 500;
         }
 
-        /* Залізобетонний захист кольорів полів введення та автозаповнення */
         .form-group input,
         .form-group select,
         .menu-container input {
@@ -503,7 +618,7 @@
         .confirm-map-btn {
             padding: 9px 18px;
             background-color: var(--accent-color);
-            color: #121212;
+            color: var(--accent-btn-text);
             border: none;
             border-radius: 6px;
             font-weight: 700;
@@ -606,7 +721,7 @@
         .add-other-btn {
             padding: 0 16px;
             background-color: var(--accent-color);
-            color: #121212;
+            color: var(--accent-btn-text);
             border: none;
             border-radius: 6px;
             font-size: 14px;
@@ -664,7 +779,7 @@
             width: 100%;
             padding: 15px;
             background-color: var(--accent-color);
-            color: #121212;
+            color: var(--accent-btn-text);
             border: none;
             border-radius: 6px;
             font-size: 16px;
@@ -792,7 +907,7 @@
         .success-modal-content .id-badge {
             display: inline-block;
             background-color: var(--accent-color);
-            color: #121212;
+            color: var(--accent-btn-text);
             font-size: 24px;
             font-weight: 800;
             padding: 8px 20px;
@@ -812,7 +927,7 @@
         }
         .close-success-btn:hover {
             background-color: var(--accent-color);
-            color: #121212;
+            color: var(--accent-btn-text);
         }
     </style>
 </head>
@@ -825,11 +940,23 @@
             <span class="navbar-title" id="navTitle">ARKON LOGISTIC</span>
         </a>
         <div class="nav-right-container">
-            <div class="nav-buttons-group" id="navActionButtons" style="display: none;">
-                <button type="button" class="nav-switch-btn" id="btnNrk" onclick="switchPage('НРК')">НРК</button>
-                <button type="button" class="nav-switch-btn" id="btnBpla" onclick="switchPage('БпЛА')">БпЛА</button>
+            <!-- Бургер-меню зі спадним списком -->
+            <div class="burger-menu-wrapper" id="burgerMenuWrapper">
+                <button type="button" class="burger-btn" id="burgerBtn" onclick="toggleBurgerMenu(event)" title="Меню">
+                    <div class="burger-lines">
+                        <span class="burger-line"></span>
+                        <span class="burger-line"></span>
+                        <span class="burger-line"></span>
+                    </div>
+                </button>
+                <div class="nav-dropdown" id="navDropdown">
+                    <button type="button" class="nav-dropdown-item" id="menuItemNrk" onclick="handleMenuSelect('НРК')">НРК</button>
+                    <button type="button" class="nav-dropdown-item" id="menuItemBpla" onclick="handleMenuSelect('БпЛА')">БпЛА</button>
+                    <button type="button" class="nav-dropdown-item exit-item" onclick="handleMenuSelect('exit')">Вихід</button>
+                </div>
             </div>
-            <button type="button" class="nav-home-btn" id="navHomeBtn" onclick="goToRoleMenu()" style="display: none;">Вихід</button>
+
+            <!-- Іконка зміни теми (праворуч від меню) -->
             <button type="button" class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Змінити тему">🌙</button>
         </div>
     </header>
@@ -1032,6 +1159,41 @@
         let selectedRoleType = null;
         let selectedSubmenuType = null;
 
+        // --- ЛОГІКА БУРГЕР-МЕНЮ ---
+        const burgerMenuWrapper = document.getElementById('burgerMenuWrapper');
+        const burgerBtn = document.getElementById('burgerBtn');
+        const navDropdown = document.getElementById('navDropdown');
+        const menuItemNrk = document.getElementById('menuItemNrk');
+        const menuItemBpla = document.getElementById('menuItemBpla');
+
+        function toggleBurgerMenu(e) {
+            e.stopPropagation();
+            burgerBtn.classList.toggle('active');
+            navDropdown.classList.toggle('active');
+        }
+
+        function closeBurgerMenu() {
+            burgerBtn.classList.remove('active');
+            navDropdown.classList.remove('active');
+        }
+
+        function handleMenuSelect(option) {
+            closeBurgerMenu();
+            if (option === 'exit') {
+                goToRoleMenu();
+            } else {
+                switchPage(option);
+            }
+        }
+
+        // Закриваємо меню при кліку поза ним
+        document.addEventListener('click', function(e) {
+            if (!burgerMenuWrapper.contains(e.target)) {
+                closeBurgerMenu();
+            }
+        });
+
+        // --- ЛОГІКА ТЕМИ ---
         function initTheme() {
             const savedTheme = localStorage.getItem('arkon_theme') || 'dark';
             document.documentElement.setAttribute('data-theme', savedTheme);
@@ -1044,6 +1206,7 @@
             document.documentElement.setAttribute('data-theme', newTheme);
             localStorage.setItem('arkon_theme', newTheme);
             updateThemeIcon(newTheme);
+            document.getElementById('themeToggleBtn').blur();
         }
 
         function updateThemeIcon(theme) {
@@ -1055,6 +1218,7 @@
 
         initTheme();
 
+        // --- НАВІГАЦІЯ МІЖ ЕКРАНАМИ ---
         function showLoader(callback) {
             const loader = document.getElementById('loader-overlay');
             loader.classList.remove('hidden');
@@ -1072,8 +1236,8 @@
             document.getElementById('adminLoginContainer').style.display = 'none';
             document.getElementById('orderFormContainer').style.display = 'none';
             document.getElementById('statusContainer').style.display = 'none';
-            document.getElementById('navActionButtons').style.display = 'none';
-            document.getElementById('navHomeBtn').style.display = 'none';
+            burgerMenuWrapper.style.display = 'none';
+            closeBurgerMenu();
         }
 
         function goToRoleMenu() {
@@ -1170,8 +1334,14 @@
                 hideAllViews();
                 document.getElementById('userSubmenuContainer').style.display = 'block';
                 document.getElementById('navTitle').textContent = 'Вибір напрямку';
-                document.getElementById('navHomeBtn').style.display = 'inline-block';
                 
+                // Показуємо бургер-меню (лише з кнопкою Вихід або всіма опціями)
+                burgerMenuWrapper.style.display = 'block';
+                menuItemNrk.style.display = 'flex';
+                menuItemBpla.style.display = 'flex';
+                menuItemNrk.classList.remove('active-route');
+                menuItemBpla.classList.remove('active-route');
+
                 document.getElementById('subNrkBtn').classList.remove('selected');
                 document.getElementById('subBplaBtn').classList.remove('selected');
                 document.getElementById('submenuActionButtons').classList.remove('active');
@@ -1186,7 +1356,12 @@
                 hideAllViews();
                 document.getElementById('adminLoginContainer').style.display = 'block';
                 document.getElementById('navTitle').textContent = 'Вхід адміністратора';
-                document.getElementById('navHomeBtn').style.display = 'inline-block';
+                
+                // У вікні входу адміна в бургері залишаємо тільки "Вихід"
+                burgerMenuWrapper.style.display = 'block';
+                menuItemNrk.style.display = 'none';
+                menuItemBpla.style.display = 'none';
+
                 window.location.hash = 'admin';
             });
         }
@@ -1217,21 +1392,20 @@
                 updateSelectedList();
 
                 document.getElementById('orderFormContainer').style.display = 'block';
-                document.getElementById('navActionButtons').style.display = 'flex';
-                document.getElementById('navHomeBtn').style.display = 'inline-block';
+                burgerMenuWrapper.style.display = 'block';
+                menuItemNrk.style.display = 'flex';
+                menuItemBpla.style.display = 'flex';
 
                 const navTitle = document.getElementById('navTitle');
-                const btnNrk = document.getElementById('btnNrk');
-                const btnBpla = document.getElementById('btnBpla');
 
                 if (currentFormType === 'БпЛА') {
                     navTitle.textContent = 'Новий запит БпЛА';
-                    btnBpla.classList.add('active');
-                    btnNrk.classList.remove('active');
+                    menuItemBpla.classList.add('active-route');
+                    menuItemNrk.classList.remove('active-route');
                 } else {
                     navTitle.textContent = 'Новий запит НРК';
-                    btnNrk.classList.add('active');
-                    btnBpla.classList.remove('active');
+                    menuItemNrk.classList.add('active-route');
+                    menuItemBpla.classList.remove('active-route');
                 }
 
                 document.querySelectorAll('.nrk-only').forEach(el => {
