@@ -793,7 +793,7 @@
     </header>
 
     <!-- Анімація завантаження -->
-    <div id="loader-overlay" class="hidden">
+    <div id="loader-overlay" class="">
         <div class="loader-logo-container">
             <div class="loader-ring"></div>
             <img src="https://lh3.googleusercontent.com/d/1dYXge-LOCn-zhxGxdZL4TX8XrEPeBW36" alt="ARKON Loading">
@@ -990,7 +990,6 @@
         let selectedRoleType = null;
         let selectedSubmenuType = null;
 
-        // Функція для плавного показу анімації завантаження між екранами
         function showLoader(callback) {
             const loader = document.getElementById('loader-overlay');
             loader.classList.remove('hidden');
@@ -1147,7 +1146,6 @@
                 
                 hideAllViews();
                 
-                // Очищаємо форму при кожному переході між НРК та БпЛА
                 const formElem = document.getElementById('applicationForm');
                 if (formElem) formElem.reset();
                 customItems = [];
@@ -1183,24 +1181,16 @@
             });
         }
 
+        // Примусове повернення на головне меню входу при будь-якому завантаженні/оновленні сторінки
         window.addEventListener('load', function() {
             const loader = document.getElementById('loader-overlay');
             setTimeout(() => {
                 loader.classList.add('hidden');
             }, 500);
 
-            const hash = window.location.hash.replace('#', '').toLowerCase();
-            if (hash === 'bpla') {
-                switchPage('БпЛА');
-            } else if (hash === 'nrk') {
-                switchPage('НРК');
-            } else if (hash === 'admin') {
-                showAdminLogin();
-            } else if (hash === 'user') {
-                showUserSubmenu();
-            } else {
-                goToRoleMenu();
-            }
+            // Очищаємо хеш в url та завжди скидаємо на головне меню вибору ролі
+            window.location.hash = '';
+            goToRoleMenu();
         });
 
         const switchToStatusBtn = document.getElementById('switchToStatusBtn');
