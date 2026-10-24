@@ -8,6 +8,36 @@
     <link rel="shortcut icon" type="image/png" href="https://lh3.googleusercontent.com/d/1dYXge-LOCn-zhxGxdZL4TX8XrEPeBW36?v=2">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
     <style>
+        :root {
+            --bg-color: #121212;
+            --text-color: #ffffff;
+            --navbar-bg: #1a1a1a;
+            --border-color: #2c2c2c;
+            --card-bg: #1e1e1e;
+            --input-bg: #2c2c2c;
+            --input-border: #3c3c3c;
+            --input-text: #ffaa00;
+            --accent-color: #ffaa00;
+            --accent-hover: #e69900;
+            --secondary-bg: #383838;
+            --label-color: #b0b0b0;
+        }
+
+        [data-theme="light"] {
+            --bg-color: #f4f6f9;
+            --text-color: #212529;
+            --navbar-bg: #ffffff;
+            --border-color: #dee2e6;
+            --card-bg: #ffffff;
+            --input-bg: #f8f9fa;
+            --input-border: #ced4da;
+            --input-text: #0056b3;
+            --accent-color: #0056b3;
+            --accent-hover: #004085;
+            --secondary-bg: #e2e6ea;
+            --label-color: #495057;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
@@ -16,19 +46,20 @@
         }
 
         body {
-            background-color: #121212;
-            color: #ffffff;
+            background-color: var(--bg-color);
+            color: var(--text-color);
             display: flex;
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
             padding-bottom: 40px;
+            transition: background-color 0.3s, color 0.3s;
         }
 
         .navbar {
             width: 100%;
-            background-color: #1a1a1a;
-            border-bottom: 1px solid #2c2c2c;
+            background-color: var(--navbar-bg);
+            border-bottom: 1px solid var(--border-color);
             padding: 14px 24px;
             display: flex;
             justify-content: space-between;
@@ -36,7 +67,8 @@
             position: sticky;
             top: 0;
             z-index: 900;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+            transition: background-color 0.3s, border-color 0.3s;
         }
 
         .navbar-brand {
@@ -61,7 +93,7 @@
         .navbar-title {
             font-size: 18px;
             font-weight: 700;
-            color: #ffffff;
+            color: var(--text-color);
             letter-spacing: 0.5px;
         }
 
@@ -77,9 +109,9 @@
         }
 
         .nav-switch-btn, .nav-home-btn {
-            background-color: #2c2c2c;
-            border: 1px solid #3c3c3c;
-            color: #b0b0b0;
+            background-color: var(--input-bg);
+            border: 1px solid var(--input-border);
+            color: var(--label-color);
             padding: 8px 16px;
             border-radius: 6px;
             font-weight: 600;
@@ -90,16 +122,36 @@
         }
 
         .nav-switch-btn:hover, .nav-home-btn:hover {
-            border-color: #ffaa00;
-            color: #ffaa00;
+            border-color: var(--accent-color);
+            color: var(--accent-color);
         }
 
         .nav-switch-btn.active {
-            background-color: #ffaa00 !important;
+            background-color: var(--accent-color) !important;
             color: #121212 !important;
-            border-color: #ffaa00 !important;
-            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
+            border-color: var(--accent-color) !important;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
             font-weight: 700;
+        }
+
+        .theme-toggle-btn {
+            background: none;
+            border: 1px solid var(--input-border);
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            width: 38px;
+            height: 38px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.2s;
+        }
+
+        .theme-toggle-btn:hover {
+            border-color: var(--accent-color);
         }
 
         .page-wrapper {
@@ -113,17 +165,18 @@
         }
 
         .menu-container {
-            background-color: #1e1e1e;
+            background-color: var(--card-bg);
             padding: 40px 30px;
             border-radius: 12px;
             width: 100%;
             max-width: 420px;
-            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.3);
             text-align: center;
+            transition: background-color 0.3s;
         }
 
         .menu-container h2 {
-            color: #ffaa00;
+            color: var(--accent-color);
             font-size: 22px;
             margin-bottom: 25px;
         }
@@ -131,9 +184,9 @@
         .menu-btn {
             width: 100%;
             padding: 15px;
-            background-color: #2c2c2c;
-            color: #ffffff;
-            border: 1px solid #3c3c3c;
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            border: 1px solid var(--input-border);
             border-radius: 8px;
             font-size: 16px;
             font-weight: 700;
@@ -145,14 +198,14 @@
         }
 
         .menu-btn:hover {
-            border-color: #ffaa00;
-            color: #ffaa00;
+            border-color: var(--accent-color);
+            color: var(--accent-color);
         }
 
         .menu-btn.selected {
-            border-color: #ffaa00;
-            background-color: #383838;
-            color: #ffaa00;
+            border-color: var(--accent-color);
+            background-color: var(--secondary-bg);
+            color: var(--accent-color);
         }
 
         .action-buttons-wrapper {
@@ -182,20 +235,20 @@
         }
 
         .btn-confirm-enter {
-            background-color: #ffaa00;
+            background-color: var(--accent-color);
             color: #121212;
         }
         .btn-confirm-enter:hover {
-            background-color: #e69900;
+            background-color: var(--accent-hover);
         }
 
         .btn-cancel-enter {
-            background-color: #383838;
-            color: #ffffff;
-            border: 1px solid #555;
+            background-color: var(--secondary-bg);
+            color: var(--text-color);
+            border: 1px solid var(--input-border);
         }
         .btn-cancel-enter:hover {
-            background-color: #444;
+            opacity: 0.9;
         }
 
         #loader-overlay {
@@ -204,7 +257,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: #121212;
+            background-color: var(--bg-color);
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -243,8 +296,8 @@
             width: 100%;
             height: 100%;
             border: 3px solid transparent;
-            border-top-color: #ffaa00;
-            border-bottom-color: #ffaa00;
+            border-top-color: var(--accent-color);
+            border-bottom-color: var(--accent-color);
             border-radius: 50%;
             animation: spinPulse 1.2s linear infinite;
             z-index: 1;
@@ -259,20 +312,21 @@
         .loader-text {
             margin-top: 20px;
             font-size: 14px;
-            color: #ffaa00;
+            color: var(--accent-color);
             letter-spacing: 2px;
             font-weight: 600;
             text-transform: uppercase;
         }
 
         .form-container {
-            background-color: #1e1e1e;
+            background-color: var(--card-bg);
             padding: 35px 30px;
             border-radius: 12px;
             width: 100%;
             max-width: 500px;
-            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.3);
             margin: 20px 15px;
+            transition: background-color 0.3s;
         }
 
         @media (max-width: 480px) {
@@ -295,18 +349,20 @@
             display: block;
             font-size: 14px;
             margin-bottom: 6px;
-            color: #b0b0b0;
+            color: var(--label-color);
             font-weight: 500;
         }
 
+        /* Залізобетонний захист кольорів полів введення та автозаповнення */
         .form-group input,
-        .form-group select {
+        .form-group select,
+        .menu-container input {
             width: 100%;
             padding: 13px 15px;
-            background-color: #2c2c2c !important;
-            border: 1px solid #3c3c3c;
+            background-color: var(--input-bg) !important;
+            border: 1px solid var(--input-border);
             border-radius: 6px;
-            color: #ffaa00 !important;
+            color: var(--input-text) !important;
             font-size: 16px;
             outline: none;
             transition: border-color 0.3s, box-shadow 0.3s;
@@ -315,27 +371,30 @@
         .form-group input:-webkit-autofill,
         .form-group input:-webkit-autofill:hover, 
         .form-group input:-webkit-autofill:focus,
-        .form-group input:-webkit-autofill:active {
-            -webkit-box-shadow: 0 0 0 30px #2c2c2c inset !important;
-            -webkit-text-fill-color: #ffaa00 !important;
-            caret-color: #ffaa00 !important;
+        .form-group input:-webkit-autofill:active,
+        .menu-container input:-webkit-autofill {
+            -webkit-box-shadow: 0 0 0 30px var(--input-bg) inset !important;
+            -webkit-text-fill-color: var(--input-text) !important;
+            caret-color: var(--input-text) !important;
         }
 
         .form-group input:hover,
-        .form-group select:hover {
-            border-color: #ffaa00;
+        .form-group select:hover,
+        .menu-container input:hover {
+            border-color: var(--accent-color);
         }
 
         .form-group input:focus,
-        .form-group select:focus {
-            border-color: #ffaa00;
-            box-shadow: 0 0 5px rgba(255, 170, 0, 0.4);
-            background-color: #2c2c2c !important;
-            color: #ffaa00 !important;
+        .form-group select:focus,
+        .menu-container input:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 5px rgba(255, 170, 0, 0.3);
+            background-color: var(--input-bg) !important;
+            color: var(--input-text) !important;
         }
 
         .form-group input::placeholder {
-            color: #666666;
+            color: #888888;
         }
 
         .coord-container {
@@ -349,10 +408,10 @@
 
         .map-btn {
             padding: 0 16px;
-            background-color: #2c2c2c;
-            border: 1px solid #3c3c3c;
+            background-color: var(--input-bg);
+            border: 1px solid var(--input-border);
             border-radius: 6px;
-            color: #ffaa00;
+            color: var(--accent-color);
             font-size: 14px;
             font-weight: 600;
             cursor: pointer;
@@ -361,8 +420,8 @@
         }
 
         .map-btn:hover {
-            border-color: #ffaa00;
-            background-color: #383838;
+            border-color: var(--accent-color);
+            background-color: var(--secondary-bg);
         }
 
         .map-modal {
@@ -384,7 +443,7 @@
         }
 
         .map-modal-content {
-            background-color: #1e1e1e;
+            background-color: var(--card-bg);
             width: 100%;
             max-width: 600px;
             height: 550px;
@@ -392,17 +451,17 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            border: 1px solid #ffaa00;
+            border: 1px solid var(--accent-color);
             box-shadow: 0 4px 25px rgba(0,0,0,0.8);
         }
 
         .map-modal-header {
             padding: 12px 18px;
-            background-color: #2c2c2c;
+            background-color: var(--input-bg);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            color: #ffffff;
+            color: var(--text-color);
             font-size: 15px;
             font-weight: 600;
         }
@@ -410,7 +469,7 @@
         .close-map-btn {
             background: none;
             border: none;
-            color: #b0b0b0;
+            color: var(--label-color);
             font-size: 22px;
             cursor: pointer;
             transition: color 0.2s;
@@ -424,13 +483,13 @@
             flex: 1;
             width: 100%;
             height: 100%;
-            background-color: #2c2c2c;
+            background-color: var(--input-bg);
             cursor: crosshair !important;
         }
 
         .map-modal-footer {
             padding: 12px 18px;
-            background-color: #2c2c2c;
+            background-color: var(--input-bg);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -438,12 +497,12 @@
 
         .map-hint {
             font-size: 12px;
-            color: #b0b0b0;
+            color: var(--label-color);
         }
 
         .confirm-map-btn {
             padding: 9px 18px;
-            background-color: #ffaa00;
+            background-color: var(--accent-color);
             color: #121212;
             border: none;
             border-radius: 6px;
@@ -453,7 +512,7 @@
         }
 
         .confirm-map-btn:hover {
-            background-color: #e69900;
+            background-color: var(--accent-hover);
         }
 
         .multiselect-wrapper {
@@ -463,29 +522,20 @@
         .select-box {
             width: 100%;
             padding: 13px 15px;
-            background-color: #2c2c2c;
-            border: 1px solid #3c3c3c;
+            background-color: var(--input-bg);
+            border: 1px solid var(--input-border);
             border-radius: 6px;
-            color: #ffffff;
+            color: var(--text-color);
             font-size: 16px;
             cursor: pointer;
             display: flex;
             justify-content: space-between;
             align-items: center;
             transition: border-color 0.3s, box-shadow 0.3s;
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23b0b0b0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-            background-repeat: no-repeat;
-            background-position: right 15px center;
-            background-size: 16px;
         }
 
         .select-box:hover {
-            border-color: #ffaa00;
-        }
-
-        .multiselect-wrapper.active .select-box {
-            border-color: #ffaa00;
-            box-shadow: 0 0 5px rgba(255, 170, 0, 0.4);
+            border-color: var(--accent-color);
         }
 
         .dropdown-list {
@@ -494,14 +544,14 @@
             top: 100%;
             left: 0;
             width: 100%;
-            background-color: #2c2c2c;
-            border: 1px solid #ffaa00;
+            background-color: var(--input-bg);
+            border: 1px solid var(--accent-color);
             border-radius: 6px;
             margin-top: 5px;
             max-height: 220px;
             overflow-y: auto;
             z-index: 10;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
         }
 
         .dropdown-list.active {
@@ -515,21 +565,21 @@
             align-items: center;
             gap: 12px;
             font-size: 15px;
-            color: #ffffff;
-            border-bottom: 1px solid #383838;
+            color: var(--text-color);
+            border-bottom: 1px solid var(--input-border);
             transition: background 0.2s, color 0.2s;
         }
 
         .dropdown-item:hover {
-            background-color: #383838;
-            color: #ffaa00;
+            background-color: var(--secondary-bg);
+            color: var(--accent-color);
         }
 
         .dropdown-item input[type="checkbox"] {
             width: 18px;
             height: 18px;
             cursor: pointer;
-            accent-color: #ffaa00;
+            accent-color: var(--accent-color);
         }
 
         .other-input-container {
@@ -546,24 +596,22 @@
             flex: 1;
             padding: 10px 12px;
             font-size: 14px;
-            background-color: #2c2c2c !important;
-            border: 1px solid #3c3c3c;
+            background-color: var(--input-bg) !important;
+            border: 1px solid var(--input-border);
             border-radius: 6px;
-            color: #ffaa00 !important;
+            color: var(--input-text) !important;
             outline: none;
-            transition: border-color 0.3s;
         }
 
         .add-other-btn {
             padding: 0 16px;
-            background-color: #ffaa00;
+            background-color: var(--accent-color);
             color: #121212;
             border: none;
             border-radius: 6px;
             font-size: 14px;
             font-weight: 700;
             cursor: pointer;
-            transition: background-color 0.3s;
         }
 
         .field-warning {
@@ -591,22 +639,21 @@
         }
 
         .tag {
-            background-color: #383838;
-            color: #ffaa00;
+            background-color: var(--secondary-bg);
+            color: var(--accent-color);
             padding: 5px 10px;
             border-radius: 4px;
             font-size: 13px;
             display: flex;
             align-items: center;
             gap: 6px;
-            border: 1px solid #ffaa00;
+            border: 1px solid var(--accent-color);
         }
 
         .tag .remove-tag {
             cursor: pointer;
             font-weight: bold;
-            color: #b0b0b0;
-            transition: color 0.2s;
+            color: var(--label-color);
         }
 
         .tag .remove-tag:hover {
@@ -616,7 +663,7 @@
         .submit-btn {
             width: 100%;
             padding: 15px;
-            background-color: #ffaa00;
+            background-color: var(--accent-color);
             color: #121212;
             border: none;
             border-radius: 6px;
@@ -628,7 +675,7 @@
         }
 
         .submit-btn:hover {
-            background-color: #e69900;
+            background-color: var(--accent-hover);
         }
 
         .submit-btn:disabled {
@@ -641,8 +688,8 @@
             width: 100%;
             padding: 14px;
             background-color: transparent;
-            color: #ffaa00;
-            border: 2px solid #ffaa00;
+            color: var(--accent-color);
+            border: 2px solid var(--accent-color);
             border-radius: 6px;
             font-size: 16px;
             font-weight: 700;
@@ -663,13 +710,9 @@
             display: block;
         }
 
-        .form-container.hidden-view {
-            display: none;
-        }
-
         .status-result-card {
-            background-color: #2c2c2c;
-            border-left: 4px solid #ffaa00;
+            background-color: var(--input-bg);
+            border-left: 4px solid var(--accent-color);
             padding: 15px;
             border-radius: 6px;
             margin-top: 20px;
@@ -684,11 +727,11 @@
         .status-result-card p {
             margin-bottom: 8px;
             font-size: 14px;
-            color: #ddd;
+            color: var(--text-color);
         }
 
         .status-result-card p strong {
-            color: #ffaa00;
+            color: var(--accent-color);
         }
 
         .status-badge {
@@ -724,13 +767,13 @@
         }
 
         .success-modal-content {
-            background-color: #1e1e1e;
+            background-color: var(--card-bg);
             padding: 30px 20px;
             border-radius: 12px;
             max-width: 380px;
             width: 100%;
             text-align: center;
-            border: 1px solid #ffaa00;
+            border: 1px solid var(--accent-color);
             box-shadow: 0 4px 25px rgba(0,0,0,0.8);
         }
 
@@ -741,14 +784,14 @@
         }
 
         .success-modal-content p {
-            color: #ffffff;
+            color: var(--text-color);
             font-size: 15px;
             margin-bottom: 15px;
         }
 
         .success-modal-content .id-badge {
             display: inline-block;
-            background-color: #ffaa00;
+            background-color: var(--accent-color);
             color: #121212;
             font-size: 24px;
             font-weight: 800;
@@ -760,17 +803,15 @@
         .close-success-btn {
             width: 100%;
             padding: 12px;
-            background-color: #383838;
-            color: #ffffff;
-            border: 1px solid #ffaa00;
+            background-color: var(--secondary-bg);
+            color: var(--text-color);
+            border: 1px solid var(--accent-color);
             border-radius: 6px;
             font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.2s;
         }
-
         .close-success-btn:hover {
-            background-color: #ffaa00;
+            background-color: var(--accent-color);
             color: #121212;
         }
     </style>
@@ -789,6 +830,7 @@
                 <button type="button" class="nav-switch-btn" id="btnBpla" onclick="switchPage('БпЛА')">БпЛА</button>
             </div>
             <button type="button" class="nav-home-btn" id="navHomeBtn" onclick="goToRoleMenu()" style="display: none;">Вихід</button>
+            <button type="button" class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Змінити тему">🌙</button>
         </div>
     </header>
 
@@ -990,6 +1032,29 @@
         let selectedRoleType = null;
         let selectedSubmenuType = null;
 
+        function initTheme() {
+            const savedTheme = localStorage.getItem('arkon_theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            updateThemeIcon(savedTheme);
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('arkon_theme', newTheme);
+            updateThemeIcon(newTheme);
+        }
+
+        function updateThemeIcon(theme) {
+            const btn = document.getElementById('themeToggleBtn');
+            if (btn) {
+                btn.textContent = theme === 'light' ? '🌙' : '☀️';
+            }
+        }
+
+        initTheme();
+
         function showLoader(callback) {
             const loader = document.getElementById('loader-overlay');
             loader.classList.remove('hidden');
@@ -1181,14 +1246,12 @@
             });
         }
 
-        // Примусове повернення на головне меню входу при будь-якому завантаженні/оновленні сторінки
         window.addEventListener('load', function() {
             const loader = document.getElementById('loader-overlay');
             setTimeout(() => {
                 loader.classList.add('hidden');
             }, 500);
 
-            // Очищаємо хеш в url та завжди скидаємо на головне меню вибору ролі
             window.location.hash = '';
             goToRoleMenu();
         });
@@ -1402,10 +1465,10 @@
             tagsContainer.innerHTML = '';
             if (selectedCargo.length === 0) {
                 selectBox.textContent = "Оберіть варіанти...";
-                selectBox.style.color = "#ffffff";
+                selectBox.style.color = "var(--text-color)";
             } else {
                 selectBox.textContent = "Обрано: " + selectedCargo.length;
-                selectBox.style.color = "#ffaa00";
+                selectBox.style.color = "var(--accent-color)";
                 hideWarning('warning-cargo');
             }
 
