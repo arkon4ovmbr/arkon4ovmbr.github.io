@@ -31,6 +31,7 @@
             border-bottom: 1px solid #2c2c2c;
             padding: 14px 24px;
             display: flex;
+            justify-content: space-between;
             align-items: center;
             position: sticky;
             top: 0;
@@ -62,6 +63,25 @@
             font-weight: 700;
             color: #ffffff;
             letter-spacing: 0.5px;
+        }
+
+        .nav-switch-btn {
+            background-color: #2c2c2c;
+            border: 1px solid #3c3c3c;
+            color: #ffaa00;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+
+        .nav-switch-btn:hover {
+            background-color: #ffaa00;
+            color: #121212;
+            border-color: #ffaa00;
         }
 
         #loader-overlay {
@@ -199,14 +219,6 @@
 
         .form-group input::placeholder {
             color: #666666;
-        }
-
-        .form-group input:-webkit-autofill,
-        .form-group input:-webkit-autofill:hover, 
-        .form-group input:-webkit-autofill:focus {
-            -webkit-box-shadow: 0 0 0 30px #2c2c2c inset !important;
-            -webkit-text-fill-color: #ffaa00 !important;
-            caret-color: #ffaa00;
         }
 
         .coord-container {
@@ -425,11 +437,6 @@
             transition: border-color 0.3s;
         }
 
-        .other-input-container input:hover,
-        .other-input-container input:focus {
-            border-color: #ffaa00;
-        }
-
         .add-other-btn {
             padding: 0 16px;
             background-color: #ffaa00;
@@ -440,10 +447,6 @@
             font-weight: 700;
             cursor: pointer;
             transition: background-color 0.3s;
-        }
-
-        .add-other-btn:hover {
-            background-color: #e69900;
         }
 
         .field-warning {
@@ -657,11 +660,13 @@
 </head>
 <body>
 
+    <!-- Верхня панель навігації з кнопкою перемикання БпЛА -->
     <header class="navbar">
-        <a href="#" class="navbar-brand" onclick="location.reload(); return false;" title="Оновити сторінку">
+        <a href="#" class="navbar-brand" onclick="switchPage('nrk'); return false;" title="На головну">
             <img src="https://lh3.googleusercontent.com/d/1dYXge-LOCn-zhxGxdZL4TX8XrEPeBW36" alt="Логотип">
             <span class="navbar-title" id="navTitle">Новий запит НРК</span>
         </a>
+        <button type="button" class="nav-switch-btn" id="navSwitchBtn" onclick="togglePage()">БпЛА</button>
     </header>
 
     <div id="loader-overlay">
@@ -713,8 +718,9 @@
                         <label class="dropdown-item"><input type="checkbox" value="Засоби і обладнання"> Засоби і обладнання</label>
                         <label class="dropdown-item"><input type="checkbox" value="Засоби і обладнання БпЛА"> Засоби і обладнання БпЛА</label>
                         <label class="dropdown-item"><input type="checkbox" value="Озброєння"> Озброєння</label>
-                        <label class="dropdown-item"><input type="checkbox" value="Евак 300"> Евак 300</label>
-                        <label class="dropdown-item"><input type="checkbox" value="Евак 200"> Евак 200</label>
+                        <!-- Евакуація доступна тільки для НРК -->
+                        <label class="dropdown-item nrk-only"><input type="checkbox" value="Евак 300"> Евак 300</label>
+                        <label class="dropdown-item nrk-only"><input type="checkbox" value="Евак 200"> Евак 200</label>
                         <label class="dropdown-item"><input type="checkbox" id="otherCheckbox" value="Інше"> Інше</label>
                     </div>
                 </div>
@@ -803,29 +809,79 @@
     <script>
         const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbw0sYEcM0GJ_RNx8V0tmsRne_CAwwh6T3GQbgP9tSVpAMJvNxq0uMzkugrpKmGIQYNS7w/exec';
 
+        // Керування режимами НРК / БпЛА
+        let currentFormType = 'НРК';
+
+        function getRouteFromHash() {
+            const hash = window.location.hash.replace('#', '').toLowerCase();
+            return hash === 'bpla' ? 'БпЛА' : 'НРК';
+        }
+
+        function switchPage(type) {
+            currentFormType = type === 'БпЛА' ? 'БпЛА' : 'НРК';
+            window.location.hash = currentFormType === 'БпЛА' ? 'bpla' : 'nrk';
+            
+            const navTitle = document.getElementById('navTitle');
+            const navSwitchBtn = document.getElementById('navSwitchBtn');
+
+            if (currentFormType === 'БпЛА') {
+                navTitle.textContent = 'Новий запит БпЛА';
+                navSwitchBtn.textContent = 'НРК';
+            } else {
+                navTitle.textContent = 'Новий запит НРК';
+                navSwitchBtn.textContent = 'БпЛА';
+            }
+
+            // Ховаємо Евакуацію для БпЛА
+            document.querySelectorAll('.nrk-only').forEach(el => {
+                if (currentFormType === 'БпЛА') {
+                    el.style.display = 'none';
+                    const cb = el.querySelector('input[type="checkbox"]');
+                    if (cb && cb.checked) cb.checked = false;
+                } else {
+                    el.style.display = 'flex';
+                }
+            });
+
+            updateSelectedList();
+        }
+
+        function togglePage() {
+            if (currentFormType === 'НРК') {
+                switchPage('БпЛА');
+            } else {
+                switchPage('НРК');
+            }
+        }
+
+        window.addEventListener('hashchange', () => {
+            switchPage(getRouteFromHash());
+        });
+
         window.addEventListener('load', function() {
             setTimeout(() => {
                 const loader = document.getElementById('loader-overlay');
                 loader.classList.add('hidden');
             }, 600);
+
+            switchPage(getRouteFromHash());
         });
 
         const orderFormContainer = document.getElementById('orderFormContainer');
         const statusContainer = document.getElementById('statusContainer');
         const switchToStatusBtn = document.getElementById('switchToStatusBtn');
         const switchToFormBtn = document.getElementById('switchToFormBtn');
-        const navTitle = document.getElementById('navTitle');
 
         switchToStatusBtn.addEventListener('click', () => {
             orderFormContainer.classList.add('hidden-view');
             statusContainer.classList.add('active');
-            navTitle.textContent = 'Перевірка статусу';
+            document.getElementById('navTitle').textContent = 'Перевірка статусу';
         });
 
         switchToFormBtn.addEventListener('click', () => {
             statusContainer.classList.remove('active');
             orderFormContainer.classList.remove('hidden-view');
-            navTitle.textContent = 'Новий запит';
+            switchPage(currentFormType);
         });
 
         function getStatusBadgeHtml(statusText) {
@@ -867,7 +923,7 @@
             fetch(WEB_APP_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify({ action: 'check', id: idVal })
+                body: JSON.stringify({ action: 'check', id: idVal, formType: currentFormType })
             })
             .then(res => res.json())
             .then(resData => {
@@ -1009,7 +1065,13 @@
 
         function updateSelectedList() {
             const standardSelected = Array.from(checkboxes)
-                .filter(i => i.checked && i !== otherCheckbox)
+                .filter(i => {
+                    if (!i.checked || i === otherCheckbox) return false;
+                    if (currentFormType === 'БпЛА' && (i.value === 'Евак 300' || i.value === 'Евак 200')) {
+                        return false;
+                    }
+                    return true;
+                })
                 .map(i => i.value);
 
             selectedCargo = [...standardSelected, ...customItems];
@@ -1358,6 +1420,7 @@
 
             const formData = {
                 action: 'create',
+                formType: currentFormType, // Передаємо тип форми (НРК або БпЛА) для запису на відповідний аркуш
                 unit: unit,
                 phone: phone,
                 position: position,
