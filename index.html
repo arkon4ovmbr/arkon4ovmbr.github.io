@@ -48,6 +48,64 @@
             -webkit-tap-highlight-color: transparent;
         }
 
+        .icon {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+            display: inline-block;
+            vertical-align: middle;
+            flex-shrink: 0;
+        }
+        .icon-lg {
+            width: 20px;
+            height: 20px;
+            transition: transform 0.4s ease, opacity 0.4s ease;
+        }
+
+        @keyframes spinSync {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .sync-btn.syncing svg {
+            animation: spinSync 0.8s linear infinite;
+        }
+        .sync-btn.syncing {
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+            pointer-events: none;
+            opacity: 0.9;
+        }
+
+        *::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        *::-webkit-scrollbar-track {
+            background: var(--bg-color);
+            border-radius: 4px;
+        }
+        *::-webkit-scrollbar-thumb {
+            background: var(--input-border);
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+        *::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-color);
+        }
+
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button {
+            opacity: 0.8;
+            background: var(--secondary-bg);
+            border-left: 1px solid var(--input-border);
+            cursor: pointer;
+            filter: var(--spin-filter, invert(0.8) hue-rotate(180deg));
+        }
+        [data-theme="light"] input[type=number]::-webkit-inner-spin-button, 
+        [data-theme="light"] input[type=number]::-webkit-outer-spin-button {
+            filter: none;
+        }
+
         html, body {
             overflow-x: hidden;
             width: 100%;
@@ -118,7 +176,29 @@
             position: relative;
         }
 
-        /* Стилі для кнопки меню-бургера */
+        .session-timer-badge {
+            display: none;
+            align-items: center;
+            gap: 6px;
+            background-color: rgba(255, 77, 77, 0.15);
+            border: 1px solid #ff4d4d;
+            color: #ff4d4d;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            white-space: nowrap;
+            animation: pulseGlowRed 1.5s infinite;
+        }
+        .session-timer-badge.active {
+            display: flex;
+        }
+        @keyframes pulseGlowRed {
+            0% { box-shadow: 0 0 0 0 rgba(255, 77, 77, 0.4); }
+            70% { box-shadow: 0 0 0 8px rgba(255, 77, 77, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 77, 77, 0); }
+        }
+
         .burger-menu-wrapper {
             position: relative;
             display: none;
@@ -152,7 +232,6 @@
             transition: transform 0.3s ease;
         }
 
-        /* Поворот на 90 градусів робить горизонтальні лінії вертикальними */
         .burger-btn.active .burger-lines {
             transform: rotate(90deg);
         }
@@ -169,7 +248,6 @@
             background-color: var(--accent-color);
         }
 
-        /* Випадаюче меню навігації */
         .nav-dropdown {
             display: none;
             position: absolute;
@@ -230,8 +308,7 @@
             color: #ff4d4d;
         }
 
-        /* Кнопка зміни теми */
-        .theme-toggle-btn {
+        .theme-toggle-btn, .fullscreen-btn {
             background-color: var(--input-bg);
             border: 1px solid var(--input-border);
             color: var(--text-color);
@@ -247,14 +324,31 @@
             line-height: 1;
             padding: 0;
             outline: none;
-            transition: border-color 0.2s, background-color 0.2s;
+            transition: border-color 0.2s, background-color 0.2s, color 0.2s;
         }
 
-        .theme-toggle-btn:hover {
+        .logout-btn, .sync-btn {
+            background-color: var(--input-bg);
+            border: 1px solid var(--input-border);
+            color: var(--text-color);
+            padding: 8px 14px;
+            height: 38px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .theme-toggle-btn:hover, .fullscreen-btn:hover, .logout-btn:hover, .sync-btn:hover {
             border-color: var(--accent-color);
+            color: var(--accent-color);
         }
 
-        .theme-toggle-btn:focus {
+        .theme-toggle-btn:focus, .fullscreen-btn:focus, .logout-btn:focus, .sync-btn:focus {
             outline: none;
         }
 
@@ -268,6 +362,13 @@
             padding: 20px 12px;
         }
 
+        .page-wrapper.admin-mode {
+            justify-content: flex-start;
+            padding: 24px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
         .menu-container {
             background-color: var(--card-bg);
             padding: 40px 30px;
@@ -277,6 +378,7 @@
             box-shadow: 0 4px 25px rgba(0, 0, 0, 0.3);
             text-align: center;
             transition: background-color 0.3s;
+            border: 1px solid var(--border-color);
         }
 
         .menu-container h2 {
@@ -290,19 +392,19 @@
             padding: 15px;
             background-color: var(--input-bg);
             color: var(--text-color);
-            border: 1px solid var(--input-border);
+            border: 2px solid var(--input-border);
             border-radius: 8px;
             font-size: 16px;
             font-weight: 700;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.2s;
             margin-bottom: 15px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             outline: none;
         }
 
-        .menu-btn:hover {
+        body:not(.keyboard-navigating) .menu-btn:hover {
             border-color: var(--accent-color);
             color: var(--accent-color);
         }
@@ -336,25 +438,28 @@
             border-radius: 6px;
             font-weight: 700;
             cursor: pointer;
-            border: none;
+            border: 2px solid transparent;
             outline: none;
+            transition: all 0.2s;
         }
 
         .btn-confirm-enter {
             background-color: var(--accent-color);
             color: var(--accent-btn-text);
         }
-        .btn-confirm-enter:hover {
+        body:not(.keyboard-navigating) .btn-confirm-enter:hover {
             background-color: var(--accent-hover);
+            border-color: #ffffff;
         }
 
         .btn-cancel-enter {
             background-color: var(--secondary-bg);
             color: var(--text-color);
-            border: 1px solid var(--input-border);
+            border: 2px solid var(--input-border) !important;
         }
-        .btn-cancel-enter:hover {
-            opacity: 0.9;
+        body:not(.keyboard-navigating) .btn-cancel-enter:hover {
+            border-color: var(--accent-color) !important;
+            color: var(--accent-color);
         }
 
         #loader-overlay {
@@ -368,7 +473,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 9999;
+            z-index: 99999;
             transition: opacity 0.4s ease, visibility 0.4s ease;
         }
 
@@ -433,6 +538,7 @@
             box-shadow: 0 4px 25px rgba(0, 0, 0, 0.3);
             margin: 10px 0;
             transition: background-color 0.3s;
+            border: 1px solid var(--border-color);
         }
 
         @media (max-width: 480px) {
@@ -444,15 +550,18 @@
                 width: 32px;
             }
             .navbar-title {
-                font-size: 16px;
+                font-size: 15px;
             }
-            .burger-btn, .theme-toggle-btn {
+            .burger-btn, .theme-toggle-btn, .fullscreen-btn {
                 width: 36px;
                 height: 36px;
             }
             .form-container, .menu-container {
                 padding: 20px 15px;
                 border-radius: 10px;
+            }
+            .page-wrapper.admin-mode {
+                padding: 12px;
             }
         }
 
@@ -469,9 +578,8 @@
             font-weight: 500;
         }
 
-        .form-group input,
-        .form-group select,
-        .menu-container input {
+        .order-form-scope .form-group input,
+        .order-form-scope .form-group select {
             width: 100%;
             padding: 13px 15px;
             background-color: var(--input-bg) !important;
@@ -480,30 +588,27 @@
             color: var(--input-text) !important;
             font-size: 16px;
             outline: none;
-            transition: border-color 0.3s, box-shadow 0.3s;
+            transition: border-color 0.25s, box-shadow 0.25s;
         }
 
-        .form-group input:-webkit-autofill,
-        .form-group input:-webkit-autofill:hover, 
-        .form-group input:-webkit-autofill:focus,
-        .form-group input:-webkit-autofill:active,
-        .menu-container input:-webkit-autofill {
+        .order-form-scope .form-group input:-webkit-autofill,
+        .order-form-scope .form-group input:-webkit-autofill:hover, 
+        .order-form-scope .form-group input:-webkit-autofill:focus,
+        .order-form-scope .form-group input:-webkit-autofill:active {
             -webkit-box-shadow: 0 0 0 30px var(--input-bg) inset !important;
             -webkit-text-fill-color: var(--input-text) !important;
             caret-color: var(--input-text) !important;
         }
 
-        .form-group input:hover,
-        .form-group select:hover,
-        .menu-container input:hover {
+        body:not(.keyboard-navigating) .order-form-scope .form-group input:hover,
+        body:not(.keyboard-navigating) .order-form-scope .form-group select:hover {
             border-color: var(--accent-color);
         }
 
-        .form-group input:focus,
-        .form-group select:focus,
-        .menu-container input:focus {
+        .order-form-scope .form-group input:focus,
+        .order-form-scope .form-group select:focus {
             border-color: var(--accent-color);
-            box-shadow: 0 0 5px rgba(255, 170, 0, 0.3);
+            box-shadow: 0 0 8px rgba(255, 170, 0, 0.35);
             background-color: var(--input-bg) !important;
             color: var(--input-text) !important;
         }
@@ -524,17 +629,21 @@
         .map-btn {
             padding: 0 16px;
             background-color: var(--input-bg);
-            border: 1px solid var(--input-border);
+            border: 2px solid var(--input-border);
             border-radius: 6px;
             color: var(--accent-color);
             font-size: 14px;
             font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.3s, border-color 0.3s;
+            transition: all 0.2s;
             white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            outline: none;
         }
 
-        .map-btn:hover {
+        body:not(.keyboard-navigating) .map-btn:hover {
             border-color: var(--accent-color);
             background-color: var(--secondary-bg);
         }
@@ -547,7 +656,7 @@
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.85);
-            z-index: 1000;
+            z-index: 20000;
             justify-content: center;
             align-items: center;
             padding: 15px;
@@ -608,6 +717,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 10px;
         }
 
         .map-hint {
@@ -619,15 +729,11 @@
             padding: 9px 18px;
             background-color: var(--accent-color);
             color: var(--accent-btn-text);
-            border: none;
+            border: 2px solid transparent;
             border-radius: 6px;
             font-weight: 700;
             cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .confirm-map-btn:hover {
-            background-color: var(--accent-hover);
+            transition: all 0.2s;
         }
 
         .multiselect-wrapper {
@@ -646,11 +752,14 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            transition: border-color 0.3s, box-shadow 0.3s;
+            transition: border-color 0.25s, box-shadow 0.25s;
+            outline: none;
         }
 
-        .select-box:hover {
+        body:not(.keyboard-navigating) .select-box:hover,
+        .select-box:focus {
             border-color: var(--accent-color);
+            box-shadow: 0 0 8px rgba(255, 170, 0, 0.35);
         }
 
         .dropdown-list {
@@ -722,11 +831,12 @@
             padding: 0 16px;
             background-color: var(--accent-color);
             color: var(--accent-btn-text);
-            border: none;
+            border: 2px solid transparent;
             border-radius: 6px;
             font-size: 14px;
             font-weight: 700;
             cursor: pointer;
+            outline: none;
         }
 
         .field-warning {
@@ -780,16 +890,17 @@
             padding: 15px;
             background-color: var(--accent-color);
             color: var(--accent-btn-text);
-            border: none;
+            border: 2px solid transparent;
             border-radius: 6px;
             font-size: 16px;
             font-weight: 700;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: all 0.25s;
             margin-top: 10px;
+            outline: none;
         }
 
-        .submit-btn:hover {
+        body:not(.keyboard-navigating) .submit-btn:hover {
             background-color: var(--accent-hover);
         }
 
@@ -809,12 +920,13 @@
             font-size: 16px;
             font-weight: 700;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.25s;
             margin-top: 10px;
+            outline: none;
         }
 
-        .switch-view-btn:hover {
-            background-color: rgba(255, 170, 0, 0.1);
+        body:not(.keyboard-navigating) .switch-view-btn:hover {
+            background-color: rgba(255, 170, 0, 0.12);
         }
 
         .status-container {
@@ -857,6 +969,7 @@
             font-size: 13px;
         }
         .status-processing { background-color: #e0e0e0; color: #333333; }
+        .status-queued { background-color: #3b82f6; color: #ffffff; }
         .status-in-progress { background-color: #fde68a; color: #78350f; }
         .status-completed { background-color: #065f46; color: #ffffff; }
         .status-partially { background-color: #d9f99d; color: #166534; }
@@ -871,7 +984,7 @@
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.85);
-            z-index: 2000;
+            z-index: 20000;
             justify-content: center;
             align-items: center;
             padding: 20px;
@@ -920,27 +1033,726 @@
             padding: 12px;
             background-color: var(--secondary-bg);
             color: var(--text-color);
-            border: 1px solid var(--accent-color);
+            border: 2px solid var(--accent-color);
             border-radius: 6px;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
+            transition: all 0.2s;
         }
-        .close-success-btn:hover {
+
+        /* ==========================================
+           СТИЛІ АДМІН-ПАНЕЛІ
+           ========================================== */
+        .admin-wrapper {
+            flex: 1;
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .login-card {
+            background-color: var(--card-bg);
+            padding: 40px 30px;
+            border-radius: 12px;
+            max-width: 400px;
+            width: 100%;
+            margin: 40px auto;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.3);
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+
+        .login-card h2 {
+            color: var(--accent-color);
+            margin-bottom: 20px;
+        }
+
+        .password-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .password-container input {
+            width: 100%;
+            padding: 12px 40px 12px 15px;
+            background-color: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 6px;
+            color: var(--text-color);
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        body:not(.keyboard-navigating) .password-container input:hover {
+            border-color: var(--accent-color);
+        }
+
+        .password-container input:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 8px rgba(255, 170, 0, 0.35);
+        }
+
+        .eye-icon {
+            position: absolute;
+            right: 12px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            width: 22px;
+            height: 22px;
+            color: var(--label-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .eye-icon:hover {
+            color: var(--accent-color);
+        }
+
+        .standard-input {
+            width: 100%;
+            padding: 12px 15px;
+            background-color: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 6px;
+            color: var(--text-color);
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        body:not(.keyboard-navigating) .standard-input:hover {
+            border-color: var(--accent-color);
+        }
+        .standard-input:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 8px rgba(255, 170, 0, 0.35);
+        }
+
+        .primary-btn {
+            width: 100%;
+            padding: 14px;
             background-color: var(--accent-color);
             color: var(--accent-btn-text);
+            border: 2px solid transparent;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.25s;
+            outline: none;
+        }
+
+        body:not(.keyboard-navigating) .primary-btn:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .primary-btn:disabled {
+            background-color: #555555;
+            color: #888888;
+            cursor: not-allowed;
+        }
+
+        .unified-add-btn {
+            width: 172px;
+            height: 36px;
+            background-color: var(--accent-color);
+            color: var(--accent-btn-text);
+            border: 2px solid transparent;
+            border-radius: 6px;
+            padding: 0 10px 0 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.15s, box-shadow 0.2s, border-color 0.2s;
+            box-shadow: 0 2px 8px rgba(255, 170, 0, 0.25);
+            overflow: hidden;
+            flex-shrink: 0;
+            outline: none;
+        }
+        body:not(.keyboard-navigating) .unified-add-btn:hover {
+            background-color: var(--accent-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(255, 170, 0, 0.4);
+        }
+        .unified-add-btn .plus-box {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: 900;
+            line-height: 0.75;
+            flex-shrink: 0;
+            user-select: none;
+            transform: translateY(-1px);
+        }
+        .unified-add-btn .btn-label {
+            font-size: 13px;
+            font-weight: 700;
+            white-space: nowrap;
+            flex: 1;
+            text-align: center;
+            line-height: 1;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .tabs-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            background-color: var(--input-bg);
+            border: 1.5px solid var(--input-border);
+            color: var(--label-color);
+            border-radius: 6px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: border-color 0.2s, color 0.2s, box-shadow 0.2s, background-color 0.2s, transform 0.15s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            outline: none;
+        }
+
+        .tab-btn:hover,
+        .tab-btn:focus-visible {
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+            box-shadow: 0 0 10px rgba(255, 170, 0, 0.35);
+            transform: translateY(-1px);
+        }
+
+        .tab-btn.active {
+            background-color: var(--accent-color);
+            color: var(--accent-btn-text);
+            border-color: var(--accent-color);
+            box-shadow: 0 2px 10px rgba(255, 170, 0, 0.3);
+        }
+
+        .tab-btn.active:hover {
+            background-color: var(--accent-hover);
+            border-color: #ffffff;
+            color: var(--accent-btn-text);
+            box-shadow: 0 0 12px rgba(255, 170, 0, 0.55);
+        }
+
+        .table-controls-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .zoom-controls {
+            display: flex;
+            align-items: center;
+            background-color: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        .zoom-btn {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            padding: 6px 10px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+        }
+        .zoom-btn:hover {
+            background-color: var(--secondary-bg);
+            color: var(--accent-color);
+        }
+        .zoom-level {
+            padding: 0 6px;
+            font-size: 12px;
+            color: var(--label-color);
+            border-left: 1px solid var(--input-border);
+            border-right: 1px solid var(--input-border);
+        }
+
+        .search-box {
+            padding: 10px 15px;
+            background-color: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 6px;
+            color: var(--text-color);
+            font-size: 14px;
+            width: 230px;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .search-box:hover, .search-box:focus {
+            border-color: var(--accent-color);
+        }
+
+        .dashboard-section {
+            display: none;
+        }
+        .dashboard-section.active {
+            display: block;
+        }
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        .dash-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+        }
+        .dash-card.clickable {
+            cursor: pointer;
+        }
+        .dash-card.clickable:hover {
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(255, 170, 0, 0.2);
+        }
+        .dash-card h3 {
+            font-size: 18px;
+            color: var(--accent-color);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .dash-card .stat-number {
+            font-size: 38px;
+            font-weight: 800;
+            color: var(--text-color);
+            margin: 10px 0;
+        }
+        .dash-card p {
+            color: var(--label-color);
+            font-size: 14px;
+        }
+
+        .bg-assets-split {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin: 15px 0 10px 0;
+            gap: 8px;
+        }
+        .bg-asset-item {
+            text-align: center;
+            flex: 1;
+            padding: 8px;
+            background-color: var(--input-bg);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+        .bg-asset-item .sub-stat {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text-color);
+            margin-top: 4px;
+        }
+        .bg-asset-item .sub-label {
+            font-size: 11px;
+            color: var(--accent-color);
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 0 0 rgba(255, 170, 0, 0.4); border-color: var(--accent-color); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 170, 0, 0); border-color: var(--accent-color); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 170, 0, 0); border-color: var(--border-color); }
+        }
+        .dash-card.has-new {
+            animation: pulseGlow 2s infinite;
+            border-color: var(--accent-color);
+        }
+
+        .stats-filters {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .activity-log-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            grid-column: 1 / -1;
+        }
+        .activity-log-card h3 {
+            color: var(--accent-color);
+            font-size: 18px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .activity-list {
+            list-style: none;
+            max-height: 180px;
+            overflow-y: auto;
+        }
+        .activity-item {
+            font-size: 13px;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--label-color);
+            display: flex;
+            justify-content: space-between;
+        }
+        .activity-item span {
+            color: var(--text-color);
+        }
+
+        .custom-select-wrapper {
+            position: relative;
+            user-select: none;
+            width: 100%;
+        }
+        .custom-select {
+            position: relative;
+            background-color: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 6px;
+            padding: 12px 16px;
+            font-size: 15px;
+            color: var(--text-color);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            width: 100%;
+            outline: none;
+        }
+        .custom-select:hover, .custom-select.active, .custom-select:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 8px rgba(255, 170, 0, 0.35);
+        }
+        .custom-select::after {
+            content: "▼";
+            font-size: 10px;
+            margin-left: 10px;
+            color: var(--label-color);
+        }
+        .custom-options {
+            display: none;
+            position: fixed;
+            background-color: var(--card-bg);
+            border: 1px solid var(--accent-color);
+            border-radius: 6px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+            z-index: 99999;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+        .custom-options.active {
+            display: block;
+        }
+
+        .custom-option {
+            padding: 12px 16px;
+            font-size: 15px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+            transition: opacity 0.15s;
+            white-space: nowrap;
+            font-weight: 600;
+        }
+        .custom-option:last-child {
+            border-bottom: none;
+        }
+        .custom-option:hover, .custom-option.highlighted {
+            opacity: 0.8;
+            filter: brightness(1.15);
+        }
+        .custom-option.selected {
+            font-weight: 700;
+            outline: 2px solid var(--text-color);
+        }
+
+        .badge-bg { background-color: #065f46; color: #ffffff; padding: 6px 12px; border-radius: 6px; font-weight: 700; font-size: 14px; display: inline-block; cursor: pointer; border: none; text-align: center; }
+        .badge-nobg { background-color: #991b1b; color: #ffffff; padding: 6px 12px; border-radius: 6px; font-weight: 700; font-size: 14px; display: inline-block; cursor: pointer; border: none; text-align: center; }
+
+        .table-container {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            overflow-x: auto;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            padding: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 14px;
+            transition: font-size 0.1s ease-out;
+        }
+
+        th, td {
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--border-color);
+            white-space: nowrap;
+        }
+
+        th {
+            background-color: var(--secondary-bg);
+            color: var(--text-color);
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        tr:hover {
+            background-color: rgba(255, 170, 0, 0.03);
+        }
+
+        .coord-cell {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .copy-coords-btn {
+            background: none;
+            border: 1px solid var(--input-border);
+            color: var(--accent-color);
+            padding: 2px 6px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
+            white-space: nowrap;
+        }
+        .copy-coords-btn:hover {
+            background-color: var(--secondary-bg);
+        }
+
+        .action-btn-group {
+            display: flex;
+            gap: 6px;
+        }
+        .edit-btn {
+            background-color: var(--accent-color);
+            color: var(--accent-btn-text);
+            border: none;
+            padding: 6px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .edit-btn:hover {
+            background-color: var(--accent-hover);
+        }
+        .delete-btn {
+            background-color: #991b1b;
+            color: #ffffff;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .delete-btn:hover {
+            background-color: #7f1d1d;
+        }
+        .save-btn {
+            background-color: #065f46;
+            color: #ffffff;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .save-btn:hover {
+            background-color: #047857;
+        }
+
+        .table-input {
+            width: 100%;
+            padding: 6px 8px;
+            background-color: var(--input-bg);
+            border: 1px solid var(--accent-color);
+            border-radius: 4px;
+            color: var(--text-color);
+            font-size: 13px;
+        }
+
+        .section-header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .empty-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px;
+            text-align: center;
+        }
+        .empty-wrapper h3 {
+            color: var(--label-color);
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+
+        .admin-manage-section, .assets-section, .positions-section {
+            display: none;
+        }
+        .admin-manage-section.active, .assets-section.active, .positions-section.active {
+            display: block;
+        }
+
+        .custom-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            z-index: 20000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .custom-modal-overlay.active {
+            display: flex;
+        }
+        .custom-modal-content {
+            position: relative;
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 440px;
+            width: 100%;
+            text-align: left;
+            border: 1px solid var(--accent-color);
+            box-shadow: 0 4px 25px rgba(0,0,0,0.8);
+        }
+        .custom-modal-content h3 {
+            color: var(--accent-color);
+            font-size: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .modal-close-btn {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            background: none;
+            border: none;
+            color: var(--label-color);
+            font-size: 18px;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: background 0.2s, color 0.2s;
+        }
+        .modal-close-btn:hover {
+            background-color: var(--secondary-bg);
+            color: var(--text-color);
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+        .modal-btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: 6px;
+            font-weight: 700;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+            outline: none;
+        }
+        
+        body:not(.keyboard-navigating) .modal-btn:hover,
+        body:not(.keyboard-navigating) .close-success-btn:hover,
+        body:not(.keyboard-navigating) .confirm-map-btn:hover {
+            border-color: #ffffff !important;
+            background-color: var(--accent-hover) !important;
+            color: var(--accent-btn-text) !important;
+        }
+        
+        .modal-btn.keyboard-focused,
+        .close-success-btn.keyboard-focused,
+        .confirm-map-btn.keyboard-focused,
+        .menu-btn.keyboard-focused,
+        .btn-confirm-enter.keyboard-focused,
+        .btn-cancel-enter.keyboard-focused,
+        .primary-btn.keyboard-focused,
+        .submit-btn.keyboard-focused,
+        .switch-view-btn.keyboard-focused,
+        .map-btn.keyboard-focused,
+        .unified-add-btn.keyboard-focused {
+            border-color: #ffffff !important;
+            background-color: var(--accent-hover) !important;
+            color: var(--accent-btn-text) !important;
+            box-shadow: 0 0 15px rgba(255, 170, 0, 0.7) !important;
+            transform: scale(1.02);
+        }
+
+        .modal-btn-confirm {
+            background-color: var(--accent-color);
+            color: var(--accent-btn-text);
+        }
+        .modal-btn-cancel {
+            background-color: var(--secondary-bg);
+            color: var(--text-color);
+            border: 1px solid var(--input-border);
         }
     </style>
 </head>
 <body>
 
-    <!-- Верхня панель навігації -->
     <header class="navbar">
-        <a href="#" class="navbar-brand" onclick="goToRoleMenu(); return false;" title="На головну">
+        <a href="#" class="navbar-brand" onclick="handleLogoClick(); return false;" title="На головну">
             <img src="https://lh3.googleusercontent.com/d/1dYXge-LOCn-zhxGxdZL4TX8XrEPeBW36" alt="Логотип">
             <span class="navbar-title" id="navTitle">ARKON LOGISTIC</span>
         </a>
         <div class="nav-right-container">
-            <!-- Бургер-меню зі спадним списком -->
+            <div class="session-timer-badge" id="sessionTimerBadge" title="Час до автоматичного завершення сесії">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+                <span id="sessionTimerText">02:00</span>
+            </div>
+
             <div class="burger-menu-wrapper" id="burgerMenuWrapper">
                 <button type="button" class="burger-btn" id="burgerBtn" onclick="toggleBurgerMenu(event)" title="Меню">
                     <div class="burger-lines">
@@ -956,12 +1768,23 @@
                 </div>
             </div>
 
-            <!-- Іконка зміни теми (праворуч від меню) -->
-            <button type="button" class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Змінити тему">🌙</button>
+            <button type="button" class="fullscreen-btn" id="fullscreenBtn" onclick="toggleFullScreen()" title="Повний екран">
+                <svg id="fullscreenIcon" class="icon icon-lg" viewBox="0 0 24 24" style="stroke: currentColor; stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round;">
+                    <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+                </svg>
+            </button>
+
+            <button type="button" class="logout-btn" id="logoutBtn" onclick="logoutAdmin()" style="display: none;">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M16 17v-3H9v-4h7V7l5 5-5 5M14 2a2 2 0 0 1 2 2v2h-2V4H5v16h9v-2h2v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9z"/></svg>
+                Вихід
+            </button>
+
+            <button type="button" class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Змінити тему">
+                <svg id="themeIcon" class="icon icon-lg" viewBox="0 0 24 24" style="stroke: currentColor; stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round;"></svg>
+            </button>
         </div>
     </header>
 
-    <!-- Анімація завантаження -->
     <div id="loader-overlay" class="">
         <div class="loader-logo-container">
             <div class="loader-ring"></div>
@@ -970,8 +1793,7 @@
         <div class="loader-text">Завантаження...</div>
     </div>
 
-    <!-- Обгортка для центрування вікон -->
-    <div class="page-wrapper">
+    <div class="page-wrapper" id="mainPageWrapper">
 
         <!-- 1. ГОЛОВНЕ МЕНЮ ВИБОРУ РОЛІ -->
         <div class="menu-container" id="roleMenuContainer">
@@ -1003,24 +1825,32 @@
             <button type="button" class="switch-view-btn" onclick="goToRoleMenu()" style="margin-top: 15px;">Назад</button>
         </div>
 
-        <!-- 3. ФОРМА ВХОДУ АДМІНІСТРАТОРА -->
-        <div class="menu-container" id="adminLoginContainer" style="display: none;">
-            <h2>Вхід для адміністратора</h2>
+        <!-- 3. ЕКРАН АВТОРИЗАЦІЇ АДМІНІСТРАТОРА (СЕРВЕРНА АВТОРИЗАЦІЯ) -->
+        <div class="login-card" id="loginCard" style="display: none;">
+            <h2>Вхід адміністратора</h2>
             <div class="form-group">
                 <label for="adminLogin">Логін</label>
-                <input type="text" id="adminLogin" placeholder="Введіть логін">
+                <input type="text" id="adminLogin" class="standard-input" placeholder="Введіть логін" autocomplete="off">
             </div>
             <div class="form-group">
                 <label for="adminPass">Пароль</label>
-                <input type="password" id="adminPass" placeholder="Введіть пароль">
+                <div class="password-container">
+                    <input type="password" id="adminPass" placeholder="Введіть пароль" autocomplete="off">
+                    <button type="button" class="eye-icon" id="adminPassEye" tabindex="-1" onclick="togglePasswordVisibility('adminPass', this)" title="Показати/приховати пароль">
+                        <svg class="icon" viewBox="0 0 24 24" style="stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round;">
+                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                            <line x1="1" y1="1" x2="23" y2="23"></line>
+                        </svg>
+                    </button>
+                </div>
             </div>
-            <div class="field-warning" id="warning-admin-auth">Невірний логін або пароль!</div>
-            <button type="button" class="menu-btn primary" onclick="handleAdminLogin()" style="margin-top: 10px;">Увійти</button>
+            <div class="field-warning" id="loginWarning">Невірний логін або пароль!</div>
+            <button type="button" class="primary-btn" id="adminLoginSubmitBtn" onclick="loginAdmin()" style="margin-top: 10px;">Увійти</button>
             <button type="button" class="switch-view-btn" onclick="goToRoleMenu()">Назад</button>
         </div>
 
         <!-- 4. ОСНОВНА ФОРМА ЗАПИТУ -->
-        <div class="form-container" id="orderFormContainer" style="display: none;">
+        <div class="form-container order-form-scope" id="orderFormContainer" style="display: none;">
             <form id="applicationForm" novalidate>
                 <div class="form-group">
                     <label for="unit">1. Підрозділ *</label>
@@ -1044,7 +1874,10 @@
                     <label for="coordinates">4. Координати (MGRS) *</label>
                     <div class="coord-container">
                         <input type="text" id="coordinates" name="coordinates" placeholder="37U CP 12345 67890" maxlength="19">
-                        <button type="button" class="map-btn" id="openMapBtn">📍 Карта</button>
+                        <button type="button" class="map-btn" id="openMapBtn">
+                            <svg class="icon" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                            Карта
+                        </button>
                     </div>
                     <div class="field-warning" id="warning-coordinates">Формат: 37U CP 12345 67890</div>
                 </div>
@@ -1052,7 +1885,7 @@
                 <div class="form-group" id="cargoGroup">
                     <label>5. Вантаж *</label>
                     <div class="multiselect-wrapper" id="cargoSelectWrapper">
-                        <div class="select-box" id="cargoSelectBox">Оберіть варіанти...</div>
+                        <div class="select-box" id="cargoSelectBox" tabindex="0">Оберіть варіанти...</div>
                         <div class="dropdown-list" id="cargoDropdownList">
                             <label class="dropdown-item"><input type="checkbox" value="Паливо"> Паливо</label>
                             <label class="dropdown-item"><input type="checkbox" value="Їжа"> Їжа</label>
@@ -1106,14 +1939,14 @@
         </div>
 
         <!-- 5. ПЕРЕВІРКА СТАТУСУ -->
-        <div class="form-container status-container" id="statusContainer" style="display: none;">
+        <div class="form-container status-container order-form-scope" id="statusContainer" style="display: none;">
             <div class="form-group">
                 <label for="checkIdInput">Введіть № вашого запиту</label>
                 <input type="text" id="checkIdInput" placeholder="Наприклад: 1">
                 <div class="field-warning" id="warning-check-id">Заявку з таким ID не знайдено!</div>
             </div>
             <button type="button" class="submit-btn" id="checkStatusBtn">Перевірити</button>
-            <button type="button" class="switch-view-btn" id="switchToFormBtn">Назад до форми</button>
+            <button type="button" class="switch-view-btn" id="switchToFormBtn">Назад</button>
 
             <div class="status-result-card" id="statusResultCard">
                 <p><strong>ID:</strong> <span id="resId">-</span></p>
@@ -1124,9 +1957,214 @@
             </div>
         </div>
 
+        <!-- 6. ПАНЕЛЬ УПРАВЛІННЯ АДМІНІСТРАТОРА -->
+        <div class="admin-wrapper" id="adminDashboard" style="display: none;">
+            <div class="dashboard-header">
+                <div class="tabs-group">
+                    <button type="button" class="tab-btn active" id="tabDash" onclick="switchTab('Дашборд')">
+                        <svg class="icon" viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+                        Дашборд
+                    </button>
+                    <button type="button" class="tab-btn" id="tabNrk" onclick="switchTab('НРК')">Аркуш: НРК</button>
+                    <button type="button" class="tab-btn" id="tabBpla" onclick="switchTab('БпЛА')">Аркуш: БпЛА</button>
+                    <button type="button" class="tab-btn" id="tabAssets" onclick="switchTab('Засоби')">Засоби</button>
+                    <button type="button" class="tab-btn" id="tabPositions" onclick="switchTab('Позиції')">Позиції</button>
+                    <button type="button" class="tab-btn" id="tabAdmins" onclick="switchTab('Адміни')">
+                        <svg class="icon" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+                        Адміни
+                    </button>
+                </div>
+
+                <div class="table-controls-right">
+                    <button type="button" class="sync-btn" id="syncOrdersBtn" onclick="syncFromGoogleSheet(true)" title="Синхронізувати з Google Таблицями">
+                        <svg class="icon" viewBox="0 0 24 24"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg>
+                        <span id="syncOrdersBtnText">Оновити</span>
+                    </button>
+                    <div class="zoom-controls" id="tableZoomControls" style="display: none;">
+                        <button type="button" class="zoom-btn" onclick="changeTableZoom(-0.1)" title="Зменшити таблицю">Табл −</button>
+                        <span class="zoom-level" id="tableZoomLevelText">100%</span>
+                        <button type="button" class="zoom-btn" onclick="changeTableZoom(0.1)" title="Збільшити таблицю">Табл +</button>
+                        <button type="button" class="zoom-btn" onclick="resetTableZoom()" title="Скинути таблицю">⟲</button>
+                    </div>
+                    <input type="text" class="search-box" id="searchBox" placeholder="Пошук..." oninput="filterTable()" style="display: none;">
+                </div>
+            </div>
+
+            <!-- РОЗДІЛ ДАШБОРД -->
+            <div class="dashboard-section active" id="dashboardSection">
+                <div class="dashboard-grid">
+                    <div class="dash-card clickable" id="cardNrkNew" onclick="goToSheetNewOrders('НРК')">
+                        <h3>Нові запити НРК</h3>
+                        <div class="stat-number" id="newNrkCount">0</div>
+                        <p>Запити НРК зі статусом «Обробляється». Натисніть для переходу.</p>
+                    </div>
+
+                    <div class="dash-card clickable" id="cardBplaNew" onclick="goToSheetNewOrders('БпЛА')">
+                        <h3>Нові запити БпЛА</h3>
+                        <div class="stat-number" id="newBplaCount">0</div>
+                        <p>Запити БпЛА зі статусом «Обробляється». Натисніть для переходу.</p>
+                    </div>
+
+                    <div class="dash-card clickable" onclick="switchTab('Засоби')">
+                        <h3>Засоби БГ</h3>
+                        <div class="bg-assets-split">
+                            <div class="bg-asset-item">
+                                <div class="sub-label">НРК</div>
+                                <div class="sub-stat" id="bgNrkCount">0</div>
+                            </div>
+                            <div class="bg-asset-item">
+                                <div class="sub-label">БпЛА</div>
+                                <div class="sub-stat" id="bgBplaCount">0</div>
+                            </div>
+                        </div>
+                        <p style="text-align: center; margin-top: 5px;">Натисніть для переходу до обліку.</p>
+                    </div>
+
+                    <div class="dash-card clickable" onclick="switchTab('Позиції')">
+                        <h3>Позиції БГ</h3>
+                        <div class="stat-number" id="bgPositionsNames" style="text-align: center; font-size: 38px; word-break: break-word;">0</div>
+                        <p style="text-align: center; margin-top: 5px;">Натисніть для переходу до позицій.</p>
+                    </div>
+
+                    <div class="dash-card" style="grid-column: 1 / -1;">
+                        <h3>Аналітика запитів</h3>
+                        <div class="stats-filters">
+                            <div class="custom-select-wrapper" id="statStatusSelect">
+                                <div class="custom-select" tabindex="0" onclick="toggleCustomSelect(this, event)">Усі статуси</div>
+                                <div class="custom-options">
+                                    <div class="custom-option selected" data-value="Усі" onclick="selectCustomOption(this)" style="background-color: var(--input-bg); color: var(--text-color);">Усі статуси</div>
+                                    <div class="custom-option status-processing" data-value="Обробляється" onclick="selectCustomOption(this)">Обробляється</div>
+                                    <div class="custom-option status-queued" data-value="В черзі" onclick="selectCustomOption(this)">В черзі</div>
+                                    <div class="custom-option status-in-progress" data-value="Виконується" onclick="selectCustomOption(this)">Виконується</div>
+                                    <div class="custom-option status-completed" data-value="Виконано" onclick="selectCustomOption(this)">Виконано</div>
+                                    <div class="custom-option status-partially" data-value="Виконано частково" onclick="selectCustomOption(this)">Виконано частково</div>
+                                    <div class="custom-option status-failed" data-value="Не виконано" onclick="selectCustomOption(this)">Не виконано</div>
+                                    <div class="custom-option status-cancelled" data-value="Скасовано" onclick="selectCustomOption(this)">Скасовано</div>
+                                </div>
+                            </div>
+
+                            <div class="custom-select-wrapper" id="statPeriodSelect">
+                                <div class="custom-select" tabindex="0" onclick="toggleCustomSelect(this, event)">За весь час</div>
+                                <div class="custom-options">
+                                    <div class="custom-option selected" data-value="all" onclick="selectCustomOption(this)" style="background-color: var(--input-bg); color: var(--text-color);">За весь час</div>
+                                    <div class="custom-option" data-value="today" onclick="selectCustomOption(this)" style="background-color: var(--input-bg); color: var(--text-color);">Сьогодні</div>
+                                    <div class="custom-option" data-value="week" onclick="selectCustomOption(this)" style="background-color: var(--input-bg); color: var(--text-color);">За останній тиждень</div>
+                                    <div class="custom-option" data-value="month" onclick="selectCustomOption(this)" style="background-color: var(--input-bg); color: var(--text-color);">За останній місяць</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-number" id="filteredOrdersCount">0</div>
+                        <p>Кількість запитів за обраними критеріями</p>
+                    </div>
+
+                    <div class="activity-log-card">
+                        <h3>
+                            <svg class="icon" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                            Останні дії в системі
+                        </h3>
+                        <ul class="activity-list" id="activityList"></ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- РОЗДІЛ ЗАСОБИ -->
+            <div class="table-container assets-section" id="assetsSection">
+                <div class="section-header-container">
+                    <h3 style="color: var(--accent-color); font-size: 18px;">Облік засобів та техніки</h3>
+                    <div id="assetsTopBtnContainer" style="display: none;">
+                        <button type="button" class="unified-add-btn" onclick="openAddAssetModal()">
+                            <span class="plus-box">+</span>
+                            <span class="btn-label">Додати засіб</span>
+                        </button>
+                    </div>
+                </div>
+                <div id="assetsContentArea"></div>
+            </div>
+
+            <!-- РОЗДІЛ ПОЗИЦІЇ -->
+            <div class="table-container positions-section" id="positionsSection">
+                <div class="section-header-container">
+                    <h3 style="color: var(--accent-color); font-size: 18px;">Облік позицій</h3>
+                    <div id="positionsTopBtnContainer" style="display: none;">
+                        <button type="button" class="unified-add-btn" onclick="openAddPositionModal()">
+                            <span class="plus-box">+</span>
+                            <span class="btn-label">Додати позицію</span>
+                        </button>
+                    </div>
+                </div>
+                <div id="positionsContentArea"></div>
+            </div>
+
+            <!-- ТАБЛИЦЯ ЗАЯВОК (НРК / БпЛА) -->
+            <div class="table-container" id="ordersTableContainer" style="display: none;">
+                <table id="mainOrdersTable">
+                    <thead>
+                        <tr>
+                            <th>№</th>
+                            <th>Дата і час</th>
+                            <th>Підрозділ</th>
+                            <th>Контакт замовника</th>
+                            <th>Позиція</th>
+                            <th>Координати</th>
+                            <th>Вантаж</th>
+                            <th>Вага</th>
+                            <th>Позивний</th>
+                            <th>Контакт в/с</th>
+                            <th>Коментарі</th>
+                            <th>Статус</th>
+                            <th>Дії</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ordersTableBody"></tbody>
+                </table>
+            </div>
+
+            <!-- ВКЛАДКА КЕРУВАННЯ АДМІНІСТРАТОРАМИ -->
+            <div class="table-container admin-manage-section" id="adminsSection">
+                <h3 style="color: var(--accent-color); margin-bottom: 20px;">Додати нового адміністратора</h3>
+                <div class="form-group">
+                    <label for="newAdminLogin">Логін нового адміна</label>
+                    <input type="text" id="newAdminLogin" class="standard-input" placeholder="Введіть логін" autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label for="newAdminPass">Пароль</label>
+                    <div class="password-container">
+                        <input type="password" id="newAdminPass" placeholder="Введіть пароль" autocomplete="off">
+                        <button type="button" class="eye-icon" id="newAdminPassEye" tabindex="-1" onclick="togglePasswordVisibility('newAdminPass', this)" title="Показати/приховати пароль">
+                            <svg class="icon" viewBox="0 0 24 24" style="stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round;">
+                                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                                <line x1="1" y1="1" x2="23" y2="23"></line>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="newAdminRole">Роль</label>
+                    <input type="text" id="newAdminRole" class="standard-input" placeholder="Введіть роль (наприклад: Адміністратор, Оператор)" autocomplete="off">
+                </div>
+                <div class="field-warning" id="addAdminWarning">Заповніть усі поля або такий логін вже існує!</div>
+                <button type="button" class="primary-btn" id="createAdminSubmitBtn" onclick="validateAndShowAddModal()" style="margin-bottom: 25px;">Створити адміністратора</button>
+
+                <h3 style="color: var(--text-color); margin-bottom: 15px; font-size: 16px;">Список активних адміністраторів</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 35%; text-align: left;">Логін</th>
+                            <th style="width: 30%; text-align: center;">Роль</th>
+                            <th style="width: 35%; text-align: right;">Дія</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminsTableBody"></tbody>
+                </table>
+            </div>
+
+        </div>
+
     </div>
 
-    <!-- МОДАЛЬНІ ВІКНА -->
+    <!-- ==========================================
+         УСІ МОДАЛЬНІ ВІКНА
+         ========================================== -->
     <div class="map-modal" id="mapModal">
         <div class="map-modal-content">
             <div class="map-modal-header">
@@ -1136,7 +2174,10 @@
             <div id="map"></div>
             <div class="map-modal-footer">
                 <span class="map-hint" id="mapHint">Клікніть на карту для вибору</span>
-                <button type="button" class="confirm-map-btn" id="confirmMapBtn">Вибрати</button>
+                <div class="modal-buttons" style="margin-top: 0;">
+                    <button type="button" class="modal-btn modal-btn-confirm" id="confirmMapBtn" style="padding: 9px 18px;">Вибрати</button>
+                    <button type="button" class="modal-btn modal-btn-cancel" onclick="closeModal('mapModal')" style="padding: 9px 18px;">Скасувати</button>
+                </div>
             </div>
         </div>
     </div>
@@ -1146,7 +2187,224 @@
             <h3>Заявку прийнято!</h3>
             <p>Ваш індивідуальний номер заявки:</p>
             <div class="id-badge" id="displayId">№ ---</div>
-            <button type="button" class="close-success-btn" id="closeSuccessBtn">ЗАКРИТИ</button>
+            <div class="modal-buttons" style="margin-top: 10px;">
+                <button type="button" class="modal-btn close-success-btn" id="closeSuccessBtn">ЗАКРИТИ</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="custom-modal-overlay" id="noBgAssetsModal">
+        <div class="custom-modal-content" style="text-align: center;">
+            <button type="button" class="modal-close-btn" onclick="closeModal('noBgAssetsModal')">✕</button>
+            <h3 style="color: #ff4d4d; margin-bottom: 15px;">Увага</h3>
+            <p id="noBgModalText" style="color: var(--text-color); margin-bottom: 20px; font-size: 15px; line-height: 1.5;">БГ засобів станом на зараз немає, поверніться згодом.</p>
+            <div class="modal-buttons">
+                <button type="button" class="modal-btn modal-btn-confirm" onclick="closeModal('noBgAssetsModal')">Зрозуміло</button>
+                <button type="button" class="modal-btn modal-btn-cancel" onclick="openStatusCheckFromNoBgModal()">Перевірити статус</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="custom-modal-overlay" id="sessionWarningModal">
+        <div class="custom-modal-content" style="text-align: center;">
+            <h3 style="color: var(--accent-color); margin-bottom: 15px;">Попередження про неактивність</h3>
+            <p id="sessionWarningText" style="color: var(--text-color); margin-bottom: 20px; font-size: 15px; line-height: 1.5;">Ви не проявляли активності тривалий час. Сесія автоматично закриється через 02:00.</p>
+            <div class="modal-buttons">
+                <button type="button" class="modal-btn modal-btn-confirm" onclick="prolongSession()">Продовжити сесію</button>
+                <button type="button" class="modal-btn modal-btn-cancel" onclick="logoutAdmin()">Вийти зараз</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="custom-modal-overlay" id="sessionExpiredModal">
+        <div class="custom-modal-content" style="text-align: center;">
+            <button type="button" class="modal-close-btn" onclick="closeModal('sessionExpiredModal')">✕</button>
+            <h3 style="color: #ff4d4d; margin-bottom: 15px;">Сесію завершено</h3>
+            <p style="color: var(--text-color); margin-bottom: 20px; font-size: 15px; line-height: 1.5;">Вашу сесію адміністратора було автоматично закрито через відсутність активності.</p>
+            <div class="modal-buttons" style="justify-content: center;">
+                <button type="button" class="modal-btn modal-btn-confirm" style="flex: 0 0 160px;" onclick="closeModal('sessionExpiredModal')">Зрозуміло</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="custom-modal-overlay" id="addAssetModal">
+        <div class="custom-modal-content">
+            <button type="button" class="modal-close-btn" onclick="closeModal('addAssetModal')">✕</button>
+            <h3 id="assetModalTitle">Додати новий засіб</h3>
+            <input type="hidden" id="editAssetId">
+            <div class="form-group">
+                <label>Тип засобу</label>
+                <div class="custom-select-wrapper" id="assetTypeSelect">
+                    <div class="custom-select" tabindex="0" onclick="toggleCustomSelect(this, event)">Наземний</div>
+                    <div class="custom-options">
+                        <div class="custom-option selected" data-value="Наземний" onclick="selectAssetType(this)">Наземний</div>
+                        <div class="custom-option" data-value="Повітряний" onclick="selectAssetType(this)">Повітряний</div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="assetNameInput">Назва засобу</label>
+                <input type="text" id="assetNameInput" class="standard-input" placeholder="Введіть назву">
+            </div>
+            <div class="form-group">
+                <label for="assetSerialInput">Серійний номер</label>
+                <input type="text" id="assetSerialInput" class="standard-input" placeholder="Введіть серійний номер">
+            </div>
+            <div class="form-group">
+                <label for="assetPositionInput">Позиція (назва)</label>
+                <input type="text" id="assetPositionInput" class="standard-input" placeholder="Введіть назву позиції">
+            </div>
+            <div class="form-group">
+                <label>Стан засобу</label>
+                <div class="custom-select-wrapper" id="assetStatusSelect">
+                    <div class="custom-select badge-bg" tabindex="0" onclick="toggleCustomSelect(this, event)">БГ</div>
+                    <div class="custom-options">
+                        <div class="custom-option selected status-completed" data-value="БГ" onclick="selectAssetStatus(this)">БГ</div>
+                        <div class="custom-option status-failed" data-value="Не БГ" onclick="selectAssetStatus(this)">Не БГ</div>
+                    </div>
+                </div>
+            </div>
+            <div class="field-warning" id="addAssetWarning">Заповніть назву, серійний номер та позицію!</div>
+            <div class="modal-buttons">
+                <button type="button" class="modal-btn modal-btn-confirm" id="assetModalSubmitBtn" onclick="executeSaveAsset()">Зберегти</button>
+                <button type="button" class="modal-btn modal-btn-cancel" onclick="closeModal('addAssetModal')">Скасувати</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="custom-modal-overlay" id="addPositionModal">
+        <div class="custom-modal-content">
+            <button type="button" class="modal-close-btn" onclick="closeModal('addPositionModal')">✕</button>
+            <h3 id="positionModalTitle">Додати нову позицію</h3>
+            <input type="hidden" id="editPositionId">
+            <div class="form-group">
+                <label>Тип позиції</label>
+                <div class="custom-select-wrapper" id="positionTypeSelect">
+                    <div class="custom-select" tabindex="0" onclick="toggleCustomSelect(this, event)">НРК</div>
+                    <div class="custom-options">
+                        <div class="custom-option selected" data-value="НРК" onclick="selectCustomOption(this)">НРК</div>
+                        <div class="custom-option" data-value="БпЛА" onclick="selectCustomOption(this)">БпЛА</div>
+                        <div class="custom-option" data-value="НРК/БпЛА" onclick="selectCustomOption(this)">НРК/БпЛА</div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="positionNameInput">Назва позиції</label>
+                <input type="text" id="positionNameInput" class="standard-input" placeholder="Введіть назву позиції">
+            </div>
+            <div class="form-group">
+                <label for="positionPersonnelInput">Кількість в/с</label>
+                <input type="number" id="positionPersonnelInput" class="standard-input" placeholder="Введіть кількість особового складу" min="0">
+            </div>
+            <div class="field-warning" id="addPositionWarning">Введіть назву позиції!</div>
+            <div class="modal-buttons">
+                <button type="button" class="modal-btn modal-btn-confirm" id="positionModalSubmitBtn" onclick="executeSavePosition()">Зберегти</button>
+                <button type="button" class="modal-btn modal-btn-cancel" onclick="closeModal('addPositionModal')">Скасувати</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="custom-modal-overlay" id="editAdminModal">
+        <div class="custom-modal-content">
+            <button type="button" class="modal-close-btn" onclick="closeModal('editAdminModal')">✕</button>
+            <h3>Редагувати адміністратора</h3>
+            <input type="hidden" id="editAdminOriginalLogin">
+            <div class="form-group">
+                <label for="editAdminLoginInput">Логін</label>
+                <input type="text" id="editAdminLoginInput" class="standard-input" placeholder="Введіть логін" autocomplete="off">
+            </div>
+            <div class="form-group">
+                <label for="editAdminPassInput">Новий пароль (залиште порожнім, щоб не змінювати)</label>
+                <div class="password-container">
+                    <input type="password" id="editAdminPassInput" placeholder="Новий пароль" autocomplete="off">
+                    <button type="button" class="eye-icon" tabindex="-1" onclick="togglePasswordVisibility('editAdminPassInput', this)" title="Показати/приховати пароль">
+                        <svg class="icon" viewBox="0 0 24 24" style="stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round;">
+                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                            <line x1="1" y1="1" x2="23" y2="23"></line>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="editAdminRoleInput">Роль</label>
+                <input type="text" id="editAdminRoleInput" class="standard-input" placeholder="Введіть роль вручну" autocomplete="off">
+            </div>
+            <div class="field-warning" id="editAdminWarning">Заповніть логін та роль!</div>
+            <div class="modal-buttons">
+                <button type="button" class="modal-btn modal-btn-confirm" onclick="executeEditAdmin()">Зберегти</button>
+                <button type="button" class="modal-btn modal-btn-cancel" onclick="closeModal('editAdminModal')">Скасувати</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="custom-modal-overlay" id="addAdminModal">
+        <div class="custom-modal-content">
+            <button type="button" class="modal-close-btn" onclick="closeModal('addAdminModal')">✕</button>
+            <h3>Підтвердження</h3>
+            <p style="color: var(--text-color); margin-bottom: 20px; text-align: center;">Ви впевнені, що хочете додати нового адміністратора?</p>
+            <div class="modal-buttons">
+                <button type="button" class="modal-btn modal-btn-confirm" onclick="executeAddAdmin()">Так</button>
+                <button type="button" class="modal-btn modal-btn-cancel" onclick="closeModal('addAdminModal')">Скасувати</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="custom-modal-overlay" id="successAddModal">
+        <div class="custom-modal-content">
+            <button type="button" class="modal-close-btn" onclick="closeModal('successAddModal')">✕</button>
+            <h3 style="color: #4CAF50;">Успішно!</h3>
+            <p style="color: var(--text-color); margin-bottom: 20px; text-align: center;">Адміністратора успішно додано!</p>
+            <div class="modal-buttons" style="justify-content: center;">
+                <button type="button" class="modal-btn modal-btn-confirm" style="flex: 0 0 140px;" onclick="closeModal('successAddModal')">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="custom-modal-overlay" id="deleteAdminModal">
+        <div class="custom-modal-content">
+            <button type="button" class="modal-close-btn" onclick="closeModal('deleteAdminModal')">✕</button>
+            <h3>Видалення адміністратора</h3>
+            <p id="deleteAdminModalText" style="color: var(--text-color); margin-bottom: 20px; text-align: center;">Ви впевнені, що хочете видалити цього адміністратора?</p>
+            <div class="modal-buttons">
+                <button type="button" class="modal-btn modal-btn-confirm" style="background-color: #991b1b; color: #fff;" onclick="executeDeleteAdmin()">Видалити</button>
+                <button type="button" class="modal-btn modal-btn-cancel" onclick="closeModal('deleteAdminModal')">Скасувати</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="custom-modal-overlay" id="deleteOrderModal">
+        <div class="custom-modal-content">
+            <button type="button" class="modal-close-btn" onclick="closeModal('deleteOrderModal')">✕</button>
+            <h3>Видалення заявки</h3>
+            <p style="color: var(--text-color); margin-bottom: 20px; text-align: center;">Ви впевнені, що хочете видалити цю заявку?</p>
+            <div class="modal-buttons">
+                <button type="button" class="modal-btn modal-btn-confirm" style="background-color: #991b1b; color: #fff;" onclick="executeDeleteOrder()">Видалити</button>
+                <button type="button" class="modal-btn modal-btn-cancel" onclick="closeModal('deleteOrderModal')">Скасувати</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="custom-modal-overlay" id="deleteAssetModal">
+        <div class="custom-modal-content">
+            <button type="button" class="modal-close-btn" onclick="closeModal('deleteAssetModal')">✕</button>
+            <h3>Видалення засобу</h3>
+            <p style="color: var(--text-color); margin-bottom: 20px; text-align: center;">Ви впевнені, що хочете видалити цей засіб з обліку?</p>
+            <div class="modal-buttons">
+                <button type="button" class="modal-btn modal-btn-confirm" style="background-color: #991b1b; color: #fff;" onclick="executeDeleteAsset()">Видалити</button>
+                <button type="button" class="modal-btn modal-btn-cancel" onclick="closeModal('deleteAssetModal')">Скасувати</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="custom-modal-overlay" id="deletePositionModal">
+        <div class="custom-modal-content">
+            <button type="button" class="modal-close-btn" onclick="closeModal('deletePositionModal')">✕</button>
+            <h3>Видалення позиції</h3>
+            <p style="color: var(--text-color); margin-bottom: 20px; text-align: center;">Ви впевнені, що хочете видалити цю позицію?</p>
+            <div class="modal-buttons">
+                <button type="button" class="modal-btn modal-btn-confirm" style="background-color: #991b1b; color: #fff;" onclick="executeDeletePosition()">Видалити</button>
+                <button type="button" class="modal-btn modal-btn-cancel" onclick="closeModal('deletePositionModal')">Скасувати</button>
+            </div>
         </div>
     </div>
 
@@ -1159,12 +2417,285 @@
         let selectedRoleType = null;
         let selectedSubmenuType = null;
 
+        // Вразливі дані ВИДАЛЕНО з клієнтського коду. Заповнюються виключно після серверної авторизації за токеном!
+        let adminSessionToken = sessionStorage.getItem('arkon_admin_token') || '';
+        let loggedAdminUser = sessionStorage.getItem('arkon_admin_user') || '';
+
+        let ordersData = { 'НРК': [], 'БпЛА': [] };
+        let assetsData = [];
+        let positionsData = [];
+        let adminsData = [];
+        let activityLog = [];
+        let publicBgAvailability = { nrkAvailable: true, bplaAvailable: true };
+
+        let currentTab = 'Дашборд';
+        let itemToDelete = null;
+        let assetToDelete = null;
+        let positionToDelete = null;
+        let editingOrderId = null;
+        let viewedNewOrders = JSON.parse(sessionStorage.getItem('arkon_viewed_new')) || { 'НРК': false, 'БпЛА': false };
+
+        // Універсальний виклик захищеного API адмін-панелі
+        function callAdminApi(payload, onSuccess, onError) {
+            if (!adminSessionToken) {
+                forceLogoutUnauthorized();
+                return;
+            }
+            payload.token = adminSessionToken;
+
+            const syncBtn = document.getElementById('syncOrdersBtn');
+            const syncText = document.getElementById('syncOrdersBtnText');
+            if (syncBtn) {
+                syncBtn.classList.add('syncing');
+                if (syncText) syncText.textContent = 'Оновлення...';
+            }
+
+            fetch(WEB_APP_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(payload)
+            })
+            .then(res => res.json())
+            .then(resData => {
+                if (syncBtn) {
+                    syncBtn.classList.remove('syncing');
+                    if (syncText) syncText.textContent = 'Оновити';
+                }
+                if (resData.status === 'unauthorized') {
+                    forceLogoutUnauthorized();
+                    return;
+                }
+                if (resData.status === 'success') {
+                    applyServerAdminState(resData);
+                    if (onSuccess) onSuccess(resData);
+                } else {
+                    if (onError) onError(resData.message || 'Помилка виконання запиту');
+                    else alert(resData.message || 'Помилка сервера');
+                }
+            })
+            .catch(err => {
+                if (syncBtn) {
+                    syncBtn.classList.remove('syncing');
+                    if (syncText) syncText.textContent = 'Оновити';
+                }
+                if (onError) onError('Помилка зʼєднання з сервером');
+            });
+        }
+
+        function applyServerAdminState(resData) {
+            if (resData.orders) ordersData = resData.orders;
+            if (resData.assets) assetsData = resData.assets;
+            if (resData.positions) positionsData = resData.positions;
+            if (resData.admins) adminsData = resData.admins;
+            if (resData.logs) activityLog = resData.logs;
+
+            if (loggedAdminUser) {
+                updateDashboardCounters();
+                renderActivityLog();
+                if (currentTab === 'Засоби') renderAssetsSection();
+                else if (currentTab === 'Позиції') renderPositionsSection();
+                else if (currentTab === 'Адміни') renderAdminsTable();
+                else if (currentTab === 'НРК' || currentTab === 'БпЛА') renderTable();
+            }
+        }
+
+        function syncFromGoogleSheet(showNotification = false) {
+            callAdminApi({ action: 'getAdminData' }, () => {
+                if (showNotification) {
+                    renderActivityLog();
+                }
+            });
+        }
+
+        function forceLogoutUnauthorized() {
+            stopAdminSessionTimers();
+            sessionStorage.removeItem('arkon_admin_token');
+            sessionStorage.removeItem('arkon_admin_user');
+            adminSessionToken = '';
+            loggedAdminUser = '';
+            ordersData = { 'НРК': [], 'БпЛА': [] };
+            assetsData = [];
+            positionsData = [];
+            adminsData = [];
+            hideAllViews();
+            document.getElementById('roleMenuContainer').style.display = 'block';
+            document.getElementById('navTitle').textContent = 'ARKON LOGISTIC';
+            window.location.hash = '';
+        }
+
+        // Отримання публічного статусу наявності БГ засобів (без пароля і без розкриття даних)
+        function refreshPublicBgAvailability(callback) {
+            fetch(WEB_APP_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({ action: 'checkBgAvailability' })
+            })
+            .then(res => res.json())
+            .then(resData => {
+                if (resData && resData.status === 'success') {
+                    publicBgAvailability.nrkAvailable = !!resData.nrkAvailable;
+                    publicBgAvailability.bplaAvailable = !!resData.bplaAvailable;
+                }
+                if (callback) callback();
+            })
+            .catch(() => {
+                if (callback) callback();
+            });
+        }
+
+        // =========================================================================
+        // ТАЙМЕР НЕАКТИВНОСТІ АДМІНА (5 ХВ ТИШІ -> 30 ХВ ПРИХОВАНИЙ ВІДЛІК -> ПОКАЗ ЗА 2 ХВ)
+        // =========================================================================
+        const IDLE_WAIT_MS = 5 * 60 * 1000;      // 5 хвилин без активності до старту відліку
+        const COUNTDOWN_TOTAL_SEC = 30 * 60;     // 30 хвилин зворотного відліку (1800 сек)
+        const WARNING_MODAL_SEC = 2 * 60;        // Відображення таймера та модалки лише за 2 хв (120 сек) до кінця
+
+        let idleWaitTimeout = null;
+        let sessionCountdownInterval = null;
+        let remainingSessionSec = COUNTDOWN_TOTAL_SEC;
+        let isCountingDown = false;
+
+        function formatTimerMMSS(totalSec) {
+            const m = String(Math.floor(totalSec / 60)).padStart(2, '0');
+            const s = String(totalSec % 60).padStart(2, '0');
+            return `${m}:${s}`;
+        }
+
+        function stopAdminSessionTimers() {
+            clearTimeout(idleWaitTimeout);
+            clearInterval(sessionCountdownInterval);
+            isCountingDown = false;
+            const badge = document.getElementById('sessionTimerBadge');
+            if (badge) badge.classList.remove('active');
+            const warnModal = document.getElementById('sessionWarningModal');
+            if (warnModal) warnModal.classList.remove('active');
+        }
+
+        function registerAdminActivity() {
+            if (!loggedAdminUser || !adminSessionToken) return;
+            const warnModal = document.getElementById('sessionWarningModal');
+            if (warnModal && warnModal.classList.contains('active')) return;
+
+            clearTimeout(idleWaitTimeout);
+            if (isCountingDown) {
+                clearInterval(sessionCountdownInterval);
+                isCountingDown = false;
+                const badge = document.getElementById('sessionTimerBadge');
+                if (badge) badge.classList.remove('active');
+            }
+
+            idleWaitTimeout = setTimeout(() => {
+                startAdmin30MinCountdown();
+            }, IDLE_WAIT_MS);
+        }
+
+        function startAdmin30MinCountdown() {
+            if (!loggedAdminUser || !adminSessionToken) return;
+            isCountingDown = true;
+            remainingSessionSec = COUNTDOWN_TOTAL_SEC;
+
+            const badge = document.getElementById('sessionTimerBadge');
+            const badgeText = document.getElementById('sessionTimerText');
+            const warnModal = document.getElementById('sessionWarningModal');
+            const warnText = document.getElementById('sessionWarningText');
+
+            if (badge) badge.classList.remove('active');
+
+            sessionCountdownInterval = setInterval(() => {
+                remainingSessionSec--;
+                const formatted = formatTimerMMSS(Math.max(0, remainingSessionSec));
+
+                if (remainingSessionSec <= WARNING_MODAL_SEC && remainingSessionSec > 0) {
+                    if (badge && badgeText) {
+                        badgeText.textContent = formatted;
+                        badge.classList.add('active');
+                    }
+                    if (!warnModal.classList.contains('active')) {
+                        warnModal.classList.add('active');
+                        clearContainerKeyboardFocus(warnModal);
+                    }
+                    warnText.textContent = `Ви не проявляли активності тривалий час. Сесія адміністратора автоматично закриється через ${formatted}.`;
+                }
+
+                if (remainingSessionSec <= 0) {
+                    stopAdminSessionTimers();
+                    forceLogoutDueToInactivity();
+                }
+            }, 1000);
+        }
+
+        function prolongSession() {
+            closeModal('sessionWarningModal');
+            const badge = document.getElementById('sessionTimerBadge');
+            if (badge) badge.classList.remove('active');
+            registerAdminActivity();
+            callAdminApi({ action: 'pingSession' });
+        }
+
+        function forceLogoutDueToInactivity() {
+            const oldToken = adminSessionToken;
+            if (oldToken) {
+                fetch(WEB_APP_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action: 'adminLogout', token: oldToken })
+                }).catch(() => {});
+            }
+            forceLogoutUnauthorized();
+            const expModal = document.getElementById('sessionExpiredModal');
+            expModal.classList.add('active');
+            clearContainerKeyboardFocus(expModal);
+        }
+
+        ['mousemove', 'mousedown', 'keydown', 'scroll', 'touchstart'].forEach(evt => {
+            document.addEventListener(evt, registerAdminActivity, { passive: true });
+        });
+
+        // =========================================================================
+        // ПЕРЕВІРКА НАЯВНОСТІ БГ ЗАСОБІВ ПЕРЕД ВІДКРИТТЯМ ФОРМИ КОРИСТУВАЧА
+        // =========================================================================
+        function checkBgAssetsAndOpenDirection(directionType) {
+            currentFormType = directionType === 'БпЛА' ? 'БпЛА' : 'НРК';
+            showLoader(() => {
+                refreshPublicBgAvailability(() => {
+                    const hasBgAssets = (currentFormType === 'БпЛА')
+                        ? publicBgAvailability.bplaAvailable
+                        : publicBgAvailability.nrkAvailable;
+
+                    if (!hasBgAssets) {
+                        const modal = document.getElementById('noBgAssetsModal');
+                        document.getElementById('noBgModalText').textContent = `БГ засобів (${currentFormType}) станом на зараз немає, поверніться згодом.`;
+                        modal.classList.add('active');
+                        clearContainerKeyboardFocus(modal);
+                        return;
+                    }
+
+                    switchPageDirect(currentFormType);
+                });
+            });
+        }
+
+        function openStatusCheckFromNoBgModal() {
+            closeModal('noBgAssetsModal');
+            showLoader(() => {
+                hideAllViews();
+                const statusCont = document.getElementById('statusContainer');
+                statusCont.style.display = 'block';
+                burgerMenuWrapper.style.display = 'block';
+                menuItemNrk.style.display = 'flex';
+                menuItemBpla.style.display = 'flex';
+                document.getElementById('navTitle').textContent = `Перевірка статусу (${currentFormType})`;
+                focusFirstInputInContainer(statusCont);
+            });
+        }
+
         // --- ЛОГІКА БУРГЕР-МЕНЮ ---
         const burgerMenuWrapper = document.getElementById('burgerMenuWrapper');
         const burgerBtn = document.getElementById('burgerBtn');
         const navDropdown = document.getElementById('navDropdown');
         const menuItemNrk = document.getElementById('menuItemNrk');
         const menuItemBpla = document.getElementById('menuItemBpla');
+        const mainPageWrapper = document.getElementById('mainPageWrapper');
 
         function toggleBurgerMenu(e) {
             e.stopPropagation();
@@ -1182,11 +2713,18 @@
             if (option === 'exit') {
                 goToRoleMenu();
             } else {
-                switchPage(option);
+                checkBgAssetsAndOpenDirection(option);
             }
         }
 
-        // Закриваємо меню при кліку поза ним
+        function handleLogoClick() {
+            if (loggedAdminUser && adminSessionToken) {
+                switchTab('Дашборд');
+            } else {
+                goToRoleMenu();
+            }
+        }
+
         document.addEventListener('click', function(e) {
             if (!burgerMenuWrapper.contains(e.target)) {
                 closeBurgerMenu();
@@ -1194,6 +2732,16 @@
         });
 
         // --- ЛОГІКА ТЕМИ ---
+        function updateThemeIcon(theme) {
+            const icon = document.getElementById('themeIcon');
+            if (!icon) return;
+            if (theme === 'light') {
+                icon.innerHTML = '<path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"/>';
+            } else {
+                icon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+            }
+        }
+
         function initTheme() {
             const savedTheme = localStorage.getItem('arkon_theme') || 'dark';
             document.documentElement.setAttribute('data-theme', savedTheme);
@@ -1207,13 +2755,6 @@
             localStorage.setItem('arkon_theme', newTheme);
             updateThemeIcon(newTheme);
             document.getElementById('themeToggleBtn').blur();
-        }
-
-        function updateThemeIcon(theme) {
-            const btn = document.getElementById('themeToggleBtn');
-            if (btn) {
-                btn.textContent = theme === 'light' ? '🌙' : '☀️';
-            }
         }
 
         initTheme();
@@ -1233,17 +2774,27 @@
         function hideAllViews() {
             document.getElementById('roleMenuContainer').style.display = 'none';
             document.getElementById('userSubmenuContainer').style.display = 'none';
-            document.getElementById('adminLoginContainer').style.display = 'none';
+            document.getElementById('loginCard').style.display = 'none';
             document.getElementById('orderFormContainer').style.display = 'none';
             document.getElementById('statusContainer').style.display = 'none';
+            document.getElementById('adminDashboard').style.display = 'none';
+            document.getElementById('logoutBtn').style.display = 'none';
+            mainPageWrapper.classList.remove('admin-mode');
             burgerMenuWrapper.style.display = 'none';
             closeBurgerMenu();
+            clearAllKeyboardFocus();
         }
 
         function goToRoleMenu() {
             showLoader(() => {
+                stopAdminSessionTimers();
+                sessionStorage.removeItem('arkon_admin_token');
+                sessionStorage.removeItem('arkon_admin_user');
+                adminSessionToken = '';
+                loggedAdminUser = '';
                 hideAllViews();
-                document.getElementById('roleMenuContainer').style.display = 'block';
+                const roleContainer = document.getElementById('roleMenuContainer');
+                roleContainer.style.display = 'block';
                 document.getElementById('navTitle').textContent = 'ARKON LOGISTIC';
                 
                 document.getElementById('roleUserBtn').classList.remove('selected');
@@ -1291,6 +2842,7 @@
             document.getElementById('roleAdminBtn').classList.remove('selected');
             document.getElementById('roleActionButtons').classList.remove('active');
             selectedRoleType = null;
+            clearContainerKeyboardFocus(document.getElementById('roleMenuContainer'));
         }
 
         function selectSubmenu(type) {
@@ -1318,7 +2870,7 @@
 
         function confirmSubmenuEntryFromButton() {
             if (selectedSubmenuType) {
-                switchPage(selectedSubmenuType);
+                checkBgAssetsAndOpenDirection(selectedSubmenuType);
             }
         }
 
@@ -1327,6 +2879,7 @@
             document.getElementById('subBplaBtn').classList.remove('selected');
             document.getElementById('submenuActionButtons').classList.remove('active');
             selectedSubmenuType = null;
+            clearContainerKeyboardFocus(document.getElementById('userSubmenuContainer'));
         }
 
         function showUserSubmenu() {
@@ -1335,7 +2888,6 @@
                 document.getElementById('userSubmenuContainer').style.display = 'block';
                 document.getElementById('navTitle').textContent = 'Вибір напрямку';
                 
-                // Показуємо бургер-меню (лише з кнопкою Вихід або всіма опціями)
                 burgerMenuWrapper.style.display = 'block';
                 menuItemNrk.style.display = 'flex';
                 menuItemBpla.style.display = 'flex';
@@ -1352,71 +2904,85 @@
         }
 
         function showAdminLogin() {
+            if (adminSessionToken && loggedAdminUser) {
+                showLoader(() => {
+                    openAdminDashboardView();
+                });
+                return;
+            }
             showLoader(() => {
                 hideAllViews();
-                document.getElementById('adminLoginContainer').style.display = 'block';
+                const loginCard = document.getElementById('loginCard');
+                loginCard.style.display = 'block';
+                document.getElementById('loginWarning').classList.remove('active');
                 document.getElementById('navTitle').textContent = 'Вхід адміністратора';
                 
-                // У вікні входу адміна в бургері залишаємо тільки "Вихід"
                 burgerMenuWrapper.style.display = 'block';
                 menuItemNrk.style.display = 'none';
                 menuItemBpla.style.display = 'none';
 
                 window.location.hash = 'admin';
+                focusFirstInputInContainer(loginCard);
             });
         }
 
-        function handleAdminLogin() {
-            const login = document.getElementById('adminLogin').value.trim();
-            const pass = document.getElementById('adminPass').value.trim();
-            const warning = document.getElementById('warning-admin-auth');
+        function openAdminDashboardView() {
+            hideAllViews();
+            mainPageWrapper.classList.add('admin-mode');
+            document.getElementById('adminDashboard').style.display = 'block';
+            document.getElementById('logoutBtn').style.display = 'flex';
+            document.getElementById('navTitle').textContent = 'ARKON LOGISTIC | АДМІН ПАНЕЛЬ';
+            window.location.hash = 'admin-panel';
+            switchTab('Дашборд', true);
+            registerAdminActivity();
+            syncFromGoogleSheet(false);
+        }
 
-            if (login === 'admin' && pass === 'arkon2026') {
-                warning.classList.remove('active');
-                alert('Успішний вхід адміністратора! (Тут буде панель управління)');
+        function switchPageDirect(type) {
+            currentFormType = type === 'БпЛА' ? 'БпЛА' : 'НРК';
+            window.location.hash = currentFormType === 'БпЛА' ? 'bpla' : 'nrk';
+            
+            hideAllViews();
+            
+            const formElem = document.getElementById('applicationForm');
+            if (formElem) formElem.reset();
+            customItems = [];
+            updateSelectedList();
+
+            const orderCont = document.getElementById('orderFormContainer');
+            orderCont.style.display = 'block';
+            burgerMenuWrapper.style.display = 'block';
+            menuItemNrk.style.display = 'flex';
+            menuItemBpla.style.display = 'flex';
+
+            const navTitle = document.getElementById('navTitle');
+
+            if (currentFormType === 'БпЛА') {
+                navTitle.textContent = 'Новий запит БпЛА';
+                menuItemBpla.classList.add('active-route');
+                menuItemNrk.classList.remove('active-route');
             } else {
-                warning.classList.add('active');
+                navTitle.textContent = 'Новий запит НРК';
+                menuItemNrk.classList.add('active-route');
+                menuItemBpla.classList.remove('active-route');
             }
+
+            document.querySelectorAll('.nrk-only').forEach(el => {
+                if (currentFormType === 'БпЛА') {
+                    el.style.display = 'none';
+                    const cb = el.querySelector('input[type="checkbox"]');
+                    if (cb && cb.checked) cb.checked = false;
+                } else {
+                    el.style.display = 'flex';
+                }
+            });
+
+            focusFirstInputInContainer(orderCont);
         }
 
         function switchPage(type) {
             showLoader(() => {
-                currentFormType = type === 'БпЛА' ? 'БпЛА' : 'НРК';
-                window.location.hash = currentFormType === 'БпЛА' ? 'bpla' : 'nrk';
-                
-                hideAllViews();
-                
-                const formElem = document.getElementById('applicationForm');
-                if (formElem) formElem.reset();
-                customItems = [];
-                updateSelectedList();
-
-                document.getElementById('orderFormContainer').style.display = 'block';
-                burgerMenuWrapper.style.display = 'block';
-                menuItemNrk.style.display = 'flex';
-                menuItemBpla.style.display = 'flex';
-
-                const navTitle = document.getElementById('navTitle');
-
-                if (currentFormType === 'БпЛА') {
-                    navTitle.textContent = 'Новий запит БпЛА';
-                    menuItemBpla.classList.add('active-route');
-                    menuItemNrk.classList.remove('active-route');
-                } else {
-                    navTitle.textContent = 'Новий запит НРК';
-                    menuItemNrk.classList.add('active-route');
-                    menuItemBpla.classList.remove('active-route');
-                }
-
-                document.querySelectorAll('.nrk-only').forEach(el => {
-                    if (currentFormType === 'БпЛА') {
-                        el.style.display = 'none';
-                        const cb = el.querySelector('input[type="checkbox"]');
-                        if (cb && cb.checked) cb.checked = false;
-                    } else {
-                        el.style.display = 'flex';
-                    }
-                });
+                switchPageDirect(type);
             });
         }
 
@@ -1426,30 +2992,40 @@
                 loader.classList.add('hidden');
             }, 500);
 
-            window.location.hash = '';
-            goToRoleMenu();
+            if (adminSessionToken && loggedAdminUser) {
+                openAdminDashboardView();
+            } else {
+                window.location.hash = '';
+                hideAllViews();
+                document.getElementById('roleMenuContainer').style.display = 'block';
+                document.getElementById('navTitle').textContent = 'ARKON LOGISTIC';
+            }
         });
 
+        // --- ПЕРЕВІРКА СТАТУСУ ---
         const switchToStatusBtn = document.getElementById('switchToStatusBtn');
         const switchToFormBtn = document.getElementById('switchToFormBtn');
 
         switchToStatusBtn.addEventListener('click', () => {
             showLoader(() => {
                 document.getElementById('orderFormContainer').style.display = 'none';
-                document.getElementById('statusContainer').style.display = 'block';
-                document.getElementById('navTitle').textContent = 'Перевірка статусу';
+                const statusCont = document.getElementById('statusContainer');
+                statusCont.style.display = 'block';
+                document.getElementById('navTitle').textContent = `Перевірка статусу (${currentFormType})`;
+                focusFirstInputInContainer(statusCont);
             });
         });
 
         switchToFormBtn.addEventListener('click', () => {
-            switchPage(currentFormType);
+            checkBgAssetsAndOpenDirection(currentFormType);
         });
 
         function getStatusBadgeHtml(statusText) {
             const cleanText = (statusText || '').trim();
             let cssClass = 'status-processing';
 
-            if (cleanText === 'Виконується') cssClass = 'status-in-progress';
+            if (cleanText === 'В черзі') cssClass = 'status-queued';
+            else if (cleanText === 'Виконується') cssClass = 'status-in-progress';
             else if (cleanText === 'Виконано') cssClass = 'status-completed';
             else if (cleanText === 'Виконано частково') cssClass = 'status-partially';
             else if (cleanText === 'Не виконано') cssClass = 'status-failed';
@@ -1490,30 +3066,28 @@
                 checkStatusBtn.disabled = false;
                 checkStatusBtn.textContent = 'Перевірити';
 
-                if (resData.status === 'success') {
-                    if (resData.found) {
-                        document.getElementById('resId').textContent = resData.data.id;
-                        document.getElementById('resUnit').textContent = resData.data.unit || '-';
-                        document.getElementById('resPosition').textContent = resData.data.position || '-';
-                        document.getElementById('resCargo').textContent = resData.data.cargo || '-';
-                        document.getElementById('resStatus').innerHTML = getStatusBadgeHtml(resData.data.orderStatus);
-                        statusResultCard.classList.add('active');
-                    } else {
-                        warningCheckId.textContent = 'Запит з таким № не знайдено!';
-                        warningCheckId.classList.add('active');
-                        statusResultCard.classList.remove('active');
-                    }
+                if (resData.status === 'success' && resData.found) {
+                    document.getElementById('resId').textContent = resData.data.id;
+                    document.getElementById('resUnit').textContent = resData.data.unit || '-';
+                    document.getElementById('resPosition').textContent = resData.data.position || '-';
+                    document.getElementById('resCargo').textContent = resData.data.cargo || '-';
+                    document.getElementById('resStatus').innerHTML = getStatusBadgeHtml(resData.data.orderStatus);
+                    statusResultCard.classList.add('active');
                 } else {
-                    alert('Помилка сервера: ' + resData.message);
+                    warningCheckId.textContent = 'Запит з таким № не знайдено!';
+                    warningCheckId.classList.add('active');
+                    statusResultCard.classList.remove('active');
                 }
             })
-            .catch(err => {
+            .catch(() => {
                 checkStatusBtn.disabled = false;
                 checkStatusBtn.textContent = 'Перевірити';
-                alert('Помилка зʼєднання з сервером!');
+                warningCheckId.textContent = 'Помилка зʼєднання з сервером!';
+                warningCheckId.classList.add('active');
             });
         });
 
+        // --- ЛОГІКА ФОРМИ ЗАПИТУ ---
         const form = document.getElementById('applicationForm');
         const submitBtn = document.getElementById('submitBtn');
         const cargoGroup = document.getElementById('cargoGroup');
@@ -1853,7 +3427,6 @@
 
                 return `${zoneNumber}${zoneLetter} ${colChar}${rowChar} ${e100k} ${n100k}`;
             } catch (err) {
-                console.error("MGRS error:", err);
                 return "37U CP 12345 67890";
             }
         }
@@ -1877,6 +3450,7 @@
 
         openMapBtn.addEventListener('click', function() {
             mapModal.classList.add('active');
+            clearContainerKeyboardFocus(mapModal);
 
             if (!map) {
                 map = L.map('map').setView([48.3794, 37.0000], 9);
@@ -1936,6 +3510,7 @@
                 coordInput.value = finalMgrsVal;
                 hideWarning('warning-coordinates');
                 mapModal.classList.remove('active');
+                document.getElementById('weight').focus();
             } else {
                 alert('Будь ласка, клікніть на карту, щоб обрати точку.');
             }
@@ -1948,8 +3523,10 @@
         closeSuccessBtn.addEventListener('click', () => {
             successModal.classList.remove('active');
             form.reset();
+            selectedCargo = [];
             customItems = [];
             updateSelectedList();
+            focusFirstInputInContainer(document.getElementById('orderFormContainer'));
         });
 
         form.addEventListener('submit', function(e) {
@@ -1963,6 +3540,7 @@
             const weight = document.getElementById('weight').value.trim();
             const callsign = document.getElementById('callsign').value.trim();
             const phone_position = document.getElementById('phone_position').value.trim();
+            const commentVal = document.getElementById('comment').value.trim();
 
             if (!unit) { showWarning('warning-unit'); isValid = false; }
             if (!phone || phone.length < 18) { showWarning('warning-phone'); isValid = false; }
@@ -1978,6 +3556,7 @@
             submitBtn.disabled = true;
             submitBtn.textContent = 'НАДСИЛАННЯ...';
 
+            const cargoJoined = selectedCargo.join(', ');
             const formData = {
                 action: 'create',
                 formType: currentFormType,
@@ -1985,11 +3564,11 @@
                 phone: phone,
                 position: position,
                 coordinates: coordinates,
-                cargo: selectedCargo.join(', '),
+                cargo: cargoJoined,
                 weight: weight,
                 callsign: callsign,
                 phone_position: phone_position,
-                comment: document.getElementById('comment').value.trim()
+                comment: commentVal
             };
 
             fetch(WEB_APP_URL, {
@@ -2003,17 +3582,1295 @@
                 submitBtn.textContent = 'НАДІСЛАТИ';
 
                 if (resData.status === 'success') {
+                    viewedNewOrders[currentFormType] = false;
+                    sessionStorage.setItem('arkon_viewed_new', JSON.stringify(viewedNewOrders));
                     displayId.textContent = '№ ' + resData.id;
                     successModal.classList.add('active');
+                    clearContainerKeyboardFocus(successModal);
                 } else {
                     alert('Помилка сервера: ' + resData.message);
                 }
             })
-            .catch(err => {
+            .catch(() => {
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'НАДІСЛАТИ';
                 alert('Помилка зʼєднання з сервером!');
             });
+        });
+
+        // =========================================================================
+        // ЄДИНА УНІВЕРСАЛЬНА СИСТЕМА КЕРУВАННЯ КЛАВІАТУРОЮ ТА МИШЕЮ ДЛЯ ВСЬОГО ДОДАТКА
+        // =========================================================================
+        function isElemVisible(el) {
+            if (!el) return false;
+            return !!(el.offsetWidth || el.offsetHeight || el.getClientRects().length);
+        }
+
+        function getActiveModalOverlay() {
+            return document.querySelector('.custom-modal-overlay.active, .success-modal.active, .map-modal.active');
+        }
+
+        function getActiveNavigationScope() {
+            const modal = getActiveModalOverlay();
+            if (modal) return modal;
+
+            const roleMenu = document.getElementById('roleMenuContainer');
+            if (isElemVisible(roleMenu)) return roleMenu;
+
+            const userSubmenu = document.getElementById('userSubmenuContainer');
+            if (isElemVisible(userSubmenu)) return userSubmenu;
+
+            const loginCard = document.getElementById('loginCard');
+            if (isElemVisible(loginCard)) return loginCard;
+
+            const orderForm = document.getElementById('orderFormContainer');
+            if (isElemVisible(orderForm)) return orderForm;
+
+            const statusView = document.getElementById('statusContainer');
+            if (isElemVisible(statusView)) return statusView;
+
+            const adminsSec = document.getElementById('adminsSection');
+            if (isElemVisible(adminsSec)) return adminsSec;
+
+            return null;
+        }
+
+        function clearContainerKeyboardFocus(container) {
+            if (!container) return;
+            container.querySelectorAll('.keyboard-focused').forEach(b => b.classList.remove('keyboard-focused'));
+        }
+
+        function clearAllKeyboardFocus() {
+            document.querySelectorAll('.keyboard-focused').forEach(b => b.classList.remove('keyboard-focused'));
+        }
+
+        function focusFirstInputInContainer(container) {
+            if (!container) return;
+            clearContainerKeyboardFocus(container);
+            const firstInput = Array.from(container.querySelectorAll('input:not([type="hidden"]):not([type="checkbox"])')).find(isElemVisible);
+            if (firstInput) {
+                setTimeout(() => {
+                    firstInput.focus();
+                    if (firstInput.type !== 'number' && firstInput.setSelectionRange) {
+                        const len = firstInput.value.length;
+                        firstInput.setSelectionRange(len, len);
+                    }
+                }, 50);
+            }
+        }
+
+        document.addEventListener('mousemove', function() {
+            if (document.body.classList.contains('keyboard-navigating')) {
+                document.body.classList.remove('keyboard-navigating');
+                clearAllKeyboardFocus();
+            }
+        });
+
+        document.addEventListener('mouseover', function(e) {
+            const btn = e.target.closest('button, .menu-btn, .modal-btn, .select-box, .custom-select');
+            if (btn && !document.body.classList.contains('keyboard-navigating')) {
+                clearAllKeyboardFocus();
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (activeDropdown && activeDropdown.classList.contains('active')) {
+                const options = Array.from(activeDropdown.querySelectorAll('.custom-option'));
+                let highlighted = activeDropdown.querySelector('.custom-option.highlighted') || activeDropdown.querySelector('.custom-option.selected');
+                let index = options.indexOf(highlighted);
+
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    index = (index + 1) % options.length;
+                    options.forEach(opt => opt.classList.remove('highlighted'));
+                    options[index].classList.add('highlighted');
+                    options[index].scrollIntoView({ block: 'nearest' });
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    index = (index - 1 + options.length) % options.length;
+                    options.forEach(opt => opt.classList.remove('highlighted'));
+                    options[index].classList.add('highlighted');
+                    options[index].scrollIntoView({ block: 'nearest' });
+                } else if (e.key === 'Enter') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (highlighted) highlighted.click();
+                } else if (e.key === 'Escape') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    activeDropdown.classList.remove('active');
+                    if (activeSelectDisplay) activeSelectDisplay.classList.remove('active');
+                    activeDropdown = null;
+                    activeSelectDisplay = null;
+                }
+                return;
+            }
+
+            if (dropdownList && dropdownList.classList.contains('active')) {
+                if (e.key === 'Escape') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    dropdownList.classList.remove('active');
+                    selectWrapper.classList.remove('active');
+                    selectBox.focus();
+                    return;
+                }
+            }
+
+            const scope = getActiveNavigationScope();
+            if (!scope) return;
+
+            const selector = [
+                'input:not([type="hidden"]):not([type="checkbox"])',
+                '.custom-select',
+                '.select-box',
+                '.menu-btn',
+                '.btn-confirm-enter',
+                '.btn-cancel-enter',
+                '.primary-btn',
+                '.submit-btn',
+                '.switch-view-btn',
+                '.map-btn',
+                '.modal-buttons .modal-btn',
+                '.close-success-btn',
+                '.confirm-map-btn'
+            ].join(', ');
+
+            const allFocusable = Array.from(scope.querySelectorAll(selector)).filter(el => isElemVisible(el) && !el.disabled);
+            if (allFocusable.length === 0) return;
+
+            const inputsAndSelects = allFocusable.filter(el => el.tagName === 'INPUT' || el.classList.contains('custom-select') || el.classList.contains('select-box'));
+            const buttons = allFocusable.filter(el => !inputsAndSelects.includes(el));
+
+            const activeEl = document.activeElement;
+            let currentFocusIdx = allFocusable.findIndex(el => el === activeEl || el.classList.contains('keyboard-focused'));
+
+            function focusScopeItem(idx) {
+                document.body.classList.add('keyboard-navigating');
+                clearContainerKeyboardFocus(scope);
+                const target = allFocusable[idx];
+                if (!target) return;
+
+                if (buttons.includes(target)) {
+                    if (activeEl && activeEl.blur && activeEl !== document.body) activeEl.blur();
+                    target.classList.add('keyboard-focused');
+                    target.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+                } else {
+                    target.focus();
+                    if (target.tagName === 'INPUT' && target.type !== 'number' && target.setSelectionRange) {
+                        const len = target.value.length;
+                        target.setSelectionRange(len, len);
+                    }
+                    target.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+                }
+            }
+
+            if (e.key === 'Tab') {
+                e.preventDefault();
+                e.stopPropagation();
+                if (e.shiftKey) {
+                    currentFocusIdx = (currentFocusIdx <= 0) ? allFocusable.length - 1 : currentFocusIdx - 1;
+                } else {
+                    currentFocusIdx = (currentFocusIdx + 1) % allFocusable.length;
+                }
+                focusScopeItem(currentFocusIdx);
+            } else if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                e.stopPropagation();
+                currentFocusIdx = (currentFocusIdx + 1) % allFocusable.length;
+                focusScopeItem(currentFocusIdx);
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                e.stopPropagation();
+                currentFocusIdx = (currentFocusIdx <= 0) ? allFocusable.length - 1 : currentFocusIdx - 1;
+                focusScopeItem(currentFocusIdx);
+            } else if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+                const isTypingInInput = activeEl && activeEl.tagName === 'INPUT';
+                if (!isTypingInInput && buttons.length > 0) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    document.body.classList.add('keyboard-navigating');
+                    let btnIdx = buttons.findIndex(b => b.classList.contains('keyboard-focused'));
+                    if (btnIdx !== -1) buttons[btnIdx].classList.remove('keyboard-focused');
+                    if (e.key === 'ArrowRight') {
+                        btnIdx = (btnIdx + 1) % buttons.length;
+                    } else {
+                        btnIdx = (btnIdx <= 0) ? buttons.length - 1 : btnIdx - 1;
+                    }
+                    if (activeEl && activeEl.blur && activeEl !== document.body) activeEl.blur();
+                    buttons[btnIdx].classList.add('keyboard-focused');
+                }
+            } else if (e.key === 'Enter') {
+                if (activeEl && activeEl.id === 'otherTextInput') return;
+
+                e.preventDefault();
+                e.stopPropagation();
+
+                const focusedBtn = buttons.find(b => b.classList.contains('keyboard-focused'));
+                if (focusedBtn) {
+                    focusedBtn.click();
+                    return;
+                }
+
+                if (activeEl && activeEl.classList.contains('custom-select')) {
+                    toggleCustomSelect(activeEl, e);
+                    return;
+                }
+                if (activeEl && activeEl.id === 'cargoSelectBox') {
+                    dropdownList.classList.toggle('active');
+                    selectWrapper.classList.toggle('active');
+                    return;
+                }
+
+                if (scope.id === 'roleMenuContainer' && selectedRoleType) {
+                    confirmRoleEntryFromButton();
+                    return;
+                }
+                if (scope.id === 'userSubmenuContainer' && selectedSubmenuType) {
+                    confirmSubmenuEntryFromButton();
+                    return;
+                }
+
+                if (activeEl && activeEl.tagName === 'INPUT') {
+                    const textInputs = inputsAndSelects.filter(el => el.tagName === 'INPUT');
+                    const idxInText = textInputs.indexOf(activeEl);
+                    const nextEmptyInput = textInputs.slice(idxInText + 1).find(inp => inp.id !== 'comment' && inp.id !== 'editAdminPassInput' && !inp.value.trim());
+
+                    if (nextEmptyInput) {
+                        focusScopeItem(allFocusable.indexOf(nextEmptyInput));
+                    } else if (idxInText !== -1 && idxInText < textInputs.length - 1 && !activeEl.value.trim() && activeEl.id !== 'editAdminPassInput') {
+                        focusScopeItem(allFocusable.indexOf(textInputs[idxInText + 1]));
+                    } else {
+                        const primaryActionBtn = scope.querySelector('.primary-btn, .submit-btn, .modal-btn-confirm, .close-success-btn, .confirm-map-btn');
+                        if (primaryActionBtn) {
+                            primaryActionBtn.click();
+                        } else if (buttons[0]) {
+                            buttons[0].click();
+                        }
+                    }
+                }
+            } else if (e.key === 'Escape') {
+                const modal = getActiveModalOverlay();
+                if (modal && modal.id !== 'sessionWarningModal') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    closeModal(modal.id);
+                }
+            }
+        }, true);
+
+        // --- МАСШТАБУВАННЯ ТАБЛИЦІ ---
+        let tableFontSize = 14;
+        function changeTableZoom(delta) {
+            tableFontSize = Math.min(Math.max(tableFontSize + (delta * 14), 9), 24);
+            applyTableZoom();
+        }
+        function resetTableZoom() {
+            tableFontSize = 14;
+            applyTableZoom();
+        }
+        function applyTableZoom() {
+            const table = document.getElementById('mainOrdersTable');
+            if (table) {
+                table.style.fontSize = `${Math.round(tableFontSize)}px`;
+                const percentage = Math.round((tableFontSize / 14) * 100);
+                document.getElementById('tableZoomLevelText').textContent = `${percentage}%`;
+            }
+        }
+
+        const tableContainerElem = document.getElementById('ordersTableContainer');
+        if (tableContainerElem) {
+            tableContainerElem.addEventListener('wheel', function(e) {
+                if (e.ctrlKey) {
+                    e.preventDefault();
+                    if (e.deltaY < 0) changeTableZoom(0.1);
+                    else changeTableZoom(-0.1);
+                }
+            }, { passive: false });
+        }
+
+        function renderActivityLog() {
+            const list = document.getElementById('activityList');
+            if (!list) return;
+            list.innerHTML = '';
+            activityLog.forEach(item => {
+                const li = document.createElement('li');
+                li.className = 'activity-item';
+                li.innerHTML = `<span>${item.text}</span> <i>${item.time}</i>`;
+                list.appendChild(li);
+            });
+        }
+
+        let activeDropdown = null;
+        let activeSelectDisplay = null;
+
+        function toggleCustomSelect(displayElem, e) {
+            if (e) e.stopPropagation();
+            const wrapper = displayElem.parentElement;
+            const options = wrapper.querySelector('.custom-options');
+            
+            if (activeDropdown && activeDropdown !== options) {
+                activeDropdown.classList.remove('active');
+                if (activeSelectDisplay) activeSelectDisplay.classList.remove('active');
+            }
+
+            if (options.classList.contains('active')) {
+                options.classList.remove('active');
+                displayElem.classList.remove('active');
+                activeDropdown = null;
+                activeSelectDisplay = null;
+            } else {
+                const rect = displayElem.getBoundingClientRect();
+                const dropdownHeight = 240;
+                const spaceBelow = window.innerHeight - rect.bottom;
+
+                const targetWidth = Math.max(rect.width, 180);
+                options.style.width = `${targetWidth}px`;
+
+                if (spaceBelow < dropdownHeight && rect.top > dropdownHeight) {
+                    options.style.top = `${rect.top - dropdownHeight - 4}px`;
+                } else {
+                    options.style.top = `${rect.bottom + 4}px`;
+                }
+                options.style.left = `${rect.left}px`;
+
+                options.classList.add('active');
+                displayElem.classList.add('active');
+                activeDropdown = options;
+                activeSelectDisplay = displayElem;
+            }
+        }
+
+        function selectCustomOption(optionElem) {
+            const wrapper = optionElem.closest('.custom-select-wrapper');
+            const selectDisplay = wrapper.querySelector('.custom-select');
+            const options = wrapper.querySelectorAll('.custom-option');
+
+            options.forEach(opt => opt.classList.remove('selected'));
+            optionElem.classList.add('selected');
+            selectDisplay.textContent = optionElem.textContent;
+
+            selectDisplay.className = 'custom-select';
+            for (let cls of optionElem.classList) {
+                if (cls.startsWith('status-')) {
+                    selectDisplay.classList.add(cls);
+                }
+            }
+
+            if (activeDropdown) activeDropdown.classList.remove('active');
+            if (activeSelectDisplay) activeSelectDisplay.classList.remove('active');
+            activeDropdown = null;
+            activeSelectDisplay = null;
+
+            updateStatistics();
+        }
+
+        function selectAssetType(optionElem) {
+            selectCustomOption(optionElem);
+        }
+
+        function selectAssetStatus(optionElem) {
+            const wrapper = optionElem.closest('.custom-select-wrapper');
+            const selectDisplay = wrapper.querySelector('.custom-select');
+            const options = wrapper.querySelectorAll('.custom-option');
+
+            options.forEach(opt => opt.classList.remove('selected'));
+            optionElem.classList.add('selected');
+            selectDisplay.textContent = optionElem.textContent;
+
+            selectDisplay.className = 'custom-select';
+            if (optionElem.getAttribute('data-value') === 'БГ') {
+                selectDisplay.classList.add('badge-bg');
+            } else {
+                selectDisplay.classList.add('badge-nobg');
+            }
+
+            if (activeDropdown) activeDropdown.classList.remove('active');
+            if (activeSelectDisplay) activeSelectDisplay.classList.remove('active');
+            activeDropdown = null;
+            activeSelectDisplay = null;
+        }
+
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.custom-select-wrapper') && !e.target.closest('.custom-options')) {
+                if (activeDropdown) activeDropdown.classList.remove('active');
+                if (activeSelectDisplay) activeSelectDisplay.classList.remove('active');
+                activeDropdown = null;
+                activeSelectDisplay = null;
+            }
+        });
+
+        function togglePasswordVisibility(inputId, btn) {
+            const input = document.getElementById(inputId);
+            const eyeSvg = btn.querySelector('svg');
+            if (input.type === 'password') {
+                input.type = 'text';
+                eyeSvg.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
+            } else {
+                input.type = 'password';
+                eyeSvg.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>';
+            }
+        }
+
+        // СЕРВЕРНИЙ ВХІД АДМІНІСТРАТОРА
+        function loginAdmin() {
+            const login = document.getElementById('adminLogin').value.trim();
+            const pass = document.getElementById('adminPass').value.trim();
+            const warning = document.getElementById('loginWarning');
+            const loginBtn = document.getElementById('adminLoginSubmitBtn');
+
+            warning.classList.remove('active');
+            if (!login || !pass) {
+                warning.textContent = 'Введіть логін та пароль!';
+                warning.classList.add('active');
+                return;
+            }
+
+            loginBtn.disabled = true;
+            loginBtn.textContent = 'ПЕРЕВІРКА...';
+
+            fetch(WEB_APP_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({ action: 'adminLogin', login: login, pass: pass })
+            })
+            .then(res => res.json())
+            .then(resData => {
+                loginBtn.disabled = false;
+                loginBtn.textContent = 'Увійти';
+
+                if (resData.status === 'success' && resData.token) {
+                    adminSessionToken = resData.token;
+                    loggedAdminUser = resData.login;
+                    sessionStorage.setItem('arkon_admin_token', adminSessionToken);
+                    sessionStorage.setItem('arkon_admin_user', loggedAdminUser);
+                    document.getElementById('adminPass').value = '';
+                    showLoader(() => {
+                        openAdminDashboardView();
+                    });
+                } else {
+                    warning.textContent = resData.message || 'Невірний логін або пароль!';
+                    warning.classList.add('active');
+                }
+            })
+            .catch(() => {
+                loginBtn.disabled = false;
+                loginBtn.textContent = 'Увійти';
+                warning.textContent = 'Помилка зʼєднання з сервером!';
+                warning.classList.add('active');
+            });
+        }
+
+        function logoutAdmin() {
+            const oldToken = adminSessionToken;
+            if (oldToken) {
+                fetch(WEB_APP_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action: 'adminLogout', token: oldToken })
+                }).catch(() => {});
+            }
+            showLoader(() => {
+                forceLogoutUnauthorized();
+            });
+        }
+
+        function applyTabSwitch(tab) {
+            currentTab = tab;
+            editingOrderId = null;
+            document.getElementById('tabDash').classList.toggle('active', tab === 'Дашборд');
+            document.getElementById('tabNrk').classList.toggle('active', tab === 'НРК');
+            document.getElementById('tabBpla').classList.toggle('active', tab === 'БпЛА');
+            document.getElementById('tabAssets').classList.toggle('active', tab === 'Засоби');
+            document.getElementById('tabPositions').classList.toggle('active', tab === 'Позиції');
+            document.getElementById('tabAdmins').classList.toggle('active', tab === 'Адміни');
+
+            const dashSection = document.getElementById('dashboardSection');
+            const ordersContainer = document.getElementById('ordersTableContainer');
+            const assetsSection = document.getElementById('assetsSection');
+            const positionsSection = document.getElementById('positionsSection');
+            const adminsSection = document.getElementById('adminsSection');
+            const searchBox = document.getElementById('searchBox');
+            const tableZoomControls = document.getElementById('tableZoomControls');
+
+            dashSection.classList.remove('active');
+            ordersContainer.style.display = 'none';
+            assetsSection.classList.remove('active');
+            positionsSection.classList.remove('active');
+            adminsSection.classList.remove('active');
+            searchBox.style.display = 'none';
+            tableZoomControls.style.display = 'none';
+
+            if (tab === 'Дашборд') {
+                dashSection.classList.add('active');
+                updateDashboardCounters();
+            } else if (tab === 'Засоби') {
+                assetsSection.classList.add('active');
+                renderAssetsSection();
+            } else if (tab === 'Позиції') {
+                positionsSection.classList.add('active');
+                renderPositionsSection();
+            } else if (tab === 'Адміни') {
+                adminsSection.classList.add('active');
+                renderAdminsTable();
+                focusFirstInputInContainer(adminsSection);
+            } else {
+                ordersContainer.style.display = 'block';
+                searchBox.style.display = 'block';
+                tableZoomControls.style.display = 'flex';
+                renderTable();
+            }
+        }
+
+        function switchTab(tab, skipLoader = false) {
+            if (skipLoader) {
+                applyTabSwitch(tab);
+            } else {
+                showLoader(() => {
+                    applyTabSwitch(tab);
+                });
+            }
+        }
+
+        function updateDashboardCounters() {
+            let nrkNew = 0;
+            let bplaNew = 0;
+
+            (ordersData['НРК'] || []).forEach(o => { if (o.status === 'Обробляється') nrkNew++; });
+            (ordersData['БпЛА'] || []).forEach(o => { if (o.status === 'Обробляється') bplaNew++; });
+
+            document.getElementById('newNrkCount').textContent = nrkNew;
+            document.getElementById('newBplaCount').textContent = bplaNew;
+
+            const bgNrk = assetsData.filter(a => a.status === 'БГ' && a.type === 'Наземний').length;
+            const bgBpla = assetsData.filter(a => a.status === 'БГ' && a.type === 'Повітряний').length;
+
+            document.getElementById('bgNrkCount').textContent = bgNrk;
+            document.getElementById('bgBplaCount').textContent = bgBpla;
+
+            let bgPositionsList = [];
+            positionsData.forEach(pos => {
+                const hasBgAssets = assetsData.some(a => a.position && a.position.toLowerCase() === pos.name.toLowerCase() && a.status === 'БГ');
+                if (hasBgAssets) {
+                    bgPositionsList.push(pos.name);
+                }
+            });
+
+            const posContainer = document.getElementById('bgPositionsNames');
+            if (bgPositionsList.length > 0) {
+                posContainer.textContent = bgPositionsList.join(', ');
+                posContainer.style.fontSize = '22px';
+            } else {
+                posContainer.textContent = '0';
+                posContainer.style.fontSize = '38px';
+            }
+
+            const cardNrk = document.getElementById('cardNrkNew');
+            const cardBpla = document.getElementById('cardBplaNew');
+
+            if (nrkNew > 0 && !viewedNewOrders['НРК']) {
+                cardNrk.classList.add('has-new');
+            } else {
+                cardNrk.classList.remove('has-new');
+            }
+
+            if (bplaNew > 0 && !viewedNewOrders['БпЛА']) {
+                cardBpla.classList.add('has-new');
+            } else {
+                cardBpla.classList.remove('has-new');
+            }
+
+            updateStatistics();
+        }
+
+        function goToSheetNewOrders(sheetName) {
+            viewedNewOrders[sheetName] = true;
+            sessionStorage.setItem('arkon_viewed_new', JSON.stringify(viewedNewOrders));
+            switchTab(sheetName);
+            setTimeout(() => {
+                document.getElementById('searchBox').value = 'Обробляється';
+                filterTable();
+            }, 100);
+        }
+
+        function updateStatistics() {
+            const statusOption = document.querySelector('#statStatusSelect .custom-option.selected');
+            const periodOption = document.querySelector('#statPeriodSelect .custom-option.selected');
+
+            const statusFilter = statusOption ? statusOption.getAttribute('data-value') : 'Усі';
+            const periodFilter = periodOption ? periodOption.getAttribute('data-value') : 'all';
+
+            let allOrders = [].concat(ordersData['НРК'] || [], ordersData['БпЛА'] || []);
+            const now = new Date();
+
+            const filtered = allOrders.filter(o => {
+                if (statusFilter !== 'Усі' && o.status !== statusFilter) return false;
+
+                if (periodFilter !== 'all') {
+                    const orderDate = new Date(o.date);
+                    if (periodFilter === 'today') {
+                        if (orderDate.toDateString() !== now.toDateString()) return false;
+                    } else if (periodFilter === 'week') {
+                        const diffTime = Math.abs(now - orderDate);
+                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                        if (diffDays > 7) return false;
+                    } else if (periodFilter === 'month') {
+                        if (orderDate.getMonth() !== now.getMonth() || orderDate.getFullYear() !== now.getFullYear()) return false;
+                    }
+                }
+                return true;
+            });
+
+            document.getElementById('filteredOrdersCount').textContent = filtered.length;
+        }
+
+        // --- РОЗДІЛ ЗАСОБИ ---
+        function renderAssetsSection() {
+            const contentArea = document.getElementById('assetsContentArea');
+            const topBtnContainer = document.getElementById('assetsTopBtnContainer');
+
+            contentArea.innerHTML = '';
+
+            if (assetsData.length === 0) {
+                topBtnContainer.style.display = 'none';
+                contentArea.innerHTML = `
+                    <div class="empty-wrapper">
+                        <h3>Список засобів порожній</h3>
+                        <button type="button" class="unified-add-btn" onclick="openAddAssetModal()">
+                            <span class="plus-box">+</span>
+                            <span class="btn-label">Додати засіб</span>
+                        </button>
+                    </div>
+                `;
+            } else {
+                topBtnContainer.style.display = 'block';
+                let html = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Тип засобу</th>
+                                <th>Назва</th>
+                                <th>Серійний номер</th>
+                                <th>Позиція</th>
+                                <th>Стан засобу</th>
+                                <th>Дії</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                assetsData.forEach(asset => {
+                    const statusBadgeClass = asset.status === 'БГ' ? 'badge-bg' : 'badge-nobg';
+                    html += `
+                        <tr>
+                            <td><strong>#${asset.id}</strong></td>
+                            <td>${asset.type}</td>
+                            <td>${asset.name}</td>
+                            <td><code>${asset.serial}</code></td>
+                            <td>${asset.position || '—'}</td>
+                            <td>
+                                <button type="button" class="${statusBadgeClass}" onclick="toggleAssetStatus(${asset.id})">${asset.status}</button>
+                            </td>
+                            <td>
+                                <div class="action-btn-group">
+                                    <button type="button" class="edit-btn" onclick="openEditAssetModal(${asset.id})">Редагувати</button>
+                                    <button type="button" class="delete-btn" onclick="confirmDeleteAsset(${asset.id})">Видалити</button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+                html += `</tbody></table>`;
+                contentArea.innerHTML = html;
+            }
+        }
+
+        function openAddAssetModal() {
+            document.getElementById('assetModalTitle').textContent = 'Додати новий засіб';
+            document.getElementById('editAssetId').value = '';
+            document.getElementById('assetNameInput').value = '';
+            document.getElementById('assetSerialInput').value = '';
+            document.getElementById('assetPositionInput').value = '';
+            document.getElementById('addAssetWarning').classList.remove('active');
+            
+            const typeSelect = document.querySelector('#assetTypeSelect .custom-select');
+            typeSelect.textContent = 'Наземний';
+            document.querySelectorAll('#assetTypeSelect .custom-option').forEach(o => o.classList.toggle('selected', o.getAttribute('data-value') === 'Наземний'));
+
+            const statusSelect = document.querySelector('#assetStatusSelect .custom-select');
+            statusSelect.textContent = 'БГ';
+            statusSelect.className = 'custom-select badge-bg';
+            document.querySelectorAll('#assetStatusSelect .custom-option').forEach(o => o.classList.toggle('selected', o.getAttribute('data-value') === 'БГ'));
+
+            const modal = document.getElementById('addAssetModal');
+            modal.classList.add('active');
+            focusFirstInputInContainer(modal);
+        }
+
+        function openEditAssetModal(id) {
+            const asset = assetsData.find(a => a.id === id);
+            if (!asset) return;
+
+            document.getElementById('assetModalTitle').textContent = 'Редагувати засіб';
+            document.getElementById('editAssetId').value = asset.id;
+            document.getElementById('assetNameInput').value = asset.name;
+            document.getElementById('assetSerialInput').value = asset.serial;
+            document.getElementById('assetPositionInput').value = asset.position || '';
+            document.getElementById('addAssetWarning').classList.remove('active');
+
+            const typeSelect = document.querySelector('#assetTypeSelect .custom-select');
+            typeSelect.textContent = asset.type;
+            document.querySelectorAll('#assetTypeSelect .custom-option').forEach(o => o.classList.toggle('selected', o.getAttribute('data-value') === asset.type));
+
+            const statusSelect = document.querySelector('#assetStatusSelect .custom-select');
+            statusSelect.textContent = asset.status;
+            statusSelect.className = `custom-select ${asset.status === 'БГ' ? 'badge-bg' : 'badge-nobg'}`;
+            document.querySelectorAll('#assetStatusSelect .custom-option').forEach(o => o.classList.toggle('selected', o.getAttribute('data-value') === asset.status));
+
+            const modal = document.getElementById('addAssetModal');
+            modal.classList.add('active');
+            focusFirstInputInContainer(modal);
+        }
+
+        function executeSaveAsset() {
+            const editId = document.getElementById('editAssetId').value;
+            const typeElem = document.querySelector('#assetTypeSelect .custom-option.selected');
+            const statusElem = document.querySelector('#assetStatusSelect .custom-option.selected');
+            const name = document.getElementById('assetNameInput').value.trim();
+            const serial = document.getElementById('assetSerialInput').value.trim();
+            const position = document.getElementById('assetPositionInput').value.trim();
+            const warning = document.getElementById('addAssetWarning');
+
+            if (!name || !serial || !position) {
+                warning.classList.add('active');
+                return;
+            }
+
+            const assetObj = {
+                id: editId ? Number(editId) : null,
+                type: typeElem ? typeElem.getAttribute('data-value') : 'Наземний',
+                name: name,
+                serial: serial,
+                position: position,
+                status: statusElem ? statusElem.getAttribute('data-value') : 'БГ'
+            };
+
+            closeModal('addAssetModal');
+            callAdminApi({ action: 'saveAsset', asset: assetObj });
+        }
+
+        function toggleAssetStatus(id) {
+            callAdminApi({ action: 'toggleAssetStatus', id: id });
+        }
+
+        function confirmDeleteAsset(id) {
+            assetToDelete = id;
+            const modal = document.getElementById('deleteAssetModal');
+            modal.classList.add('active');
+            clearContainerKeyboardFocus(modal);
+        }
+
+        function executeDeleteAsset() {
+            if (assetToDelete !== null) {
+                const targetId = assetToDelete;
+                closeModal('deleteAssetModal');
+                assetToDelete = null;
+                callAdminApi({ action: 'deleteAsset', id: targetId });
+            }
+        }
+
+        // --- РОЗДІЛ ПОЗИЦІЇ ---
+        function renderPositionsSection() {
+            const contentArea = document.getElementById('positionsContentArea');
+            const topBtnContainer = document.getElementById('positionsTopBtnContainer');
+
+            contentArea.innerHTML = '';
+
+            if (positionsData.length === 0) {
+                topBtnContainer.style.display = 'none';
+                contentArea.innerHTML = `
+                    <div class="empty-wrapper">
+                        <h3>Список позицій порожній</h3>
+                        <button type="button" class="unified-add-btn" onclick="openAddPositionModal()">
+                            <span class="plus-box">+</span>
+                            <span class="btn-label">Додати позицію</span>
+                        </button>
+                    </div>
+                `;
+            } else {
+                topBtnContainer.style.display = 'block';
+                let html = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Тип позиції</th>
+                                <th>Назва позиції</th>
+                                <th>Кількість в/с</th>
+                                <th>Стан позиції</th>
+                                <th>Дії</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                positionsData.forEach(pos => {
+                    const hasAssets = assetsData.some(a => a.position && a.position.toLowerCase() === pos.name.toLowerCase() && a.status === 'БГ');
+                    const posStatus = hasAssets ? 'БГ' : 'Не БГ';
+                    const statusBadgeClass = posStatus === 'БГ' ? 'badge-bg' : 'badge-nobg';
+
+                    html += `
+                        <tr>
+                            <td><strong>#${pos.id}</strong></td>
+                            <td>${pos.type}</td>
+                            <td>${pos.name}</td>
+                            <td>${pos.personnel || 0}</td>
+                            <td><span class="${statusBadgeClass}" style="cursor: default;">${posStatus}</span></td>
+                            <td>
+                                <div class="action-btn-group">
+                                    <button type="button" class="edit-btn" onclick="openEditPositionModal(${pos.id})">Редагувати</button>
+                                    <button type="button" class="delete-btn" onclick="confirmDeletePosition(${pos.id})">Видалити</button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+                html += `</tbody></table>`;
+                contentArea.innerHTML = html;
+            }
+        }
+
+        function openAddPositionModal() {
+            document.getElementById('positionModalTitle').textContent = 'Додати нову позицію';
+            document.getElementById('editPositionId').value = '';
+            document.getElementById('positionNameInput').value = '';
+            document.getElementById('positionPersonnelInput').value = '';
+            document.getElementById('addPositionWarning').classList.remove('active');
+            
+            const typeSelect = document.querySelector('#positionTypeSelect .custom-select');
+            typeSelect.textContent = 'НРК';
+            document.querySelectorAll('#positionTypeSelect .custom-option').forEach(o => o.classList.toggle('selected', o.getAttribute('data-value') === 'НРК'));
+
+            const modal = document.getElementById('addPositionModal');
+            modal.classList.add('active');
+            focusFirstInputInContainer(modal);
+        }
+
+        function openEditPositionModal(id) {
+            const pos = positionsData.find(p => p.id === id);
+            if (!pos) return;
+
+            document.getElementById('positionModalTitle').textContent = 'Редагувати позицію';
+            document.getElementById('editPositionId').value = pos.id;
+            document.getElementById('positionNameInput').value = pos.name;
+            document.getElementById('positionPersonnelInput').value = pos.personnel || 0;
+            document.getElementById('addPositionWarning').classList.remove('active');
+
+            const typeSelect = document.querySelector('#positionTypeSelect .custom-select');
+            typeSelect.textContent = pos.type;
+            document.querySelectorAll('#positionTypeSelect .custom-option').forEach(o => o.classList.toggle('selected', o.getAttribute('data-value') === pos.type));
+
+            const modal = document.getElementById('addPositionModal');
+            modal.classList.add('active');
+            focusFirstInputInContainer(modal);
+        }
+
+        function executeSavePosition() {
+            const editId = document.getElementById('editPositionId').value;
+            const typeElem = document.querySelector('#positionTypeSelect .custom-option.selected');
+            const name = document.getElementById('positionNameInput').value.trim();
+            const personnel = parseInt(document.getElementById('positionPersonnelInput').value.trim()) || 0;
+            const warning = document.getElementById('addPositionWarning');
+
+            if (!name) {
+                warning.classList.add('active');
+                return;
+            }
+
+            const posObj = {
+                id: editId ? Number(editId) : null,
+                type: typeElem ? typeElem.getAttribute('data-value') : 'НРК',
+                name: name,
+                personnel: personnel
+            };
+
+            closeModal('addPositionModal');
+            callAdminApi({ action: 'savePosition', positionData: posObj });
+        }
+
+        function confirmDeletePosition(id) {
+            positionToDelete = id;
+            const modal = document.getElementById('deletePositionModal');
+            modal.classList.add('active');
+            clearContainerKeyboardFocus(modal);
+        }
+
+        function executeDeletePosition() {
+            if (positionToDelete !== null) {
+                const targetId = positionToDelete;
+                closeModal('deletePositionModal');
+                positionToDelete = null;
+                callAdminApi({ action: 'deletePosition', id: targetId });
+            }
+        }
+
+        // --- ТАБЛИЦЯ ЗАЯВОК ---
+        function copyCoords(coordsText, btnElem) {
+            navigator.clipboard.writeText(coordsText).then(() => {
+                const originalText = btnElem.textContent;
+                btnElem.textContent = 'Скопійовано!';
+                setTimeout(() => {
+                    btnElem.textContent = originalText;
+                }, 1500);
+            }).catch(() => {
+                alert('Не вдалося скопіювати координати');
+            });
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('ordersTableBody');
+            tbody.innerHTML = '';
+            const orders = ordersData[currentTab] || [];
+
+            if (orders.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="13" style="text-align: center; padding: 30px; color: var(--label-color);">Заявок поки немає</td></tr>`;
+                return;
+            }
+
+            orders.forEach(order => {
+                const tr = document.createElement('tr');
+                const isEditing = editingOrderId === order.id;
+                const badgeClass = getStatusClass(order.status);
+
+                if (isEditing) {
+                    tr.innerHTML = `
+                        <td><strong>#${order.id}</strong></td>
+                        <td><input type="text" class="table-input" id="edit_date_${order.id}" value="${order.date}"></td>
+                        <td><input type="text" class="table-input" id="edit_unit_${order.id}" value="${order.unit}"></td>
+                        <td><input type="text" class="table-input" id="edit_phone_${order.id}" value="${order.phone}"></td>
+                        <td><input type="text" class="table-input" id="edit_position_${order.id}" value="${order.position}"></td>
+                        <td><input type="text" class="table-input" id="edit_coords_${order.id}" value="${order.coords}"></td>
+                        <td><input type="text" class="table-input" id="edit_cargo_${order.id}" value="${order.cargo}"></td>
+                        <td><input type="text" class="table-input" id="edit_weight_${order.id}" value="${order.weight}"></td>
+                        <td><input type="text" class="table-input" id="edit_callsign_${order.id}" value="${order.callsign}"></td>
+                        <td><input type="text" class="table-input" id="edit_personnelPhone_${order.id}" value="${order.personnelPhone || ''}"></td>
+                        <td><input type="text" class="table-input" id="edit_comment_${order.id}" value="${order.comment || ''}"></td>
+                        <td>
+                            <div class="custom-select-wrapper">
+                                <div class="custom-select ${badgeClass}" tabindex="0" onclick="toggleCustomSelect(this, event)">${order.status}</div>
+                                <div class="custom-options" id="edit_status_${order.id}">
+                                    <div class="custom-option status-processing ${order.status==='Обробляється'?'selected':''}" data-value="Обробляється" onclick="selectCustomOption(this)">Обробляється</div>
+                                    <div class="custom-option status-queued ${order.status==='В черзі'?'selected':''}" data-value="В черзі" onclick="selectCustomOption(this)">В черзі</div>
+                                    <div class="custom-option status-in-progress ${order.status==='Виконується'?'selected':''}" data-value="Виконується" onclick="selectCustomOption(this)">Виконується</div>
+                                    <div class="custom-option status-completed ${order.status==='Виконано'?'selected':''}" data-value="Виконано" onclick="selectCustomOption(this)">Виконано</div>
+                                    <div class="custom-option status-partially ${order.status==='Виконано частково'?'selected':''}" data-value="Виконано частково" onclick="selectCustomOption(this)">Виконано частково</div>
+                                    <div class="custom-option status-failed ${order.status==='Не виконано'?'selected':''}" data-value="Не виконано" onclick="selectCustomOption(this)">Не виконано</div>
+                                    <div class="custom-option status-cancelled ${order.status==='Скасовано'?'selected':''}" data-value="Скасовано" onclick="selectCustomOption(this)">Скасовано</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="action-btn-group">
+                                <button type="button" class="save-btn" onclick="saveOrderEdit(${order.id})">Зберегти</button>
+                                <button type="button" class="delete-btn" onclick="cancelOrderEdit()">Скасувати</button>
+                            </div>
+                        </td>
+                    `;
+                } else {
+                    tr.innerHTML = `
+                        <td><strong>#${order.id}</strong></td>
+                        <td>${order.date}</td>
+                        <td>${order.unit}</td>
+                        <td>${order.phone}</td>
+                        <td>${order.position}</td>
+                        <td>
+                            <div class="coord-cell">
+                                <code>${order.coords}</code>
+                                <button type="button" class="copy-coords-btn" onclick="copyCoords('${order.coords}', this)">Копіювати</button>
+                            </div>
+                        </td>
+                        <td>${order.cargo}</td>
+                        <td>${order.weight} кг</td>
+                        <td>${order.callsign}</td>
+                        <td>${order.personnelPhone || '—'}</td>
+                        <td>${order.comment || '—'}</td>
+                        <td>
+                            <div class="custom-select-wrapper">
+                                <div class="custom-select ${badgeClass}" tabindex="0" onclick="toggleCustomSelect(this, event)">${order.status}</div>
+                                <div class="custom-options">
+                                    <div class="custom-option status-processing ${order.status==='Обробляється'?'selected':''}" data-value="Обробляється" onclick="updateStatusTableItem(${order.id}, this)">Обробляється</div>
+                                    <div class="custom-option status-queued ${order.status==='В черзі'?'selected':''}" data-value="В черзі" onclick="updateStatusTableItem(${order.id}, this)">В черзі</div>
+                                    <div class="custom-option status-in-progress ${order.status==='Виконується'?'selected':''}" data-value="Виконується" onclick="updateStatusTableItem(${order.id}, this)">Виконується</div>
+                                    <div class="custom-option status-completed ${order.status==='Виконано'?'selected':''}" data-value="Виконано" onclick="updateStatusTableItem(${order.id}, this)">Виконано</div>
+                                    <div class="custom-option status-partially ${order.status==='Виконано частково'?'selected':''}" data-value="Виконано частково" onclick="updateStatusTableItem(${order.id}, this)">Виконано частково</div>
+                                    <div class="custom-option status-failed ${order.status==='Не виконано'?'selected':''}" data-value="Не виконано" onclick="updateStatusTableItem(${order.id}, this)">Не виконано</div>
+                                    <div class="custom-option status-cancelled ${order.status==='Скасовано'?'selected':''}" data-value="Скасовано" onclick="updateStatusTableItem(${order.id}, this)">Скасовано</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="action-btn-group">
+                                <button type="button" class="edit-btn" onclick="startOrderEdit(${order.id})">Редагувати</button>
+                                <button type="button" class="delete-btn" onclick="confirmDeleteOrder(${order.id})">Видалити</button>
+                            </div>
+                        </td>
+                    `;
+                }
+                tbody.appendChild(tr);
+            });
+        }
+
+        function getStatusClass(status) {
+            switch (status) {
+                case 'В черзі': return 'status-queued';
+                case 'Виконується': return 'status-in-progress';
+                case 'Виконано': return 'status-completed';
+                case 'Виконано частково': return 'status-partially';
+                case 'Не виконано': return 'status-failed';
+                case 'Скасовано': return 'status-cancelled';
+                default: return 'status-processing';
+            }
+        }
+
+        function updateStatusTableItem(id, optionElem) {
+            const newStatus = optionElem.getAttribute('data-value');
+            selectCustomOption(optionElem);
+            callAdminApi({ action: 'updateStatus', formType: currentTab, id: id, status: newStatus });
+        }
+
+        function startOrderEdit(id) {
+            editingOrderId = id;
+            renderTable();
+        }
+
+        function cancelOrderEdit() {
+            editingOrderId = null;
+            renderTable();
+        }
+
+        function saveOrderEdit(id) {
+            const statusOption = document.querySelector(`#edit_status_${id} .custom-option.selected`);
+            const updatedOrder = {
+                id: id,
+                date: document.getElementById(`edit_date_${id}`).value.trim(),
+                unit: document.getElementById(`edit_unit_${id}`).value.trim(),
+                phone: document.getElementById(`edit_phone_${id}`).value.trim(),
+                position: document.getElementById(`edit_position_${id}`).value.trim(),
+                coords: document.getElementById(`edit_coords_${id}`).value.trim(),
+                cargo: document.getElementById(`edit_cargo_${id}`).value.trim(),
+                weight: document.getElementById(`edit_weight_${id}`).value.trim(),
+                callsign: document.getElementById(`edit_callsign_${id}`).value.trim(),
+                personnelPhone: document.getElementById(`edit_personnelPhone_${id}`).value.trim(),
+                comment: document.getElementById(`edit_comment_${id}`).value.trim(),
+                status: statusOption ? statusOption.getAttribute('data-value') : 'Обробляється'
+            };
+            editingOrderId = null;
+            callAdminApi({ action: 'editOrder', formType: currentTab, order: updatedOrder });
+        }
+
+        function confirmDeleteOrder(id) {
+            itemToDelete = id;
+            const modal = document.getElementById('deleteOrderModal');
+            modal.classList.add('active');
+            clearContainerKeyboardFocus(modal);
+        }
+
+        function executeDeleteOrder() {
+            if (itemToDelete !== null) {
+                const targetId = itemToDelete;
+                closeModal('deleteOrderModal');
+                itemToDelete = null;
+                callAdminApi({ action: 'deleteOrder', formType: currentTab, id: targetId });
+            }
+        }
+
+        function filterTable() {
+            const query = document.getElementById('searchBox').value.toLowerCase();
+            const rows = document.getElementById('ordersTableBody').getElementsByTagName('tr');
+
+            for (let i = 0; i < rows.length; i++) {
+                const text = rows[i].textContent.toLowerCase();
+                rows[i].style.display = text.includes(query) ? '' : 'none';
+            }
+        }
+
+        // --- УПРАВЛІННЯ АДМІНІСТРАТОРАМИ ---
+        function renderAdminsTable() {
+            const tbody = document.getElementById('adminsTableBody');
+            tbody.innerHTML = '';
+
+            adminsData.forEach(admin => {
+                const tr = document.createElement('tr');
+                const roleLabel = admin.login === 'wowstroy' ? 'Головний адмін' : (admin.role || 'Адміністратор');
+                let actionHtml = `<span style="color: var(--label-color); font-size: 12px;">Незмінний акаунт</span>`;
+                
+                if (admin.login !== 'wowstroy') {
+                    actionHtml = `
+                        <div class="action-btn-group" style="justify-content: flex-end;">
+                            <button type="button" class="edit-btn" onclick="openEditAdminModal('${admin.login}')">Редагувати</button>
+                            <button type="button" class="delete-btn" onclick="confirmDeleteAdmin('${admin.login}')">Видалити</button>
+                        </div>
+                    `;
+                }
+
+                tr.innerHTML = `
+                    <td style="text-align: left;"><strong>${admin.login}</strong></td>
+                    <td style="text-align: center;"><span style="color: var(--accent-color); font-weight: 600;">${roleLabel}</span></td>
+                    <td style="text-align: right;">${actionHtml}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function openEditAdminModal(login) {
+            const admin = adminsData.find(a => a.login === login);
+            if (!admin || admin.login === 'wowstroy') return;
+
+            document.getElementById('editAdminOriginalLogin').value = admin.login;
+            document.getElementById('editAdminLoginInput').value = admin.login;
+            document.getElementById('editAdminPassInput').value = '';
+            document.getElementById('editAdminRoleInput').value = admin.role || 'Адміністратор';
+            document.getElementById('editAdminWarning').classList.remove('active');
+
+            const modal = document.getElementById('editAdminModal');
+            modal.classList.add('active');
+            focusFirstInputInContainer(modal);
+        }
+
+        function executeEditAdmin() {
+            const origLogin = document.getElementById('editAdminOriginalLogin').value;
+            const newLogin = document.getElementById('editAdminLoginInput').value.trim();
+            const newPass = document.getElementById('editAdminPassInput').value.trim();
+            const newRole = document.getElementById('editAdminRoleInput').value.trim();
+            const warning = document.getElementById('editAdminWarning');
+
+            warning.classList.remove('active');
+
+            if (!newLogin || !newRole) {
+                warning.textContent = 'Заповніть логін та роль!';
+                warning.classList.add('active');
+                return;
+            }
+
+            callAdminApi({
+                action: 'editAdmin',
+                origLogin: origLogin,
+                login: newLogin,
+                pass: newPass,
+                role: newRole
+            }, () => {
+                closeModal('editAdminModal');
+            }, (errMsg) => {
+                warning.textContent = errMsg;
+                warning.classList.add('active');
+            });
+        }
+
+        function validateAndShowAddModal() {
+            const loginInput = document.getElementById('newAdminLogin');
+            const passInput = document.getElementById('newAdminPass');
+            const roleInput = document.getElementById('newAdminRole');
+            const warning = document.getElementById('addAdminWarning');
+
+            const login = loginInput.value.trim();
+            const pass = passInput.value.trim();
+            const role = roleInput.value.trim();
+
+            warning.classList.remove('active');
+
+            if (!login || !pass || !role) {
+                warning.textContent = 'Заповніть логін, пароль та роль!';
+                warning.classList.add('active');
+                return;
+            }
+
+            if (adminsData.some(a => a.login.toLowerCase() === login.toLowerCase())) {
+                warning.textContent = 'Адміністратор з таким логіном вже існує!';
+                warning.classList.add('active');
+                return;
+            }
+
+            const modal = document.getElementById('addAdminModal');
+            modal.classList.add('active');
+            clearContainerKeyboardFocus(modal);
+        }
+
+        function executeAddAdmin() {
+            const loginInput = document.getElementById('newAdminLogin');
+            const passInput = document.getElementById('newAdminPass');
+            const roleInput = document.getElementById('newAdminRole');
+            const warning = document.getElementById('addAdminWarning');
+
+            const login = loginInput.value.trim();
+            const pass = passInput.value.trim();
+            const role = roleInput.value.trim() || 'Адміністратор';
+
+            closeModal('addAdminModal');
+
+            callAdminApi({
+                action: 'addAdmin',
+                login: login,
+                pass: pass,
+                role: role
+            }, () => {
+                loginInput.value = '';
+                passInput.value = '';
+                roleInput.value = '';
+                const modal = document.getElementById('successAddModal');
+                modal.classList.add('active');
+                clearContainerKeyboardFocus(modal);
+            }, (errMsg) => {
+                warning.textContent = errMsg;
+                warning.classList.add('active');
+            });
+        }
+
+        function confirmDeleteAdmin(login) {
+            itemToDelete = login;
+            document.getElementById('deleteAdminModalText').textContent = `Ви впевнені, що хочете видалити адміністратора ${login}?`;
+            const modal = document.getElementById('deleteAdminModal');
+            modal.classList.add('active');
+            clearContainerKeyboardFocus(modal);
+        }
+
+        function executeDeleteAdmin() {
+            if (itemToDelete && itemToDelete !== 'wowstroy') {
+                const targetLogin = itemToDelete;
+                closeModal('deleteAdminModal');
+                itemToDelete = null;
+                callAdminApi({ action: 'deleteAdmin', login: targetLogin });
+            }
+        }
+
+        function closeModal(modalId) {
+            const el = document.getElementById(modalId);
+            if (el) el.classList.remove('active');
+        }
+
+        // --- ПОВНОЕКРАННИЙ РЕЖИМ ---
+        function toggleFullScreen() {
+            const icon = document.getElementById('fullscreenIcon');
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    alert(`Помилка увімкнення повноекранного режиму: ${err.message}`);
+                });
+                icon.innerHTML = '<path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/>';
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+                icon.innerHTML = '<path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>';
+            }
+        }
+
+        document.addEventListener('fullscreenchange', function() {
+            const icon = document.getElementById('fullscreenIcon');
+            if (!document.fullscreenElement) {
+                icon.innerHTML = '<path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>';
+            } else {
+                icon.innerHTML = '<path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/>';
+            }
         });
     </script>
 </body>
