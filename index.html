@@ -2196,8 +2196,8 @@
     <div class="custom-modal-overlay" id="noBgAssetsModal">
         <div class="custom-modal-content" style="text-align: center;">
             <button type="button" class="modal-close-btn" onclick="closeModal('noBgAssetsModal')">✕</button>
-            <h3 style="color: #ff4d4d; margin-bottom: 15px;">Увага</h3>
-            <p id="noBgModalText" style="color: var(--text-color); margin-bottom: 20px; font-size: 15px; line-height: 1.5;">БГ засобів станом на зараз немає, поверніться згодом.</p>
+            <h3 style="color: #ff4d4d; margin-bottom: 15px;">Увага!</h3>
+            <p id="noBgModalText" style="color: var(--text-color); margin-bottom: 20px; font-size: 15px; line-height: 1.5;">Станом на зараз засобів БГ немає, поверніться згодом</p>
             <div class="modal-buttons">
                 <button type="button" class="modal-btn modal-btn-confirm" onclick="closeModal('noBgAssetsModal')">Зрозуміло</button>
                 <button type="button" class="modal-btn modal-btn-cancel" onclick="openStatusCheckFromNoBgModal()">Перевірити статус</button>
@@ -2417,7 +2417,6 @@
         let selectedRoleType = null;
         let selectedSubmenuType = null;
 
-        // Вразливі дані ВИДАЛЕНО з клієнтського коду. Заповнюються виключно після серверної авторизації за токеном!
         let adminSessionToken = sessionStorage.getItem('arkon_admin_token') || '';
         let loggedAdminUser = sessionStorage.getItem('arkon_admin_user') || '';
 
@@ -2435,7 +2434,6 @@
         let editingOrderId = null;
         let viewedNewOrders = JSON.parse(sessionStorage.getItem('arkon_viewed_new')) || { 'НРК': false, 'БпЛА': false };
 
-        // Універсальний виклик захищеного API адмін-панелі
         function callAdminApi(payload, onSuccess, onError) {
             if (!adminSessionToken) {
                 forceLogoutUnauthorized();
@@ -2473,7 +2471,7 @@
                     else alert(resData.message || 'Помилка сервера');
                 }
             })
-            .catch(err => {
+            .catch(() => {
                 if (syncBtn) {
                     syncBtn.classList.remove('syncing');
                     if (syncText) syncText.textContent = 'Оновити';
@@ -2523,32 +2521,12 @@
             window.location.hash = '';
         }
 
-        // Отримання публічного статусу наявності БГ засобів (без пароля і без розкриття даних)
-        function refreshPublicBgAvailability(callback) {
-            fetch(WEB_APP_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify({ action: 'checkBgAvailability' })
-            })
-            .then(res => res.json())
-            .then(resData => {
-                if (resData && resData.status === 'success') {
-                    publicBgAvailability.nrkAvailable = !!resData.nrkAvailable;
-                    publicBgAvailability.bplaAvailable = !!resData.bplaAvailable;
-                }
-                if (callback) callback();
-            })
-            .catch(() => {
-                if (callback) callback();
-            });
-        }
-
         // =========================================================================
         // ТАЙМЕР НЕАКТИВНОСТІ АДМІНА (5 ХВ ТИШІ -> 30 ХВ ПРИХОВАНИЙ ВІДЛІК -> ПОКАЗ ЗА 2 ХВ)
         // =========================================================================
-        const IDLE_WAIT_MS = 5 * 60 * 1000;      // 5 хвилин без активності до старту відліку
-        const COUNTDOWN_TOTAL_SEC = 30 * 60;     // 30 хвилин зворотного відліку (1800 сек)
-        const WARNING_MODAL_SEC = 2 * 60;        // Відображення таймера та модалки лише за 2 хв (120 сек) до кінця
+        const IDLE_WAIT_MS = 5 * 60 * 1000;
+        const COUNTDOWN_TOTAL_SEC = 30 * 60;
+        const WARNING_MODAL_SEC = 2 * 60;
 
         let idleWaitTimeout = null;
         let sessionCountdownInterval = null;
@@ -2652,26 +2630,72 @@
         });
 
         // =========================================================================
-        // ПЕРЕВІРКА НАЯВНОСТІ БГ ЗАСОБІВ ПЕРЕД ВІДКРИТТЯМ ФОРМИ КОРИСТУВАЧА
+        // ПЕРЕВІРКА НАЯВНОСТІ БГ ЗАСОБІВ БЕЗ ПЕРЕДЧАСНОГО ЗНИКНЕННЯ ЛОАДЕРА
         // =========================================================================
+        function getLocalBgAvailability(directionType) {
+            const requiredAssetType = (directionType === 'БпЛА') ? 'Повітряний' : 'Наземний';
+            if (Array.isArray(assetsData) && assetsData.length > 0) {
+                return assetsData.some(a => a.type === requiredAssetType && a.status === 'БГ');
+            }
+            const savedLocal = localStorage.getItem('arkon_assets');
+            if (savedLocal) {
+                try {
+                    const parsed = JSON.parse(savedLocal);
+                    if (Array.isArray(parsed)) {
+                        return parsed.some(a => a.type === requiredAssetType && a.status === 'БГ');
+                    }
+                } catch (e) {}
+            }
+            return null;
+        }
+
+        function showNoBgModal() {
+            const modal = document.getElementById('noBgAssetsModal');
+            document.getElementById('noBgModalText').textContent = 'Станом на зараз засобів БГ немає, поверніться згодом';
+            modal.classList.add('active');
+            clearContainerKeyboardFocus(modal);
+        }
+
         function checkBgAssetsAndOpenDirection(directionType) {
             currentFormType = directionType === 'БпЛА' ? 'БпЛА' : 'НРК';
-            showLoader(() => {
-                refreshPublicBgAvailability(() => {
-                    const hasBgAssets = (currentFormType === 'БпЛА')
-                        ? publicBgAvailability.bplaAvailable
-                        : publicBgAvailability.nrkAvailable;
+            const loader = document.getElementById('loader-overlay');
+            loader.classList.remove('hidden');
 
-                    if (!hasBgAssets) {
-                        const modal = document.getElementById('noBgAssetsModal');
-                        document.getElementById('noBgModalText').textContent = `БГ засобів (${currentFormType}) станом на зараз немає, поверніться згодом.`;
-                        modal.classList.add('active');
-                        clearContainerKeyboardFocus(modal);
-                        return;
-                    }
+            fetch(WEB_APP_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({ action: 'checkBgAvailability' })
+            })
+            .then(res => res.json())
+            .then(resData => {
+                loader.classList.add('hidden');
+                let hasBgAssets = true;
 
-                    switchPageDirect(currentFormType);
-                });
+                if (resData && resData.status === 'success' && typeof resData.nrkAvailable === 'boolean') {
+                    publicBgAvailability.nrkAvailable = resData.nrkAvailable;
+                    publicBgAvailability.bplaAvailable = resData.bplaAvailable;
+                    hasBgAssets = (currentFormType === 'БпЛА') ? resData.bplaAvailable : resData.nrkAvailable;
+                } else {
+                    const localCheck = getLocalBgAvailability(currentFormType);
+                    if (localCheck !== null) hasBgAssets = localCheck;
+                }
+
+                if (!hasBgAssets) {
+                    showNoBgModal();
+                    return;
+                }
+                switchPageDirect(currentFormType);
+            })
+            .catch(() => {
+                loader.classList.add('hidden');
+                const localCheck = getLocalBgAvailability(currentFormType);
+                const hasBgAssets = (localCheck !== null) ? localCheck : true;
+
+                if (!hasBgAssets) {
+                    showNoBgModal();
+                    return;
+                }
+                switchPageDirect(currentFormType);
             });
         }
 
@@ -3810,6 +3834,11 @@
 
                 const focusedBtn = buttons.find(b => b.classList.contains('keyboard-focused'));
                 if (focusedBtn) {
+                    if (focusedBtn.id === 'roleUserBtn') { confirmRoleEntry('user'); return; }
+                    if (focusedBtn.id === 'roleAdminBtn') { confirmRoleEntry('admin'); return; }
+                    if (focusedBtn.id === 'subNrkBtn') { confirmSubmenuEntry('НРК'); return; }
+                    if (focusedBtn.id === 'subBplaBtn') { confirmSubmenuEntry('БпЛА'); return; }
+
                     focusedBtn.click();
                     return;
                 }
