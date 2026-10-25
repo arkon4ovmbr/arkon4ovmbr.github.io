@@ -2497,15 +2497,77 @@
             }
         }
 
+        // Канал миттєвого зв'язку між вкладками одного браузера
+        const arkonChannel = ('BroadcastChannel' in window) ? new BroadcastChannel('arkon_live_sync') : null;
+        if (arkonChannel) {
+            arkonChannel.onmessage = (event) => {
+                if (event.data && event.data.type === 'NEW_ORDER' && loggedAdminUser && adminSessionToken) {
+                    viewedNewOrders[event.data.formType] = false;
+                    sessionStorage.setItem('arkon_viewed_new', JSON.stringify(viewedNewOrders));
+                    silentBackgroundSync();
+                }
+            };
+        }
+
+        let autoSyncInterval = null;
+
+        // Тихе фонове оновлення без блокування інтерфейсу та без скидання таймера неактивності
+        function silentBackgroundSync() {
+            if (!loggedAdminUser || !adminSessionToken) return;
+            // Не перемальовуємо таблицю, якщо адмін прямо зараз редагує рядок або відкрив випадаючий список/модалку
+            if (editingOrderId !== null || (activeDropdown && activeDropdown.classList.contains('active')) || getActiveModalOverlay()) return;
+
+            fetch(WEB_APP_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({ action: 'getAdminData', token: adminSessionToken, silent: true })
+            })
+            .then(res => res.json())
+            .then(resData => {
+                if (resData && resData.status === 'unauthorized') {
+                    forceLogoutUnauthorized();
+                    return;
+                }
+                if (resData && resData.status === 'success') {
+                    ['НРК', 'БпЛА'].forEach(sheet => {
+                        const newList = (resData.orders && resData.orders[sheet]) || [];
+                        const newProcessingCount = newList.filter(o => o.status === 'Обробляється').length;
+                        const oldProcessingCount = (ordersData[sheet] || []).filter(o => o.status === 'Обробляється').length;
+
+                        if (newProcessingCount > oldProcessingCount) {
+                            viewedNewOrders[sheet] = false;
+                            sessionStorage.setItem('arkon_viewed_new', JSON.stringify(viewedNewOrders));
+                        }
+                    });
+                    applyServerAdminState(resData);
+                }
+            })
+            .catch(() => {});
+        }
+
+        function startAutoSync() {
+            stopAutoSync();
+            autoSyncInterval = setInterval(silentBackgroundSync, 10000); // Автооновлення кожні 10 секунд
+        }
+
+        function stopAutoSync() {
+            if (autoSyncInterval) {
+                clearInterval(autoSyncInterval);
+                autoSyncInterval = null;
+            }
+        }
+
         function syncFromGoogleSheet(showNotification = false) {
             callAdminApi({ action: 'getAdminData' }, () => {
                 if (showNotification) {
                     renderActivityLog();
                 }
             });
+            startAutoSync(); // Запускаємо фонову синхронізацію автоматично разом із першим завантаженням адмінки
         }
 
         function forceLogoutUnauthorized() {
+            stopAutoSync();
             stopAdminSessionTimers();
             sessionStorage.removeItem('arkon_admin_token');
             sessionStorage.removeItem('arkon_admin_user');
