@@ -2028,6 +2028,15 @@
 
                     <div class="dash-card" style="grid-column: 1 / -1;">
                         <h3>Аналітика запитів</h3>
+                        <!-- Новий кастомний селект для вибору засобу -->
+            <div class="custom-select-wrapper" id="statAssetSelect">
+                <div class="custom-select" tabindex="0" onclick="toggleCustomSelect(this, event)">Загально</div>
+                <div class="custom-options">
+                    <div class="custom-option selected" data-value="Загально" onclick="selectCustomOption(this)" style="background-color: var(--input-bg); color: var(--text-color);">Загально</div>
+                    <div class="custom-option" data-value="НРК" onclick="selectCustomOption(this)">НРК</div>
+                    <div class="custom-option" data-value="БпЛА" onclick="selectCustomOption(this)">БпЛА</div>
+                </div>
+            </div>
                         <div class="stats-filters">
                             <div class="custom-select-wrapper" id="statStatusSelect">
                                 <div class="custom-select" tabindex="0" onclick="toggleCustomSelect(this, event)">Усі статуси</div>
