@@ -2511,9 +2511,56 @@
 
         let autoSyncInterval = null;
 
-        // Тихе фонове оновлення без блокування інтерфейсу та без скидання таймера неактивності
+        // Тихе фонове оновлення для ВСІХ розділів адмін-панелі
         function silentBackgroundSync() {
             if (!loggedAdminUser || !adminSessionToken) return;
+            
+            // Якщо адмін зараз редагує рядок у таблиці, відкрив будь-яку модалку чи селект — не чіпаємо інтерфейс, щоб не збити роботу
+            if (editingOrderId !== null || (activeDropdown && activeDropdown.classList.contains('active')) || getActiveModalOverlay()) return;
+
+            fetch(WEB_APP_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({ action: 'getAdminData', token: adminSessionToken, silent: true })
+            })
+            .then(res => res.json())
+            .then(resData => {
+                if (resData && resData.status === 'unauthorized') {
+                    forceLogoutUnauthorized();
+                    return;
+                }
+                if (resData && resData.status === 'success') {
+                    // Перевіряємо появу нових запитів для анімації на Дашборді
+                    ['НРК', 'БпЛА'].forEach(sheet => {
+                        const newList = (resData.orders && resData.orders[sheet]) || [];
+                        const newProcessingCount = newList.filter(o => o.status === 'Обробляється').length;
+                        const oldProcessingCount = (ordersData[sheet] || []).filter(o => o.status === 'Обробляється').length;
+
+                        if (newProcessingCount > oldProcessingCount) {
+                            viewedNewOrders[sheet] = false;
+                            sessionStorage.setItem('arkon_viewed_new', JSON.stringify(viewedNewOrders));
+                        }
+                    });
+
+                    // Оновлюємо дані в системі
+                    applyServerAdminState(resData);
+
+                    // Динамічно оновлюємо вміст залежно від того, яка вкладка зараз відкрита у адміна
+                    if (currentTab === 'Дашборд') {
+                        updateDashboardCounters();
+                    } else if (currentTab === 'Засоби') {
+                        renderAssetsSection();
+                    } else if (currentTab === 'Позиції') {
+                        renderPositionsSection();
+                    } else if (currentTab === 'Адміни') {
+                        renderAdminsTable();
+                    } else if (currentTab === 'НРК' || currentTab === 'БпЛА') {
+                        renderTable();
+                    }
+                }
+            })
+            .catch(() => {});
+        }
             // Не перемальовуємо таблицю, якщо адмін прямо зараз редагує рядок або відкрив випадаючий список/модалку
             if (editingOrderId !== null || (activeDropdown && activeDropdown.classList.contains('active')) || getActiveModalOverlay()) return;
 
