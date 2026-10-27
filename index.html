@@ -3152,19 +3152,21 @@
         window.addEventListener('load', function() {
             const loader = document.getElementById('loader-overlay');
             setTimeout(() => {
-                loader.classList.add('hidden');
-            }, 500);
+                if (loader) loader.classList.add('hidden');
+            }, 600);
 
             if (adminSessionToken && loggedAdminUser) {
                 openAdminDashboardView();
             } else {
                 window.location.hash = '';
                 hideAllViews();
-                document.getElementById('roleMenuContainer').style.display = 'block';
-                document.getElementById('navTitle').textContent = 'ARKON LOGISTIC';
+                const roleContainer = document.getElementById('roleMenuContainer');
+                if (roleContainer) roleContainer.style.display = 'block';
+                const navTitle = document.getElementById('navTitle');
+                if (navTitle) navTitle.textContent = 'ARKON LOGISTIC';
             }
+            renderActivityLog();
         });
-
         // --- ПЕРЕВІРКА СТАТУСУ ---
         const switchToStatusBtn = document.getElementById('switchToStatusBtn');
         const switchToFormBtn = document.getElementById('switchToFormBtn');
