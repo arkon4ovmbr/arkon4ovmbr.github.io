@@ -2761,12 +2761,19 @@
             });
         }
 
+        let statusOpenedFromNoBgModal = false;
+
         function openStatusCheckFromNoBgModal() {
+            statusOpenedFromNoBgModal = true;
             closeModal('noBgAssetsModal');
+            cancelSubmenuEntry();
             showLoader(() => {
                 hideAllViews();
                 const statusCont = document.getElementById('statusContainer');
                 statusCont.style.display = 'block';
+                document.getElementById('checkIdInput').value = '';
+                document.getElementById('warning-check-id').classList.remove('active');
+                document.getElementById('statusResultCard').classList.remove('active');
                 burgerMenuWrapper.style.display = 'block';
                 menuItemNrk.style.display = 'flex';
                 menuItemBpla.style.display = 'flex';
@@ -3093,17 +3100,26 @@
         const switchToFormBtn = document.getElementById('switchToFormBtn');
 
         switchToStatusBtn.addEventListener('click', () => {
+            statusOpenedFromNoBgModal = false;
             showLoader(() => {
                 document.getElementById('orderFormContainer').style.display = 'none';
                 const statusCont = document.getElementById('statusContainer');
                 statusCont.style.display = 'block';
+                document.getElementById('checkIdInput').value = '';
+                document.getElementById('warning-check-id').classList.remove('active');
+                document.getElementById('statusResultCard').classList.remove('active');
                 document.getElementById('navTitle').textContent = `Перевірка статусу (${currentFormType})`;
                 focusFirstInputInContainer(statusCont);
             });
         });
 
         switchToFormBtn.addEventListener('click', () => {
-            checkBgAssetsAndOpenDirection(currentFormType);
+            if (statusOpenedFromNoBgModal) {
+                statusOpenedFromNoBgModal = false;
+                showUserSubmenu(); // Повертає прямо на вікно "Вибір напрямку" без повторної модалки!
+            } else {
+                switchPage(currentFormType); // Повертає назад до форми запиту
+            }
         });
 
         function getStatusBadgeHtml(statusText) {
