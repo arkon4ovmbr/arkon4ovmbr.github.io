@@ -365,7 +365,7 @@
         .page-wrapper.admin-mode {
             justify-content: flex-start;
             padding: 24px;
-            max-width: 1400px;
+            max-width: 1480px;
             margin: 0 auto;
         }
 
@@ -968,13 +968,26 @@
             font-weight: 700;
             font-size: 13px;
         }
-        .status-processing { background-color: #e0e0e0; color: #333333; }
-        .status-queued { background-color: #3b82f6; color: #ffffff; }
-        .status-in-progress { background-color: #fde68a; color: #78350f; }
-        .status-completed { background-color: #065f46; color: #ffffff; }
-        .status-partially { background-color: #d9f99d; color: #166534; }
-        .status-failed { background-color: #991b1b; color: #ffffff; }
-        .status-cancelled { background-color: #fecaca; color: #991b1b; }
+        /* Колірне кодування статусів для всіх селектів, фільтрів та бейджів */
+        .status-processing { background-color: #e0e0e0 !important; color: #222222 !important; border-color: #bdbdbd !important; }
+        .status-queued { background-color: #3b82f6 !important; color: #ffffff !important; border-color: #2563eb !important; }
+        .status-in-progress { background-color: #fde68a !important; color: #78350f !important; border-color: #f59e0b !important; }
+        .status-completed { background-color: #065f46 !important; color: #ffffff !important; border-color: #047857 !important; }
+        .status-partially { background-color: #d9f99d !important; color: #166534 !important; border-color: #84cc16 !important; }
+        .status-failed { background-color: #991b1b !important; color: #ffffff !important; border-color: #dc2626 !important; }
+        .status-cancelled { background-color: #fecaca !important; color: #991b1b !important; border-color: #f87171 !important; }
+
+        .custom-select.status-processing::after,
+        .custom-select.status-in-progress::after,
+        .custom-select.status-partially::after,
+        .custom-select.status-cancelled::after {
+            color: #222222 !important;
+        }
+        .custom-select.status-queued::after,
+        .custom-select.status-completed::after,
+        .custom-select.status-failed::after {
+            color: #ffffff !important;
+        }
 
         .success-modal {
             display: none;
@@ -1046,7 +1059,7 @@
         .admin-wrapper {
             flex: 1;
             width: 100%;
-            max-width: 1400px;
+            max-width: 1480px;
             margin: 0 auto;
         }
 
@@ -1265,6 +1278,7 @@
             border: 1px solid var(--input-border);
             border-radius: 6px;
             overflow: hidden;
+            height: 38px;
         }
         .zoom-btn {
             background: none;
@@ -1275,6 +1289,7 @@
             font-weight: 700;
             cursor: pointer;
             transition: background 0.2s, color 0.2s;
+            height: 100%;
         }
         .zoom-btn:hover {
             background-color: var(--secondary-bg);
@@ -1289,13 +1304,14 @@
         }
 
         .search-box {
-            padding: 10px 15px;
+            padding: 8px 14px;
+            height: 38px;
             background-color: var(--input-bg);
             border: 1px solid var(--input-border);
             border-radius: 6px;
             color: var(--text-color);
             font-size: 14px;
-            width: 230px;
+            width: 210px;
             outline: none;
             transition: border-color 0.2s, box-shadow 0.2s;
         }
@@ -1378,14 +1394,27 @@
             text-transform: uppercase;
         }
 
-        @keyframes pulseGlow {
-            0% { box-shadow: 0 0 0 0 rgba(255, 170, 0, 0.4); border-color: var(--accent-color); }
-            70% { box-shadow: 0 0 0 10px rgba(255, 170, 0, 0); border-color: var(--accent-color); }
-            100% { box-shadow: 0 0 0 0 rgba(255, 170, 0, 0); border-color: var(--border-color); }
+        /* Яскравий червоний жирний пульсуючий індикатор для нових запитів */
+        @keyframes pulseGlowAlertRed {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 40, 40, 0.85), inset 0 0 12px rgba(255, 40, 40, 0.25);
+                border-color: #ff2828;
+            }
+            60% {
+                box-shadow: 0 0 0 14px rgba(255, 40, 40, 0), inset 0 0 18px rgba(255, 40, 40, 0.4);
+                border-color: #ff0000;
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 40, 40, 0), inset 0 0 12px rgba(255, 40, 40, 0.25);
+                border-color: #ff2828;
+            }
         }
         .dash-card.has-new {
-            animation: pulseGlow 2s infinite;
-            border-color: var(--accent-color);
+            border: 3px solid #ff2828 !important;
+            animation: pulseGlowAlertRed 1.4s infinite !important;
+        }
+        .dash-card.has-new h3 {
+            color: #ff4d4d !important;
         }
 
         .stats-filters {
@@ -1438,8 +1467,9 @@
             background-color: var(--input-bg);
             border: 1px solid var(--input-border);
             border-radius: 6px;
-            padding: 12px 16px;
-            font-size: 15px;
+            padding: 10px 14px;
+            font-size: 14px;
+            font-weight: 600;
             color: var(--text-color);
             cursor: pointer;
             display: flex;
@@ -1467,7 +1497,7 @@
             border-radius: 6px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.6);
             z-index: 99999;
-            max-height: 250px;
+            max-height: 260px;
             overflow-y: auto;
         }
         .custom-options.active {
@@ -1475,8 +1505,8 @@
         }
 
         .custom-option {
-            padding: 12px 16px;
-            font-size: 15px;
+            padding: 11px 16px;
+            font-size: 14px;
             cursor: pointer;
             border-bottom: 1px solid var(--border-color);
             transition: opacity 0.15s;
@@ -1487,12 +1517,13 @@
             border-bottom: none;
         }
         .custom-option:hover, .custom-option.highlighted {
-            opacity: 0.8;
-            filter: brightness(1.15);
+            opacity: 0.85;
+            filter: brightness(1.12);
         }
         .custom-option.selected {
             font-weight: 700;
             outline: 2px solid var(--text-color);
+            outline-offset: -2px;
         }
 
         .badge-bg { background-color: #065f46; color: #ffffff; padding: 6px 12px; border-radius: 6px; font-weight: 700; font-size: 14px; display: inline-block; cursor: pointer; border: none; text-align: center; }
@@ -1515,7 +1546,7 @@
         }
 
         th, td {
-            padding: 12px 14px;
+            padding: 11px 12px;
             border-bottom: 1px solid var(--border-color);
             white-space: nowrap;
         }
@@ -1548,6 +1579,26 @@
         }
         .copy-coords-btn:hover {
             background-color: var(--secondary-bg);
+        }
+
+        .admin-note-inline-input {
+            width: 100%;
+            min-width: 160px;
+            padding: 7px 10px;
+            background-color: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 5px;
+            color: var(--text-color);
+            font-size: 13px;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .admin-note-inline-input:hover {
+            border-color: var(--accent-color);
+        }
+        .admin-note-inline-input:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 6px rgba(255, 170, 0, 0.35);
         }
 
         .action-btn-group {
@@ -1599,6 +1650,7 @@
 
         .table-input {
             width: 100%;
+            min-width: 90px;
             padding: 6px 8px;
             background-color: var(--input-bg);
             border: 1px solid var(--accent-color);
@@ -1825,7 +1877,7 @@
             <button type="button" class="switch-view-btn" onclick="goToRoleMenu()" style="margin-top: 15px;">Назад</button>
         </div>
 
-        <!-- 3. ЕКРАН АВТОРИЗАЦІЇ АДМІНІСТРАТОРА (СЕРВЕРНА АВТОРИЗАЦІЯ) -->
+        <!-- 3. ЕКРАН АВТОРИЗАЦІЇ АДМІНІСТРАТОРА -->
         <div class="login-card" id="loginCard" style="display: none;">
             <h2>Вхід адміністратора</h2>
             <div class="form-group">
@@ -1980,13 +2032,29 @@
                         <svg class="icon" viewBox="0 0 24 24"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg>
                         <span id="syncOrdersBtnText">Оновити</span>
                     </button>
+
+                    <!-- Фільтр за статусом у таблицях -->
+                    <div class="custom-select-wrapper" id="tableStatusFilterWrapper" style="width: 185px; display: none;">
+                        <div class="custom-select" tabindex="0" onclick="toggleCustomSelect(this, event)" style="height: 38px; padding: 8px 12px;">Усі статуси</div>
+                        <div class="custom-options">
+                            <div class="custom-option selected" data-value="Усі" onclick="selectTableStatusFilter(this)" style="background-color: var(--input-bg); color: var(--text-color);">Усі статуси</div>
+                            <div class="custom-option status-processing" data-value="Обробляється" onclick="selectTableStatusFilter(this)">Обробляється</div>
+                            <div class="custom-option status-queued" data-value="В черзі" onclick="selectTableStatusFilter(this)">В черзі</div>
+                            <div class="custom-option status-in-progress" data-value="Виконується" onclick="selectTableStatusFilter(this)">Виконується</div>
+                            <div class="custom-option status-completed" data-value="Виконано" onclick="selectTableStatusFilter(this)">Виконано</div>
+                            <div class="custom-option status-partially" data-value="Виконано частково" onclick="selectTableStatusFilter(this)">Виконано частково</div>
+                            <div class="custom-option status-failed" data-value="Не виконано" onclick="selectTableStatusFilter(this)">Не виконано</div>
+                            <div class="custom-option status-cancelled" data-value="Скасовано" onclick="selectTableStatusFilter(this)">Скасовано</div>
+                        </div>
+                    </div>
+
                     <div class="zoom-controls" id="tableZoomControls" style="display: none;">
                         <button type="button" class="zoom-btn" onclick="changeTableZoom(-0.1)" title="Зменшити таблицю">Табл −</button>
                         <span class="zoom-level" id="tableZoomLevelText">100%</span>
                         <button type="button" class="zoom-btn" onclick="changeTableZoom(0.1)" title="Збільшити таблицю">Табл +</button>
                         <button type="button" class="zoom-btn" onclick="resetTableZoom()" title="Скинути таблицю">⟲</button>
                     </div>
-                    <input type="text" class="search-box" id="searchBox" placeholder="Пошук..." oninput="filterTable()" style="display: none;">
+                    <input type="text" class="search-box" id="searchBox" placeholder="Пошук по таблиці..." oninput="filterTable()" style="display: none;">
                 </div>
             </div>
 
@@ -2025,62 +2093,66 @@
                         <div class="stat-number" id="bgPositionsNames" style="text-align: center; font-size: 38px; word-break: break-word;">0</div>
                         <p style="text-align: center; margin-top: 5px;">Натисніть для переходу до позицій.</p>
                     </div>
-<!-- Блок Аналітика запитів -->
-    <div class="dash-card" style="grid-column: 1 / -1; margin-top: 20px;">
-        <h3>Аналітика запитів</h3>
-        
-        <div class="stats-filters" style="display: flex; flex-direction: column; gap: 12px; margin-top: 15px;">
-            
-            <!-- 1. Фільтр: Засіб -->
-            <div class="filter-group">
-                <label style="display: block; font-size: 12px; color: var(--text-muted, #aaa); margin-bottom: 5px; font-weight: 500;">Засіб</label>
-                <div class="custom-select-wrapper" id="statAssetSelect">
-                    <div class="custom-select" tabindex="0" onclick="toggleCustomSelect(this, event)">Загально</div>
-                    <div class="custom-options">
-                        <div class="custom-option selected" data-value="Загально" onclick="selectCustomOption(this); updateAnalyticsData();">Загально</div>
-                        <div class="custom-option" data-value="НРК" onclick="selectCustomOption(this); updateAnalyticsData();">НРК</div>
-                        <div class="custom-option" data-value="БпЛА" onclick="selectCustomOption(this); updateAnalyticsData();">БпЛА</div>
+
+                    <!-- Блок Аналітика запитів -->
+                    <div class="dash-card" style="grid-column: 1 / -1;">
+                        <h3>Аналітика запитів</h3>
+                        
+                        <div class="stats-filters" style="display: flex; flex-direction: column; gap: 14px; margin-top: 15px;">
+                            
+                            <!-- 1. Фільтр: Засіб -->
+                            <div class="filter-group">
+                                <label style="display: block; font-size: 13px; color: var(--label-color); margin-bottom: 6px; font-weight: 600;">Засіб</label>
+                                <div class="custom-select-wrapper" id="statAssetSelect">
+                                    <div class="custom-select" tabindex="0" onclick="toggleCustomSelect(this, event)">Загально</div>
+                                    <div class="custom-options">
+                                        <div class="custom-option selected" data-value="Загально" onclick="selectCustomOption(this)" style="background-color: var(--input-bg); color: var(--text-color);">Загально</div>
+                                        <div class="custom-option" data-value="НРК" onclick="selectCustomOption(this)">НРК</div>
+                                        <div class="custom-option" data-value="БпЛА" onclick="selectCustomOption(this)">БпЛА</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 2. Фільтр: Статус -->
+                            <div class="filter-group">
+                                <label style="display: block; font-size: 13px; color: var(--label-color); margin-bottom: 6px; font-weight: 600;">Статус</label>
+                                <div class="custom-select-wrapper" id="statStatusSelect">
+                                    <div class="custom-select" tabindex="0" onclick="toggleCustomSelect(this, event)">Усі статуси</div>
+                                    <div class="custom-options">
+                                        <div class="custom-option selected" data-value="Усі" onclick="selectCustomOption(this)" style="background-color: var(--input-bg); color: var(--text-color);">Усі статуси</div>
+                                        <div class="custom-option status-processing" data-value="Обробляється" onclick="selectCustomOption(this)">Обробляється</div>
+                                        <div class="custom-option status-queued" data-value="В черзі" onclick="selectCustomOption(this)">В черзі</div>
+                                        <div class="custom-option status-in-progress" data-value="Виконується" onclick="selectCustomOption(this)">Виконується</div>
+                                        <div class="custom-option status-completed" data-value="Виконано" onclick="selectCustomOption(this)">Виконано</div>
+                                        <div class="custom-option status-partially" data-value="Виконано частково" onclick="selectCustomOption(this)">Виконано частково</div>
+                                        <div class="custom-option status-failed" data-value="Не виконано" onclick="selectCustomOption(this)">Не виконано</div>
+                                        <div class="custom-option status-cancelled" data-value="Скасовано" onclick="selectCustomOption(this)">Скасовано</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 3. Фільтр: Період -->
+                            <div class="filter-group">
+                                <label style="display: block; font-size: 13px; color: var(--label-color); margin-bottom: 6px; font-weight: 600;">Період</label>
+                                <div class="custom-select-wrapper" id="statPeriodSelect">
+                                    <div class="custom-select" tabindex="0" onclick="toggleCustomSelect(this, event)">За весь час</div>
+                                    <div class="custom-options">
+                                        <div class="custom-option selected" data-value="all" onclick="selectCustomOption(this)">За весь час</div>
+                                        <div class="custom-option" data-value="today" onclick="selectCustomOption(this)">За сьогодні</div>
+                                        <div class="custom-option" data-value="week" onclick="selectCustomOption(this)">За останні 7 днів</div>
+                                        <div class="custom-option" data-value="month" onclick="selectCustomOption(this)">За цей місяць</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- Вивід результату -->
+                        <div style="margin-top: 20px;">
+                            <div class="stat-number" id="filteredOrdersCount" style="font-size: 38px; font-weight: 800; margin: 10px 0;">0</div>
+                            <p>Кількість запитів за обраними критеріями</p>
+                        </div>
                     </div>
-                </div>
-            </div>
-
-            <!-- 2. Фільтр: Статус -->
-            <div class="filter-group">
-                <label style="display: block; font-size: 12px; color: var(--text-muted, #aaa); margin-bottom: 5px; font-weight: 500;">Статус</label>
-                <div class="custom-select-wrapper" id="statStatusSelect">
-                    <div class="custom-select" tabindex="0" onclick="toggleCustomSelect(this, event)">Усі статуси</div>
-                    <div class="custom-options">
-                        <div class="custom-option selected" data-value="Усі статуси" onclick="selectCustomOption(this); updateAnalyticsData();">Усі статуси</div>
-                        <div class="custom-option" data-value="Обробляється" onclick="selectCustomOption(this); updateAnalyticsData();">Обробляється</div>
-                        <div class="custom-option" data-value="В черзі" onclick="selectCustomOption(this); updateAnalyticsData();">В черзі</div>
-                        <div class="custom-option" data-value="Виконується" onclick="selectCustomOption(this); updateAnalyticsData();">Виконується</div>
-                        <div class="custom-option" data-value="Виконано" onclick="selectCustomOption(this); updateAnalyticsData();">Виконано</div>
-                        <div class="custom-option" data-value="Виконано частково" onclick="selectCustomOption(this); updateAnalyticsData();">Виконано частково</div>
-                        <div class="custom-option" data-value="Не виконано" onclick="selectCustomOption(this); updateAnalyticsData();">Не виконано</div>
-                        <div class="custom-option" data-value="Скасовано" onclick="selectCustomOption(this); updateAnalyticsData();">Скасовано</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 3. Фільтр: Період -->
-            <div class="filter-group">
-                <label style="display: block; font-size: 12px; color: var(--text-muted, #aaa); margin-bottom: 5px; font-weight: 500;">Період</label>
-                <div class="custom-select-wrapper" id="statTimeSelect">
-                    <div class="custom-select" tabindex="0" onclick="toggleCustomSelect(this, event)">За весь час</div>
-                    <div class="custom-options">
-                        <div class="custom-option selected" data-value="За весь час" onclick="selectCustomOption(this); updateAnalyticsData();">За весь час</div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-        <!-- Вивід результату -->
-        <div style="margin-top: 20px;">
-            <div id="analyticsCounter" style="font-size: 32px; font-weight: bold;">0</div>
-            <div style="color: var(--text-muted, #aaa); font-size: 13px;">Кількість запитів за обраними критеріями</div>
-        </div>
-    </div>
 
                     <div class="activity-log-card">
                         <h3>
@@ -2137,6 +2209,7 @@
                             <th>Контакт в/с</th>
                             <th>Коментарі</th>
                             <th>Статус</th>
+                            <th>Примітки адміна</th>
                             <th>Дії</th>
                         </tr>
                     </thead>
@@ -2453,6 +2526,7 @@
         let publicBgAvailability = { nrkAvailable: true, bplaAvailable: true };
 
         let currentTab = 'Дашборд';
+        let currentTableStatusFilter = 'Усі';
         let itemToDelete = null;
         let assetToDelete = null;
         let positionToDelete = null;
@@ -2535,16 +2609,23 @@
         }
 
         let autoSyncInterval = null;
+        let isBackgroundSyncInProgress = false;
 
-        // Тихе фонове оновлення для ВСІХ розділів адмін-панелі
+        // Швидке тихе фонове оновлення для ВСІХ розділів адмін-панелі (кожні 4 секунди)
         function silentBackgroundSync() {
-            if (!loggedAdminUser || !adminSessionToken) return;
+            if (!loggedAdminUser || !adminSessionToken || isBackgroundSyncInProgress) return;
             
-            // Не перемальовуємо таблицю, якщо адмін прямо зараз редагує рядок або відкрив випадаючий список/модалку
-            if (editingOrderId !== null || (activeDropdown && activeDropdown.classList.contains('active')) || getActiveModalOverlay()) {
+            // Не перемальовуємо інтерфейс, якщо адмін прямо зараз редагує рядок, пише примітку або відкрив селект/модалку
+            const activeEl = document.activeElement;
+            const isTypingInTable = activeEl && (activeEl.classList.contains('admin-note-inline-input') || activeEl.classList.contains('table-input'));
+            const isTypingAdminForm = activeEl && (activeEl.id === 'newAdminLogin' || activeEl.id === 'newAdminPass' || activeEl.id === 'newAdminRole');
+
+            if (editingOrderId !== null || isTypingInTable || isTypingAdminForm || (activeDropdown && activeDropdown.classList.contains('active')) || getActiveModalOverlay()) {
                 return;
             }
 
+            isBackgroundSyncInProgress = true;
+
             fetch(WEB_APP_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -2552,6 +2633,7 @@
             })
             .then(res => res.json())
             .then(resData => {
+                isBackgroundSyncInProgress = false;
                 if (resData && resData.status === 'unauthorized') {
                     forceLogoutUnauthorized();
                     return;
@@ -2569,53 +2651,16 @@
                     });
 
                     applyServerAdminState(resData);
-
-                    if (currentTab === 'Дашборд') {
-                        updateDashboardCounters();
-                    } else if (currentTab === 'Засоби') {
-                        renderAssetsSection();
-                    } else if (currentTab === 'Позиції') {
-                        renderPositionsSection();
-                    } else if (currentTab === 'Адміни') {
-                        renderAdminsTable();
-                    } else if (currentTab === 'НРК' || currentTab === 'БпЛА') {
-                        renderTable();
-                    }
                 }
             })
-            .catch(() => {});
+            .catch(() => {
+                isBackgroundSyncInProgress = false;
+            });
         }
-
-            fetch(WEB_APP_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify({ action: 'getAdminData', token: adminSessionToken, silent: true })
-            })
-            .then(res => res.json())
-            .then(resData => {
-                if (resData && resData.status === 'unauthorized') {
-                    forceLogoutUnauthorized();
-                    return;
-                }
-                if (resData && resData.status === 'success') {
-                    ['НРК', 'БпЛА'].forEach(sheet => {
-                        const newList = (resData.orders && resData.orders[sheet]) || [];
-                        const newProcessingCount = newList.filter(o => o.status === 'Обробляється').length;
-                        const oldProcessingCount = (ordersData[sheet] || []).filter(o => o.status === 'Обробляється').length;
-
-                        if (newProcessingCount > oldProcessingCount) {
-                            viewedNewOrders[sheet] = false;
-                            sessionStorage.setItem('arkon_viewed_new', JSON.stringify(viewedNewOrders));
-                        }
-                    });
-                    applyServerAdminState(resData);
-                }
-            })
-            .catch(() => {});
 
         function startAutoSync() {
             stopAutoSync();
-            autoSyncInterval = setInterval(silentBackgroundSync, 10000); // Автооновлення кожні 10 секунд
+            autoSyncInterval = setInterval(silentBackgroundSync, 4000); // Автооновлення кожні 4 секунди
         }
 
         function stopAutoSync() {
@@ -2631,7 +2676,7 @@
                     renderActivityLog();
                 }
             });
-            startAutoSync(); // Запускаємо фонову синхронізацію автоматично разом із першим завантаженням адмінки
+            startAutoSync();
         }
 
         function forceLogoutUnauthorized() {
@@ -2652,7 +2697,7 @@
         }
 
         // =========================================================================
-        // ТАЙМЕР НЕАКТИВНОСТІ АДМІНА (5 ХВ ТИШІ -> 30 ХВ ПРИХОВАНИЙ ВІДЛІК -> ПОКАЗ ЗА 2 ХВ)
+        // ТАЙМЕР НЕАКТИВНОСТІ АДМІНА
         // =========================================================================
         const IDLE_WAIT_MS = 5 * 60 * 1000;
         const COUNTDOWN_TOTAL_SEC = 30 * 60;
@@ -2760,7 +2805,7 @@
         });
 
         // =========================================================================
-        // ПЕРЕВІРКА НАЯВНОСТІ БГ ЗАСОБІВ БЕЗ ПЕРЕДЧАСНОГО ЗНИКНЕННЯ ЛОАДЕРА
+        // ПЕРЕВІРКА НАЯВНОСТІ БГ ЗАСОБІВ
         // =========================================================================
         function getLocalBgAvailability(directionType) {
             const requiredAssetType = (directionType === 'БпЛА') ? 'Повітряний' : 'Наземний';
@@ -2943,7 +2988,6 @@
 
             setTimeout(safeCallback, 400);
 
-            // Аварійний запобіжник: гарантовано знімає лоадер через 2 секунди, щоб ніколи не було зависання
             setTimeout(() => {
                 if (!executed) {
                     executed = true;
@@ -3188,6 +3232,7 @@
             }
             renderActivityLog();
         });
+
         // --- ПЕРЕВІРКА СТАТУСУ ---
         const switchToStatusBtn = document.getElementById('switchToStatusBtn');
         const switchToFormBtn = document.getElementById('switchToFormBtn');
@@ -3209,9 +3254,9 @@
         switchToFormBtn.addEventListener('click', () => {
             if (statusOpenedFromNoBgModal) {
                 statusOpenedFromNoBgModal = false;
-                showUserSubmenu(); // Повертає прямо на вікно "Вибір напрямку" без повторної модалки!
+                showUserSubmenu();
             } else {
-                switchPage(currentFormType); // Повертає назад до форми запиту
+                switchPage(currentFormType);
             }
         });
 
@@ -3779,6 +3824,9 @@
                 if (resData.status === 'success') {
                     viewedNewOrders[currentFormType] = false;
                     sessionStorage.setItem('arkon_viewed_new', JSON.stringify(viewedNewOrders));
+                    if (arkonChannel) {
+                        arkonChannel.postMessage({ type: 'NEW_ORDER', formType: currentFormType });
+                    }
                     displayId.textContent = '№ ' + resData.id;
                     successModal.classList.add('active');
                     clearContainerKeyboardFocus(successModal);
@@ -3794,7 +3842,7 @@
         });
 
         // =========================================================================
-        // ЄДИНА УНІВЕРСАЛЬНА СИСТЕМА КЕРУВАННЯ КЛАВІАТУРОЮ ТА МИШЕЮ ДЛЯ ВСЬОГО ДОДАТКА
+        // СИСТЕМА КЕРУВАННЯ КЛАВІАТУРОЮ ТА МИШЕЮ
         // =========================================================================
         function isElemVisible(el) {
             if (!el) return false;
@@ -4123,10 +4171,10 @@
                 activeSelectDisplay = null;
             } else {
                 const rect = displayElem.getBoundingClientRect();
-                const dropdownHeight = 240;
+                const dropdownHeight = 250;
                 const spaceBelow = window.innerHeight - rect.bottom;
 
-                const targetWidth = Math.max(rect.width, 180);
+                const targetWidth = Math.max(rect.width, 185);
                 options.style.width = `${targetWidth}px`;
 
                 if (spaceBelow < dropdownHeight && rect.top > dropdownHeight) {
@@ -4165,6 +4213,47 @@
             activeSelectDisplay = null;
 
             updateStatistics();
+        }
+
+        function selectTableStatusFilter(optionElem) {
+            const wrapper = optionElem.closest('.custom-select-wrapper');
+            const selectDisplay = wrapper.querySelector('.custom-select');
+            const options = wrapper.querySelectorAll('.custom-option');
+
+            options.forEach(opt => opt.classList.remove('selected'));
+            optionElem.classList.add('selected');
+            selectDisplay.textContent = optionElem.textContent;
+
+            selectDisplay.className = 'custom-select';
+            for (let cls of optionElem.classList) {
+                if (cls.startsWith('status-')) {
+                    selectDisplay.classList.add(cls);
+                }
+            }
+
+            currentTableStatusFilter = optionElem.getAttribute('data-value') || 'Усі';
+
+            if (activeDropdown) activeDropdown.classList.remove('active');
+            if (activeSelectDisplay) activeSelectDisplay.classList.remove('active');
+            activeDropdown = null;
+            activeSelectDisplay = null;
+
+            filterTable();
+        }
+
+        function resetTableStatusFilterUI() {
+            currentTableStatusFilter = 'Усі';
+            const wrapper = document.getElementById('tableStatusFilterWrapper');
+            if (!wrapper) return;
+            const selectDisplay = wrapper.querySelector('.custom-select');
+            const options = wrapper.querySelectorAll('.custom-option');
+            if (selectDisplay) {
+                selectDisplay.textContent = 'Усі статуси';
+                selectDisplay.className = 'custom-select';
+            }
+            options.forEach(opt => {
+                opt.classList.toggle('selected', opt.getAttribute('data-value') === 'Усі');
+            });
         }
 
         function selectAssetType(optionElem) {
@@ -4294,6 +4383,7 @@
             const adminsSection = document.getElementById('adminsSection');
             const searchBox = document.getElementById('searchBox');
             const tableZoomControls = document.getElementById('tableZoomControls');
+            const tableStatusFilterWrapper = document.getElementById('tableStatusFilterWrapper');
 
             dashSection.classList.remove('active');
             ordersContainer.style.display = 'none';
@@ -4302,6 +4392,7 @@
             adminsSection.classList.remove('active');
             searchBox.style.display = 'none';
             tableZoomControls.style.display = 'none';
+            if (tableStatusFilterWrapper) tableStatusFilterWrapper.style.display = 'none';
 
             if (tab === 'Дашборд') {
                 dashSection.classList.add('active');
@@ -4317,9 +4408,14 @@
                 renderAdminsTable();
                 focusFirstInputInContainer(adminsSection);
             } else {
+                // Якщо переходимо на вкладку НРК або БпЛА — знімаємо індикатор непрочитаних для цього аркуша
+                viewedNewOrders[tab] = true;
+                sessionStorage.setItem('arkon_viewed_new', JSON.stringify(viewedNewOrders));
+
                 ordersContainer.style.display = 'block';
                 searchBox.style.display = 'block';
                 tableZoomControls.style.display = 'flex';
+                if (tableStatusFilterWrapper) tableStatusFilterWrapper.style.display = 'block';
                 renderTable();
             }
         }
@@ -4341,14 +4437,18 @@
             (ordersData['НРК'] || []).forEach(o => { if (o.status === 'Обробляється') nrkNew++; });
             (ordersData['БпЛА'] || []).forEach(o => { if (o.status === 'Обробляється') bplaNew++; });
 
-            document.getElementById('newNrkCount').textContent = nrkNew;
-            document.getElementById('newBplaCount').textContent = bplaNew;
+            const newNrkEl = document.getElementById('newNrkCount');
+            const newBplaEl = document.getElementById('newBplaCount');
+            if (newNrkEl) newNrkEl.textContent = nrkNew;
+            if (newBplaEl) newBplaEl.textContent = bplaNew;
 
             const bgNrk = assetsData.filter(a => a.status === 'БГ' && a.type === 'Наземний').length;
             const bgBpla = assetsData.filter(a => a.status === 'БГ' && a.type === 'Повітряний').length;
 
-            document.getElementById('bgNrkCount').textContent = bgNrk;
-            document.getElementById('bgBplaCount').textContent = bgBpla;
+            const bgNrkEl = document.getElementById('bgNrkCount');
+            const bgBplaEl = document.getElementById('bgBplaCount');
+            if (bgNrkEl) bgNrkEl.textContent = bgNrk;
+            if (bgBplaEl) bgBplaEl.textContent = bgBpla;
 
             let bgPositionsList = [];
             positionsData.forEach(pos => {
@@ -4359,27 +4459,33 @@
             });
 
             const posContainer = document.getElementById('bgPositionsNames');
-            if (bgPositionsList.length > 0) {
-                posContainer.textContent = bgPositionsList.join(', ');
-                posContainer.style.fontSize = '22px';
-            } else {
-                posContainer.textContent = '0';
-                posContainer.style.fontSize = '38px';
+            if (posContainer) {
+                if (bgPositionsList.length > 0) {
+                    posContainer.textContent = bgPositionsList.join(', ');
+                    posContainer.style.fontSize = '22px';
+                } else {
+                    posContainer.textContent = '0';
+                    posContainer.style.fontSize = '38px';
+                }
             }
 
             const cardNrk = document.getElementById('cardNrkNew');
             const cardBpla = document.getElementById('cardBplaNew');
 
-            if (nrkNew > 0 && !viewedNewOrders['НРК']) {
-                cardNrk.classList.add('has-new');
-            } else {
-                cardNrk.classList.remove('has-new');
+            if (cardNrk) {
+                if (nrkNew > 0 && !viewedNewOrders['НРК']) {
+                    cardNrk.classList.add('has-new');
+                } else {
+                    cardNrk.classList.remove('has-new');
+                }
             }
 
-            if (bplaNew > 0 && !viewedNewOrders['БпЛА']) {
-                cardBpla.classList.add('has-new');
-            } else {
-                cardBpla.classList.remove('has-new');
+            if (cardBpla) {
+                if (bplaNew > 0 && !viewedNewOrders['БпЛА']) {
+                    cardBpla.classList.add('has-new');
+                } else {
+                    cardBpla.classList.remove('has-new');
+                }
             }
 
             updateStatistics();
@@ -4390,40 +4496,71 @@
             sessionStorage.setItem('arkon_viewed_new', JSON.stringify(viewedNewOrders));
             switchTab(sheetName);
             setTimeout(() => {
-                document.getElementById('searchBox').value = 'Обробляється';
-                filterTable();
-            }, 100);
+                const wrapper = document.getElementById('tableStatusFilterWrapper');
+                if (wrapper) {
+                    const procOpt = wrapper.querySelector('.custom-option[data-value="Обробляється"]');
+                    if (procOpt) selectTableStatusFilter(procOpt);
+                }
+            }, 150);
+        }
+
+        function parseOrderDate(dateStr) {
+            if (!dateStr) return null;
+            let d = new Date(dateStr);
+            if (!isNaN(d.getTime())) return d;
+            if (typeof dateStr === 'string') {
+                const m = dateStr.match(/(\d{2})\.(\d{2})\.(\d{4})(?:\s+(\d{2}):(\d{2}))?/);
+                if (m) {
+                    return new Date(Number(m[3]), Number(m[2]) - 1, Number(m[1]), Number(m[4] || 0), Number(m[5] || 0));
+                }
+            }
+            return null;
         }
 
         function updateStatistics() {
+            const assetOption = document.querySelector('#statAssetSelect .custom-option.selected');
             const statusOption = document.querySelector('#statStatusSelect .custom-option.selected');
             const periodOption = document.querySelector('#statPeriodSelect .custom-option.selected');
 
+            const assetFilter = assetOption ? assetOption.getAttribute('data-value') : 'Загально';
             const statusFilter = statusOption ? statusOption.getAttribute('data-value') : 'Усі';
             const periodFilter = periodOption ? periodOption.getAttribute('data-value') : 'all';
 
-            let allOrders = [].concat(ordersData['НРК'] || [], ordersData['БпЛА'] || []);
+            let targetOrders = [];
+            if (assetFilter === 'НРК') {
+                targetOrders = ordersData['НРК'] || [];
+            } else if (assetFilter === 'БпЛА') {
+                targetOrders = ordersData['БпЛА'] || [];
+            } else {
+                targetOrders = [].concat(ordersData['НРК'] || [], ordersData['БпЛА'] || []);
+            }
+
             const now = new Date();
 
-            const filtered = allOrders.filter(o => {
+            const filtered = targetOrders.filter(o => {
                 if (statusFilter !== 'Усі' && o.status !== statusFilter) return false;
 
                 if (periodFilter !== 'all') {
-                    const orderDate = new Date(o.date);
-                    if (periodFilter === 'today') {
-                        if (orderDate.toDateString() !== now.toDateString()) return false;
-                    } else if (periodFilter === 'week') {
-                        const diffTime = Math.abs(now - orderDate);
-                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                        if (diffDays > 7) return false;
-                    } else if (periodFilter === 'month') {
-                        if (orderDate.getMonth() !== now.getMonth() || orderDate.getFullYear() !== now.getFullYear()) return false;
+                    const orderDate = parseOrderDate(o.date);
+                    if (orderDate) {
+                        if (periodFilter === 'today') {
+                            if (orderDate.toDateString() !== now.toDateString()) return false;
+                        } else if (periodFilter === 'week') {
+                            const diffTime = Math.abs(now - orderDate);
+                            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                            if (diffDays > 7) return false;
+                        } else if (periodFilter === 'month') {
+                            if (orderDate.getMonth() !== now.getMonth() || orderDate.getFullYear() !== now.getFullYear()) return false;
+                        }
                     }
                 }
                 return true;
             });
 
-            document.getElementById('filteredOrdersCount').textContent = filtered.length;
+            const countEl = document.getElementById('filteredOrdersCount');
+            if (countEl) {
+                countEl.textContent = filtered.length;
+            }
         }
 
         // --- РОЗДІЛ ЗАСОБИ ---
@@ -4728,36 +4865,42 @@
             });
         }
 
+        function escapeHtmlAttr(str) {
+            return String(str || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+
         function renderTable() {
             const tbody = document.getElementById('ordersTableBody');
             tbody.innerHTML = '';
             const orders = ordersData[currentTab] || [];
 
             if (orders.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="13" style="text-align: center; padding: 30px; color: var(--label-color);">Заявок поки немає</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="14" style="text-align: center; padding: 30px; color: var(--label-color);">Заявок поки немає</td></tr>`;
                 return;
             }
 
             orders.forEach(order => {
                 const tr = document.createElement('tr');
+                tr.setAttribute('data-status', order.status || 'Обробляється');
                 const isEditing = editingOrderId === order.id;
                 const badgeClass = getStatusClass(order.status);
+                const adminNoteVal = escapeHtmlAttr(order.adminNote || '');
 
                 if (isEditing) {
                     tr.innerHTML = `
                         <td><strong>#${order.id}</strong></td>
-                        <td><input type="text" class="table-input" id="edit_date_${order.id}" value="${order.date}"></td>
-                        <td><input type="text" class="table-input" id="edit_unit_${order.id}" value="${order.unit}"></td>
-                        <td><input type="text" class="table-input" id="edit_phone_${order.id}" value="${order.phone}"></td>
-                        <td><input type="text" class="table-input" id="edit_position_${order.id}" value="${order.position}"></td>
-                        <td><input type="text" class="table-input" id="edit_coords_${order.id}" value="${order.coords}"></td>
-                        <td><input type="text" class="table-input" id="edit_cargo_${order.id}" value="${order.cargo}"></td>
-                        <td><input type="text" class="table-input" id="edit_weight_${order.id}" value="${order.weight}"></td>
-                        <td><input type="text" class="table-input" id="edit_callsign_${order.id}" value="${order.callsign}"></td>
-                        <td><input type="text" class="table-input" id="edit_personnelPhone_${order.id}" value="${order.personnelPhone || ''}"></td>
-                        <td><input type="text" class="table-input" id="edit_comment_${order.id}" value="${order.comment || ''}"></td>
+                        <td><input type="text" class="table-input" id="edit_date_${order.id}" value="${escapeHtmlAttr(order.date)}"></td>
+                        <td><input type="text" class="table-input" id="edit_unit_${order.id}" value="${escapeHtmlAttr(order.unit)}"></td>
+                        <td><input type="text" class="table-input" id="edit_phone_${order.id}" value="${escapeHtmlAttr(order.phone)}"></td>
+                        <td><input type="text" class="table-input" id="edit_position_${order.id}" value="${escapeHtmlAttr(order.position)}"></td>
+                        <td><input type="text" class="table-input" id="edit_coords_${order.id}" value="${escapeHtmlAttr(order.coords)}"></td>
+                        <td><input type="text" class="table-input" id="edit_cargo_${order.id}" value="${escapeHtmlAttr(order.cargo)}"></td>
+                        <td><input type="text" class="table-input" id="edit_weight_${order.id}" value="${escapeHtmlAttr(order.weight)}"></td>
+                        <td><input type="text" class="table-input" id="edit_callsign_${order.id}" value="${escapeHtmlAttr(order.callsign)}"></td>
+                        <td><input type="text" class="table-input" id="edit_personnelPhone_${order.id}" value="${escapeHtmlAttr(order.personnelPhone || '')}"></td>
+                        <td><input type="text" class="table-input" id="edit_comment_${order.id}" value="${escapeHtmlAttr(order.comment || '')}"></td>
                         <td>
-                            <div class="custom-select-wrapper">
+                            <div class="custom-select-wrapper" style="min-width: 155px;">
                                 <div class="custom-select ${badgeClass}" tabindex="0" onclick="toggleCustomSelect(this, event)">${order.status}</div>
                                 <div class="custom-options" id="edit_status_${order.id}">
                                     <div class="custom-option status-processing ${order.status==='Обробляється'?'selected':''}" data-value="Обробляється" onclick="selectCustomOption(this)">Обробляється</div>
@@ -4770,6 +4913,7 @@
                                 </div>
                             </div>
                         </td>
+                        <td><input type="text" class="table-input" id="edit_adminNote_${order.id}" value="${adminNoteVal}" placeholder="Примітка адміна..."></td>
                         <td>
                             <div class="action-btn-group">
                                 <button type="button" class="save-btn" onclick="saveOrderEdit(${order.id})">Зберегти</button>
@@ -4787,7 +4931,7 @@
                         <td>
                             <div class="coord-cell">
                                 <code>${order.coords}</code>
-                                <button type="button" class="copy-coords-btn" onclick="copyCoords('${order.coords}', this)">Копіювати</button>
+                                <button type="button" class="copy-coords-btn" onclick="copyCoords('${escapeHtmlAttr(order.coords)}', this)">Копіювати</button>
                             </div>
                         </td>
                         <td>${order.cargo}</td>
@@ -4796,7 +4940,7 @@
                         <td>${order.personnelPhone || '—'}</td>
                         <td>${order.comment || '—'}</td>
                         <td>
-                            <div class="custom-select-wrapper">
+                            <div class="custom-select-wrapper" style="min-width: 155px;">
                                 <div class="custom-select ${badgeClass}" tabindex="0" onclick="toggleCustomSelect(this, event)">${order.status}</div>
                                 <div class="custom-options">
                                     <div class="custom-option status-processing ${order.status==='Обробляється'?'selected':''}" data-value="Обробляється" onclick="updateStatusTableItem(${order.id}, this)">Обробляється</div>
@@ -4810,6 +4954,11 @@
                             </div>
                         </td>
                         <td>
+                            <input type="text" class="admin-note-inline-input" value="${adminNoteVal}" placeholder="Додати примітку..." 
+                                onblur="updateAdminNoteInline(${order.id}, this.value)" 
+                                onkeydown="if(event.key==='Enter'){this.blur();}">
+                        </td>
+                        <td>
                             <div class="action-btn-group">
                                 <button type="button" class="edit-btn" onclick="startOrderEdit(${order.id})">Редагувати</button>
                                 <button type="button" class="delete-btn" onclick="confirmDeleteOrder(${order.id})">Видалити</button>
@@ -4819,6 +4968,8 @@
                 }
                 tbody.appendChild(tr);
             });
+
+            filterTable();
         }
 
         function getStatusClass(status) {
@@ -4836,7 +4987,19 @@
         function updateStatusTableItem(id, optionElem) {
             const newStatus = optionElem.getAttribute('data-value');
             selectCustomOption(optionElem);
+            const list = ordersData[currentTab] || [];
+            const item = list.find(o => o.id === id);
+            if (item) item.status = newStatus;
             callAdminApi({ action: 'updateStatus', formType: currentTab, id: id, status: newStatus });
+        }
+
+        function updateAdminNoteInline(id, newNote) {
+            const trimmed = (newNote || '').trim();
+            const list = ordersData[currentTab] || [];
+            const item = list.find(o => o.id === id);
+            if (item && (item.adminNote || '') === trimmed) return; // Якщо нічого не змінилося — не смикаємо сервер
+            if (item) item.adminNote = trimmed;
+            callAdminApi({ action: 'updateAdminNote', formType: currentTab, id: id, adminNote: trimmed });
         }
 
         function startOrderEdit(id) {
@@ -4863,7 +5026,8 @@
                 callsign: document.getElementById(`edit_callsign_${id}`).value.trim(),
                 personnelPhone: document.getElementById(`edit_personnelPhone_${id}`).value.trim(),
                 comment: document.getElementById(`edit_comment_${id}`).value.trim(),
-                status: statusOption ? statusOption.getAttribute('data-value') : 'Обробляється'
+                status: statusOption ? statusOption.getAttribute('data-value') : 'Обробляється',
+                adminNote: document.getElementById(`edit_adminNote_${id}`) ? document.getElementById(`edit_adminNote_${id}`).value.trim() : ''
             };
             editingOrderId = null;
             callAdminApi({ action: 'editOrder', formType: currentTab, order: updatedOrder });
@@ -4886,12 +5050,28 @@
         }
 
         function filterTable() {
-            const query = document.getElementById('searchBox').value.toLowerCase();
-            const rows = document.getElementById('ordersTableBody').getElementsByTagName('tr');
+            const searchInput = document.getElementById('searchBox');
+            const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+            const tbody = document.getElementById('ordersTableBody');
+            if (!tbody) return;
+            const rows = tbody.getElementsByTagName('tr');
 
             for (let i = 0; i < rows.length; i++) {
-                const text = rows[i].textContent.toLowerCase();
-                rows[i].style.display = text.includes(query) ? '' : 'none';
+                const row = rows[i];
+                if (row.cells.length <= 1) continue; // Пропускаємо рядок "Заявок поки немає"
+
+                const rowStatus = row.getAttribute('data-status') || '';
+                const statusMatches = (currentTableStatusFilter === 'Усі' || rowStatus === currentTableStatusFilter);
+
+                let textContent = row.textContent.toLowerCase();
+                const noteInputs = row.querySelectorAll('input');
+                noteInputs.forEach(inp => {
+                    textContent += ' ' + (inp.value || '').toLowerCase();
+                });
+
+                const queryMatches = !query || textContent.includes(query);
+
+                row.style.display = (statusMatches && queryMatches) ? '' : 'none';
             }
         }
 
