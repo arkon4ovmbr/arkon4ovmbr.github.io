@@ -2025,81 +2025,62 @@
                         <div class="stat-number" id="bgPositionsNames" style="text-align: center; font-size: 38px; word-break: break-word;">0</div>
                         <p style="text-align: center; margin-top: 5px;">Натисніть для переходу до позицій.</p>
                     </div>
-<div class="dash-card" style="grid-column: 1 / -1;">
-    <h3>Аналітика запитів</h3>
-    
-    <div class="stats-filters" style="display: flex; flex-direction: column; gap: 12px; margin-top: 15px;">
+<!-- Блок Аналітика запитів -->
+    <div class="dash-card" style="grid-column: 1 / -1; margin-top: 20px;">
+        <h3>Аналітика запитів</h3>
         
-        <!-- 1. Фільтр: Засіб -->
-        <div class="filter-group">
-            <label style="display: block; font-size: 12px; color: var(--text-muted, #aaa); margin-bottom: 5px; font-weight: 500;">Засіб</label>
-            <div class="custom-select-wrapper" id="statAssetSelect">
-                <div class="custom-select" tabindex="0" onclick="toggleCustomSelect(this, event)">Загально</div>
-                <div class="custom-options">
-                    <div class="custom-option selected" data-value="Загально" onclick="selectCustomOption(this); updateAnalyticsData();">Загально</div>
-                    <div class="custom-option" data-value="НРК" onclick="selectCustomOption(this); updateAnalyticsData();">НРК</div>
-                    <div class="custom-option" data-value="БпЛА" onclick="selectCustomOption(this); updateAnalyticsData();">БпЛА</div>
+        <div class="stats-filters" style="display: flex; flex-direction: column; gap: 12px; margin-top: 15px;">
+            
+            <!-- 1. Фільтр: Засіб -->
+            <div class="filter-group">
+                <label style="display: block; font-size: 12px; color: var(--text-muted, #aaa); margin-bottom: 5px; font-weight: 500;">Засіб</label>
+                <div class="custom-select-wrapper" id="statAssetSelect">
+                    <div class="custom-select" tabindex="0" onclick="toggleCustomSelect(this, event)">Загально</div>
+                    <div class="custom-options">
+                        <div class="custom-option selected" data-value="Загально" onclick="selectCustomOption(this); updateAnalyticsData();">Загально</div>
+                        <div class="custom-option" data-value="НРК" onclick="selectCustomOption(this); updateAnalyticsData();">НРК</div>
+                        <div class="custom-option" data-value="БпЛА" onclick="selectCustomOption(this); updateAnalyticsData();">БпЛА</div>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- 2. Фільтр: Статус -->
-        <div class="filter-group">
-            <label style="display: block; font-size: 12px; color: var(--text-muted, #aaa); margin-bottom: 5px; font-weight: 500;">Статус</label>
-            <div class="custom-select-wrapper" id="statStatusSelect">
-                <div class="custom-select" tabindex="0" onclick="toggleCustomSelect(this, event)">Усі статуси</div>
-                <div class="custom-options">
-                    <div class="custom-option selected" data-value="Усі статуси" onclick="selectCustomOption(this); updateAnalyticsData();">Усі статуси</div>
-                    <div class="custom-option" data-value="Обробляється" onclick="selectCustomOption(this); updateAnalyticsData();">Обробляється</div>
-                    <div class="custom-option" data-value="В черзі" onclick="selectCustomOption(this); updateAnalyticsData();">В черзі</div>
-                    <div class="custom-option" data-value="Виконується" onclick="selectCustomOption(this); updateAnalyticsData();">Виконується</div>
-                    <div class="custom-option" data-value="Виконано" onclick="selectCustomOption(this); updateAnalyticsData();">Виконано</div>
-                    <div class="custom-option" data-value="Виконано частково" onclick="selectCustomOption(this); updateAnalyticsData();">Виконано частково</div>
-                    <div class="custom-option" data-value="Не виконано" onclick="selectCustomOption(this); updateAnalyticsData();">Не виконано</div>
-                    <div class="custom-option" data-value="Скасовано" onclick="selectCustomOption(this); updateAnalyticsData();">Скасовано</div>
+            <!-- 2. Фільтр: Статус -->
+            <div class="filter-group">
+                <label style="display: block; font-size: 12px; color: var(--text-muted, #aaa); margin-bottom: 5px; font-weight: 500;">Статус</label>
+                <div class="custom-select-wrapper" id="statStatusSelect">
+                    <div class="custom-select" tabindex="0" onclick="toggleCustomSelect(this, event)">Усі статуси</div>
+                    <div class="custom-options">
+                        <div class="custom-option selected" data-value="Усі статуси" onclick="selectCustomOption(this); updateAnalyticsData();">Усі статуси</div>
+                        <div class="custom-option" data-value="Обробляється" onclick="selectCustomOption(this); updateAnalyticsData();">Обробляється</div>
+                        <div class="custom-option" data-value="В черзі" onclick="selectCustomOption(this); updateAnalyticsData();">В черзі</div>
+                        <div class="custom-option" data-value="Виконується" onclick="selectCustomOption(this); updateAnalyticsData();">Виконується</div>
+                        <div class="custom-option" data-value="Виконано" onclick="selectCustomOption(this); updateAnalyticsData();">Виконано</div>
+                        <div class="custom-option" data-value="Виконано частково" onclick="selectCustomOption(this); updateAnalyticsData();">Виконано частково</div>
+                        <div class="custom-option" data-value="Не виконано" onclick="selectCustomOption(this); updateAnalyticsData();">Не виконано</div>
+                        <div class="custom-option" data-value="Скасовано" onclick="selectCustomOption(this); updateAnalyticsData();">Скасовано</div>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- 3. Фільтр: Період -->
-        <div class="filter-group">
-            <label style="display: block; font-size: 12px; color: var(--text-muted, #aaa); margin-bottom: 5px; font-weight: 500;">Період</label>
-            <div class="custom-select-wrapper" id="statTimeSelect">
-                <div class="custom-select" tabindex="0" onclick="toggleCustomSelect(this, event)">За весь час</div>
-                <div class="custom-options">
-                    <div class="custom-option selected" data-value="За весь час" onclick="selectCustomOption(this); updateAnalyticsData();">За весь час</div>
+            <!-- 3. Фільтр: Період -->
+            <div class="filter-group">
+                <label style="display: block; font-size: 12px; color: var(--text-muted, #aaa); margin-bottom: 5px; font-weight: 500;">Період</label>
+                <div class="custom-select-wrapper" id="statTimeSelect">
+                    <div class="custom-select" tabindex="0" onclick="toggleCustomSelect(this, event)">За весь час</div>
+                    <div class="custom-options">
+                        <div class="custom-option selected" data-value="За весь час" onclick="selectCustomOption(this); updateAnalyticsData();">За весь час</div>
+                    </div>
                 </div>
             </div>
+
         </div>
 
-    </div>
-
-    <!-- Вивід результату -->
-    <div style="margin-top: 20px;">
-        <div id="analyticsCounter" style="font-size: 32px; font-weight: bold;">0</div>
-        <div style="color: var(--text-muted, #aaa); font-size: 13px;">Кількість запитів за обраними критеріями</div>
-    </div>
-</div>
-        <!-- 3. Фільтр: Період -->
-        <div class="filter-group">
-            <label style="display: block; font-size: 12px; color: var(--text-muted, #aaa); margin-bottom: 5px; font-weight: 500;">Період</label>
-            <div class="custom-select-wrapper" id="statTimeSelect">
-                <div class="custom-select" tabindex="0" onclick="toggleCustomSelect(this, event)">За весь час</div>
-                <div class="custom-options">
-                    <div class="custom-option selected" data-value="За весь час" onclick="selectCustomOption(this); updateAnalyticsData();">За весь час</div>
-                    <!-- Додайте сюди інші варіанти часу, якщо вони у вас є (наприклад, Сьогодні, Цей тиждень тощо) -->
-                </div>
-            </div>
+        <!-- Вивід результату -->
+        <div style="margin-top: 20px;">
+            <div id="analyticsCounter" style="font-size: 32px; font-weight: bold;">0</div>
+            <div style="color: var(--text-muted, #aaa); font-size: 13px;">Кількість запитів за обраними критеріями</div>
         </div>
-
     </div>
-
-    <!-- Вивід результату -->
-    <div style="margin-top: 20px;">
-        <div id="analyticsCounter" style="font-size: 32px; font-weight: bold;">0</div>
-        <div style="color: var(--text-muted, #aaa); font-size: 13px;">Кількість запитів за обраними критеріями</div>
-    </div>
-</div>
 
                     <div class="activity-log-card">
                         <h3>
