@@ -2562,7 +2562,9 @@
             .catch(() => {});
         }
             // Не перемальовуємо таблицю, якщо адмін прямо зараз редагує рядок або відкрив випадаючий список/модалку
-            if (editingOrderId !== null || (activeDropdown && activeDropdown.classList.contains('active')) || getActiveModalOverlay()) return;
+            if (editingOrderId !== null || (activeDropdown && activeDropdown.classList.contains('active')) || getActiveModalOverlay()) {
+    return;
+}
 
             fetch(WEB_APP_URL, {
                 method: 'POST',
