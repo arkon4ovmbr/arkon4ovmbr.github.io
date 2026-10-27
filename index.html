@@ -2902,13 +2902,36 @@
         // --- НАВІГАЦІЯ МІЖ ЕКРАНАМИ ---
         function showLoader(callback) {
             const loader = document.getElementById('loader-overlay');
-            loader.classList.remove('hidden');
-            setTimeout(() => {
+            if (!loader) {
                 if (callback) callback();
+                return;
+            }
+            loader.classList.remove('hidden');
+
+            let executed = false;
+            const safeCallback = () => {
+                if (executed) return;
+                executed = true;
+                if (callback) {
+                    try { callback(); } catch (e) { console.error(e); }
+                }
                 setTimeout(() => {
                     loader.classList.add('hidden');
                 }, 300);
-            }, 400);
+            };
+
+            setTimeout(safeCallback, 400);
+
+            // Аварійний запобіжник: гарантовано знімає лоадер через 2 секунди, щоб ніколи не було зависання
+            setTimeout(() => {
+                if (!executed) {
+                    executed = true;
+                    if (callback) {
+                        try { callback(); } catch (e) {}
+                    }
+                    loader.classList.add('hidden');
+                }
+            }, 2000);
         }
 
         function hideAllViews() {
