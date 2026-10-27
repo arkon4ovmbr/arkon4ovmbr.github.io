@@ -2025,10 +2025,7 @@
                         <div class="stat-number" id="bgPositionsNames" style="text-align: center; font-size: 38px; word-break: break-word;">0</div>
                         <p style="text-align: center; margin-top: 5px;">Натисніть для переходу до позицій.</p>
                     </div>
-
-                    <div class="dash-card" style="grid-column: 1 / -1;">
-                        <h3>Аналітика запитів</h3>
-                        <div class="dash-card" style="grid-column: 1 / -1;">
+<div class="dash-card" style="grid-column: 1 / -1;">
     <h3>Аналітика запитів</h3>
     
     <div class="stats-filters" style="display: flex; flex-direction: column; gap: 12px; margin-top: 15px;">
@@ -2064,6 +2061,25 @@
             </div>
         </div>
 
+        <!-- 3. Фільтр: Період -->
+        <div class="filter-group">
+            <label style="display: block; font-size: 12px; color: var(--text-muted, #aaa); margin-bottom: 5px; font-weight: 500;">Період</label>
+            <div class="custom-select-wrapper" id="statTimeSelect">
+                <div class="custom-select" tabindex="0" onclick="toggleCustomSelect(this, event)">За весь час</div>
+                <div class="custom-options">
+                    <div class="custom-option selected" data-value="За весь час" onclick="selectCustomOption(this); updateAnalyticsData();">За весь час</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Вивід результату -->
+    <div style="margin-top: 20px;">
+        <div id="analyticsCounter" style="font-size: 32px; font-weight: bold;">0</div>
+        <div style="color: var(--text-muted, #aaa); font-size: 13px;">Кількість запитів за обраними критеріями</div>
+    </div>
+</div>
         <!-- 3. Фільтр: Період -->
         <div class="filter-group">
             <label style="display: block; font-size: 12px; color: var(--text-muted, #aaa); margin-bottom: 5px; font-weight: 500;">Період</label>
